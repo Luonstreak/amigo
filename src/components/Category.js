@@ -9,20 +9,19 @@ import {
 	TextInput
 } from 'react-native';
 import { Button, Badge } from 'react-native-elements';
+import { connect } from 'react-redux';
 
-export default class App extends Component {
+import * as actions from '../actions';
+
+class Category extends Component {
 	state = {
 		categories: [
-			{ id: 'wk9ut93', category: 'random' },
-			{ id: 'alkbnen', category: 'me in 10 years' },
-			{ id: 'sfjngks', category: 'TV' },
-			{ id: 'assfjas', category: 'Dirty' },
-			{ id: 'asfdkjl', category: 'Dating' },
-			{ id: 'sdkfljd', category: 'my personality' },
-			{ id: 'dslfjsd', category: 'what I eat' },
-			{ id: 'sfdjkln', category: 'my music' },
-			{ id: 'sjdntkc', category: 'star wars' },
-			{ id: 'skfjtbc', category: 'my health' }
+			{ id: 'r', category: 'random' },
+			{ id: 'a', category: 'me in 10 years' },
+			{ id: 'b', category: 'TV' },
+			{ id: 'c', category: 'Dirty' },
+			{ id: 'd', category: 'Dating' },
+			{ id: 'e', category: 'my personality' },
 		]
 	}
 	_keyExtractor = (item, index) => item.id;
@@ -32,7 +31,7 @@ export default class App extends Component {
 			<Button
 				title={item.category}
 				buttonStyle={styles.option}
-				onPress={() => { alert(`you chose "${item.category}" category`) }}
+				onPress={() => { this.props.fetchQuestion(item.id) }}
 			/>
 		)
 	}
@@ -135,3 +134,5 @@ const styles = StyleSheet.create({
 		padding: 10
 	},
 });
+
+export default connect(null, actions)(Category)
