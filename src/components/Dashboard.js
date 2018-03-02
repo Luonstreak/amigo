@@ -7,8 +7,13 @@ import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
 
 class Dashboard extends Component {
-	// constructor(props) {
-	// 	super(props)
+	constructor(props) {
+		super(props)
+		this.props.fetchPlayers()
+		this.props.usernameFetch()
+	}
+
+	// componentDidMount() {
 	// 	this.props.fetchPlayers()
 	// }
 

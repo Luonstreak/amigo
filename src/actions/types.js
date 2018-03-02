@@ -7,6 +7,7 @@ export const LOGIN_FAIL = 'login_fail';
 // USERNAME & REFERRAL CODE
 export const USERNAME_INPUT = 'username_input';
 export const USERNAME_SAVE = 'username_save';
+export const USERNAME_FETCH = 'username_fetch';
 
 // PLAYERS LIST 
 export const PLAYERS_FETCH = 'players_fetch';

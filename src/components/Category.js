@@ -11,6 +11,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { Button, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
 
 import * as actions from '../actions';
 
@@ -47,18 +48,6 @@ class Category extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<View style={styles.counter}>
-					<Badge
-						value={'user 0'}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-					<Badge
-						value={'user 3'}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-				</View>
 				<ScrollView
 					style={styles.card}
 					showsVerticalScrollIndicator={false}
@@ -73,14 +62,6 @@ class Category extends Component {
 						renderItem={this.renderItem}
 					/>
 				</ScrollView>
-				<View style={styles.chat}>
-					<Text>CHAT</Text>
-					<TextInput
-						value={"hello!"}
-						style={styles.input}
-						onTextChange={() => alert('chat not available yet!')}
-					/>
-				</View>
 			</View>
 		);
 	}
@@ -91,25 +72,10 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: 'center',
-		backgroundColor: '#DFE2E7',
-		paddingTop: 30
-	},
-	//header
-	counter: {
-		height: 50,
-		justifyContent: 'space-between',
-		paddingLeft: 30,
-		paddingRight: 30,
-		alignItems: 'center',
-		backgroundColor: '#83D0CD',
-		flexDirection: 'row'
-	},
-	badge: {
-		padding: 10
+		backgroundColor: '#DFE2E7'
 	},
 	//card
 	card: {
-		flex: 6,
 		backgroundColor: '#0D658D',
 		margin: 30,
 		padding: 20,
