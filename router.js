@@ -8,6 +8,7 @@ import Username from './src/components/Username';
 import Dashboard from './src/components/Dashboard';
 import PlayerList from './src/components/PlayerList';
 import Category from './src/components/Category';
+import Choice from './src/components/Choice';
 
 const RouterComponent = () => {
 	return (
@@ -29,6 +30,7 @@ const RouterComponent = () => {
 					/>
 					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
 					<Scene key='categories' component={Category} title='Pick a Question' />
+					<Scene key='choose' component={Choice} title='Pick a Question' />
 				</Scene>
 				{/* <Scene key='start'>
 					<Scene key='lobby' component={Lobby} title='Lobby Time' />

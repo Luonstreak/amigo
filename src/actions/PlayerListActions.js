@@ -13,7 +13,6 @@ export const fetchPlayers = () => {
 			console.log(snap.val())
 			dispatch({ type: PLAYERS_FETCH, payload: snap.val() })
 		})
-
 	}
 }
 
@@ -22,5 +21,4 @@ export const playerSelect = (player) => {
 		type: PLAYER_SELECTED,
 		payload: player
 	}
-	// Actions.categories();
 }

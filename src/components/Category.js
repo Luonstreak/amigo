@@ -8,6 +8,7 @@ import {
 	ScrollView,
 	TextInput
 } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 import { Button, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 
@@ -24,6 +25,13 @@ class Category extends Component {
 			{ id: 'e', category: 'my personality' },
 		]
 	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.question.selectedQuestion !== null) {
+			Actions.choose()
+		}
+	}
+
 	_keyExtractor = (item, index) => item.id;
 
 	renderItem = ({ item }) => {
@@ -135,4 +143,8 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default connect(null, actions)(Category)
+const mapStateToProps = state => {
+	return { question: state.question }
+}
+
+export default connect(mapStateToProps, actions)(Category)

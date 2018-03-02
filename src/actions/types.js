@@ -11,3 +11,6 @@ export const USERNAME_SAVE = 'username_save';
 // PLAYERS LIST 
 export const PLAYERS_FETCH = 'players_fetch';
 export const PLAYER_SELECTED = 'player_selected';
+
+//CATEGORY 
+export const QUESTION_CHOSEN = 'question_chosen';
