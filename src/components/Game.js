@@ -10,13 +10,22 @@ import {
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
+import Overlay from './Overlay';
 
 export default class App extends Component {
 
 	state  = {
 		chatHeight: 100,
-		chooseCardVisible: false
+		chooseCardVisible: false,
+		layer: 'overlay'
 	}
+
+	componentDidMount() {
+		setTimeout(() => {
+			this.setState({ layer: 'game' })
+		}, 2000);
+	}
+	
 
 	renderChoice = () => {
 		if (this.state.chooseCardVisible) {
@@ -37,63 +46,72 @@ export default class App extends Component {
 		} 
 		return null
 	}
-	render() {
-		return (
-			<View style={styles.container}>
-				<View style={styles.counter}>
-					<Badge
-						value={'user 1'}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-					<Badge
-						value={'user 2'}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-				</View>
-				<ScrollView
-					style={styles.card}
-					showsVerticalScrollIndicator={false}
-				>
-					<View style={styles.header}>
-						<Text style={{ fontSize: 30 }}>What brand of sode do I like the best?</Text>
-					</View>
-					<View style={styles.user}>
+
+	renderLayer = () => {
+		if (this.state.layer === 'overlay') {
+			return <Overlay type={'loose'}/>
+		} else {
+			return (
+				<View style={styles.container}>
+					<View style={styles.counter}>
 						<Badge
-							value={'Michael\'s answer was...'}
-							textStyle={{ color: '#FFF', fontSize: 20 }}
-							containerStyle={{ backgroundColor: '#F5D86B' }}
+							value={'user 1'}
+							textStyle={{ color: '#F7E7B4' }}
+							containerStyle={styles.badge}
+						/>
+						<Badge
+							value={'user 2'}
+							textStyle={{ color: '#F7E7B4' }}
+							containerStyle={styles.badge}
 						/>
 					</View>
-					<View style={styles.options}>
-						<Button
-							title={'OPTION 1'}
-							buttonStyle={styles.option}
-						/>
-						<Button
-							title={'OPTION 2'}
-							buttonStyle={styles.option}
-						/>
-						<Button
-							title={'OPTION 3'}
-							buttonStyle={[styles.option, { backgroundColor: '#FB0068' }]}
-						/>
-						<Button
-							title={'OPTION 4'}
-							buttonStyle={[styles.option, { backgroundColor: '#6DC066' }]}
-							onPress={() => { 
-
-								this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-							}}
+					<ScrollView
+						style={styles.card}
+						showsVerticalScrollIndicator={false}
+					>
+						<View style={styles.header}>
+							<Text style={{ fontSize: 30 }}>What brand of sode do I like the best?</Text>
+						</View>
+						<View style={styles.user}>
+							<Badge
+								value={'Michael\'s answer was...'}
+								textStyle={{ color: '#FFF', fontSize: 20 }}
+								containerStyle={{ backgroundColor: '#F5D86B' }}
 							/>
-					</View>
+						</View>
+						<View style={styles.options}>
+							<Button
+								title={'OPTION 1'}
+								buttonStyle={styles.option}
+							/>
+							<Button
+								title={'OPTION 2'}
+								buttonStyle={styles.option}
+							/>
+							<Button
+								title={'OPTION 3'}
+								buttonStyle={[styles.option, { backgroundColor: '#FB0068' }]}
+							/>
+							<Button
+								title={'OPTION 4'}
+								buttonStyle={[styles.option, { backgroundColor: '#6DC066' }]}
+								onPress={() => {
 
-				</ScrollView>
-				{this.renderChoice()}
-				<Chat style={styles.chat} height={this.state.chatHeight}/>
-			</View>
-		);
+									this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
+								}}
+							/>
+						</View>
+
+					</ScrollView>
+					{this.renderChoice()}
+					<Chat style={styles.chat} height={this.state.chatHeight} />
+				</View>
+			);
+		}
+	}
+
+	render() {
+		return this.renderLayer()
 	}
 }
 
@@ -104,6 +122,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		backgroundColor: '#DFE2E7',
 		paddingTop: 30
+	},
+	//overlay
+	overlay: {
+		position: 'absolute'
 	},
 	//header
 	counter: {
