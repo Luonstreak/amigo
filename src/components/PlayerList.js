@@ -50,8 +50,6 @@ class PlayerList extends Component {
 }
 
 const mapStateToProps = state => {
-	// console.log(state.player)
-	console.log(Object.keys(state.player.players))
 	return { player: state.player }
 }
 

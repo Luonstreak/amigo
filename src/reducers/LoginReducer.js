@@ -2,7 +2,7 @@
 import { EMAIL_INPUT, PASSWORD_INPUT, LOGIN_SUCCESS, LOGIN_FAIL } from '../actions/types';
 
 const INITIAL_STATE = {
-	email: 'michael@top.com',
+	email: 'come@bruh.com',
 	password: 'password',
 	user: null
 }
@@ -16,8 +16,8 @@ export default (state = INITIAL_STATE, action) => {
 		case LOGIN_SUCCESS:
 			return { ...state, user: action.payload };
 		case LOGIN_FAIL:
-			return console.log('fail');
-
+			console.log('fail');
+			return state
 		default:
 			return state;
 	}

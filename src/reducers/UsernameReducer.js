@@ -2,7 +2,7 @@
 import {
 	USERNAME_INPUT,
 	USERNAME_SAVE,
-	FETCH_USERNAME
+	USERNAME_FETCH
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -15,7 +15,7 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, username: action.payload };
 		case USERNAME_SAVE:
 			return INITIAL_STATE;
-		case FETCH_USERNAME:
+		case USERNAME_FETCH:
 			return { ...state, username: action.payload };
 		default:
 			return state;

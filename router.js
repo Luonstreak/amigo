@@ -8,6 +8,7 @@ import Username from './src/components/Username';
 import Dashboard from './src/components/Dashboard';
 import PlayerList from './src/components/PlayerList';
 import Category from './src/components/Category';
+import Game from './src/components/Game';
 
 const RouterComponent = () => {
 	return (
@@ -21,14 +22,13 @@ const RouterComponent = () => {
 				</Scene>
 				<Scene key='main'>
 					<Scene
-						// rightTitle='Add'
-						// onRight={() => Actions.leaderboard()}
 						key='dashboard'
 						component={Dashboard}
 						initial
 					/>
 					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
 					<Scene key='categories' component={Category} title='Pick a Question' />
+					<Scene key='game' component={Game} hideNavBar />
 				</Scene>
 				{/* <Scene key='start'>
 					<Scene key='lobby' component={Lobby} title='Lobby Time' />

@@ -6,7 +6,7 @@ import { Actions } from 'react-native-router-flux';
 import {
 	USERNAME_INPUT,
 	USERNAME_SAVE,
-	FETCH_USERNAME,
+	USERNAME_FETCH,
 	REFERRALCODE_INPUT
 } from './types';
 
@@ -36,7 +36,7 @@ export const usernameFetch = () => {
 	return (dispatch) => {
 		firebase.database().ref(`users/${currentUser.uid}/username`)
 			.once('value', snap => {
-				dispatch({ type: FETCH_USERNAME, payload: snap.val() });
+				dispatch({ type: USERNAME_FETCH, payload: snap.val() });
 			});	
 	};
 };
