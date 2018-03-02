@@ -11,7 +11,6 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { Button, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Actions } from 'react-native-router-flux';
 
 import * as actions from '../actions';
 
@@ -29,7 +28,7 @@ class Category extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.question.selectedQuestion !== null) {
-			Actions.choose()
+			Actions.game()
 		}
 	}
 
