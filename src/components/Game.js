@@ -11,8 +11,11 @@ import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import Overlay from './Overlay';
+import { connect } from 'react-redux';
 
-export default class App extends Component {
+import * as actions from '../actions';
+
+class Game extends Component {
 
 	state  = {
 		chatHeight: 100,
@@ -70,7 +73,7 @@ export default class App extends Component {
 						showsVerticalScrollIndicator={false}
 					>
 						<View style={styles.header}>
-							<Text style={{ fontSize: 30 }}>What brand of sode do I like the best?</Text>
+							<Text style={{ fontSize: 30 }}>{this.props.question.selectedQuestion.content}</Text>
 						</View>
 						<View style={styles.user}>
 							<Badge
@@ -81,19 +84,19 @@ export default class App extends Component {
 						</View>
 						<View style={styles.options}>
 							<Button
-								title={'OPTION 1'}
+								title={this.props.question.selectedQuestion.choices.option1}
 								buttonStyle={styles.option}
 							/>
 							<Button
-								title={'OPTION 2'}
+								title={this.props.question.selectedQuestion.choices.option2}
 								buttonStyle={styles.option}
 							/>
 							<Button
-								title={'OPTION 3'}
+								title={this.props.question.selectedQuestion.choices.option3}
 								buttonStyle={[styles.option, { backgroundColor: '#FB0068' }]}
 							/>
 							<Button
-								title={'OPTION 4'}
+								title={this.props.question.selectedQuestion.choices.option4}
 								buttonStyle={[styles.option, { backgroundColor: '#6DC066' }]}
 								onPress={() => {
 
@@ -199,3 +202,10 @@ const styles = StyleSheet.create({
 		padding: 10
 	},
 });
+
+const mapStateToProps = state => {
+	console.log(state.question)
+	return { question: state.question }
+}
+
+export default connect(mapStateToProps, actions)(Game);
