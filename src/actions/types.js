@@ -13,5 +13,8 @@ export const USERNAME_FETCH = 'username_fetch';
 export const PLAYERS_FETCH = 'players_fetch';
 export const PLAYER_SELECTED = 'player_selected';
 
+//DASHBOARD
+export const GAMES_FETCHED = "games_fetched"
+
 //CATEGORY 
 export const QUESTION_CHOSEN = 'question_chosen';

@@ -11,18 +11,10 @@ class Dashboard extends Component {
 		super(props)
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
-	}
-
-	// componentDidMount() {
-	// 	this.props.fetchPlayers()
-	// }
-
-	componentDidMount() {
-		this.props.fetchPlayers()
-	}
-	
+	}	
 
 	render() {
+		// const games = this.props.dash.games
 		return (
 			<View style={styles.wrapper}>
 				<View style={styles.section1}>
@@ -39,7 +31,7 @@ class Dashboard extends Component {
 					// onPress={this._pickImage} 
 					/>
 				</View>
-
+			
 				<View style={styles.mainSection}>
 					<Card
 						title='Your Turn'
@@ -52,7 +44,7 @@ class Dashboard extends Component {
 							icon={{ name: 'code' }}
 							backgroundColor='#03A9F4'
 							buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
-							title='VIEW NOW' />
+							title='Play' />
 					</Card>
 					<Card
 						title='Their Turn'
@@ -65,7 +57,7 @@ class Dashboard extends Component {
 							icon={{ name: 'code' }}
 							backgroundColor='#03A9F4'
 							buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
-							title='VIEW NOW' />
+							title='Nudge' />
 					</Card>
 					<Card
 						title='Pending'
@@ -78,7 +70,7 @@ class Dashboard extends Component {
 							icon={{ name: 'code' }}
 							backgroundColor='#03A9F4'
 							buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
-							title='VIEW NOW' />
+							title='Remind' />
 					</Card>
 				</View>
 			</View>
@@ -108,6 +100,10 @@ const styles = {
 	card: {
 		flexDirection: 'row'
 	}
+}
+
+const mapStateToProps = state => {
+	return { dash: state.dash }
 }
 
 export default connect(null, actions)(Dashboard);
