@@ -11,51 +11,10 @@ class Dashboard extends Component {
 		super(props)
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
-	}
-
-	// componentDidMount() {
-	// 	this.props.fetchPlayers()
-	// }
-
-	componentDidMount() {
-		this.props.fetchPlayers()
-	}
-
-	_keyExtractor = (item, index) => item.id;
-
-	// renderGame = (gameId) => {
-	// 	firebase.database().ref(`games/${gameId}`).once(snap => {
-	// 		this.
-	// 	})
-	// }
+	}	
 
 	render() {
-		const list = [
-			{
-				name: 'Amy Farha',
-				key: 'skdjffsdlk',
-				avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-				subtitle: 'Vice President'
-			},
-			{
-				name: 'Chris Jackson',
-				key: 'skdjffsssd',
-				avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-				subtitle: 'Vice Chairman'
-			},
-			{
-				name: 'Perri Elis',
-				key: 'djfksll;',
-				avatar_url: 'https://i.imgur.com/XUbwQ5E.jpg',
-				subtitle: 'Vice Chairman'
-			},
-			{
-				name: 'Curtis Jackson',
-				key: 'dksjfkdk',
-				avatar_url: 'https://i.imgur.com/jlXXJ.jpg',
-				subtitle: 'Vice Chairman'
-			},
-		];
+		// const games = this.props.dash.games
 		return (
 			<View style={{ marginTop: 20, justifyContent: 'center' }}>
 				<View style={styles.header}>
@@ -69,9 +28,51 @@ class Dashboard extends Component {
 					<Avatar
 						medium
 						rounded
-						avatarStyle={{ flex: 1 }}
-						source={{ uri: 'https://pbs.twimg.com/profile_images/764466597788614656/bw2IMmNk_400x400.jpg' }}
-					/> 
+						source={{ uri: 'https://www.acspri.org.au/sites/acspri.org.au/files/profile-placeholder.png' }}
+					// onPress={this._pickImage} 
+					/>
+				</View>
+			
+				<View style={styles.mainSection}>
+					<Card
+						title='Your Turn'
+						style={styles.card}
+					>
+						<Text style={{ marginBottom: 10 }}>
+							The idea with React Native Elements is more about component structure than actual design.
+						</Text>
+						<Button
+							icon={{ name: 'code' }}
+							backgroundColor='#03A9F4'
+							buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+							title='Play' />
+					</Card>
+					<Card
+						title='Their Turn'
+						style={styles.card}
+					>
+						<Text style={{ marginBottom: 10 }}>
+							The idea with React Native Elements is more about component structure than actual design.
+						</Text>
+						<Button
+							icon={{ name: 'code' }}
+							backgroundColor='#03A9F4'
+							buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+							title='Nudge' />
+					</Card>
+					<Card
+						title='Pending'
+						style={styles.card}
+					>
+						<Text style={{ marginBottom: 10 }}>
+							The idea with React Native Elements is more about component structure than actual design.
+						</Text>
+						<Button
+							icon={{ name: 'code' }}
+							backgroundColor='#03A9F4'
+							buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+							title='Remind' />
+					</Card>
 				</View>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<Text style={styles.title}>Your Turn!</Text>
@@ -132,6 +133,10 @@ const styles = {
 		borderTopWidth: 0,
 		borderBottomWidth: 0,
 	}
+}
+
+const mapStateToProps = state => {
+	return { dash: state.dash }
 }
 
 export default connect(null, actions)(Dashboard);

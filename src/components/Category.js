@@ -35,11 +35,12 @@ class Category extends Component {
 	_keyExtractor = (item, index) => item.id;
 
 	renderItem = ({ item }) => {
+		var player = this.props.player.selectedPlayer
 		return (
 			<Button
 				title={item.category}
 				buttonStyle={styles.option}
-				onPress={() => { this.props.fetchQuestion(item.id) }}
+				onPress={() => { this.props.fetchQuestionAndCreateGame(item.id, player) }}
 			/>
 		)
 	}
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { question: state.question }
+	return { question: state.question, player: state.player }
 }
 
 export default connect(mapStateToProps, actions)(Category)
