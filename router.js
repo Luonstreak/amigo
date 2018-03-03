@@ -12,7 +12,7 @@ import Game from './src/components/Game';
 
 const RouterComponent = () => {
 	return (
-		<Router sceneStyle={{ backgroundColor: '#F5F5F5' }}>
+		<Router sceneStyle={{ backgroundColor: '#FFF' }}>
 			<Scene key='root' hideNavBar>
 				<Scene key='auth'>
 					<Scene key='login' component={Login} title='True Friends' initial />
@@ -20,7 +20,7 @@ const RouterComponent = () => {
 				<Scene key='username'>
 					<Scene key='login2' component={Username} title='Enter Your Username' />
 				</Scene>
-				<Scene key='main'>
+				<Scene key='main' hideNavBar>
 					<Scene
 						key='dashboard'
 						component={Dashboard}
