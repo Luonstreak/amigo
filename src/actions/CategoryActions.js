@@ -8,11 +8,8 @@ import { QUESTION_CHOSEN } from './types';
 
 export const fetchQuestionAndCreateGame = (id, player) => {
 	const { currentUser } = firebase.auth()
-	console.log('fetchQandCreateGame', id, player)
 	const num = Math.floor(Math.random() * 2) + 1
 	const questionRef = id + num
-	console.log(questionRef)
-	console.log(num)
 	const pushId = firebase.database().ref('games').push({
 		player1: currentUser.uid,
 		player2: player,
@@ -34,7 +31,6 @@ export const fetchQuestionAndCreateGame = (id, player) => {
 
 	return(dispatch) => {
 		ref.once('value', snap => {
-			console.log(snap.val())
 			dispatch({ type: QUESTION_CHOSEN, payload: snap.val()})
 		})
 	}

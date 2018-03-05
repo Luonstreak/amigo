@@ -6,7 +6,7 @@ import { Scene, Router, Actions } from 'react-native-router-flux';
 import Login from './src/components/Login';
 import Username from './src/components/Username';
 import Dashboard from './src/components/Dashboard';
-import PlayerList from './src/components/PlayerList';
+import Contacts from './src/components/Contacts';
 import Category from './src/components/Category';
 import Game from './src/components/Game';
 
@@ -26,7 +26,7 @@ const RouterComponent = () => {
 						component={Dashboard}
 						initial
 					/>
-					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
+					<Scene key='contacts' component={Contacts} title='Pick a friend' />
 					<Scene key='categories' component={Category} title='Pick a Question' />
 					<Scene key='game' component={Game} hideNavBar />
 				</Scene>

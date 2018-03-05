@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	console.log(state.question)
 	return { question: state.question }
 }
 

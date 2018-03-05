@@ -36,7 +36,6 @@ const gameFetch = (dispatch, user) => {
 	// return (dispatch) => {
 		ref.once('value', snap => {
 			var games = snap.val()
-			console.log(games)
 			
 			// var arr = Object.keys(games)
 			// console.log(arr)
@@ -59,7 +58,6 @@ const gameFetch = (dispatch, user) => {
 
 const loginSuccess1 = (dispatch, user) => {
 	gameFetch(dispatch, user)
-	console.log(user.uid)
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user
