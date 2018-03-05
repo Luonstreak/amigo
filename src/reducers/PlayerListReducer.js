@@ -3,7 +3,7 @@ import { PLAYERS_FETCH, PLAYER_SELECTED } from '../actions/types';
 
 const INITIAL_STATE = {
 	players: null, 
-	selectedPlayer: null
+	selectedPlayer: null	
 }
 
 export default (state = INITIAL_STATE, action) => {

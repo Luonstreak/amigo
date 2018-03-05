@@ -1,4 +1,4 @@
-import { QUESTION_CHOSEN } from '../actions/types';
+import { QUESTION_CHOSEN, GAME_CREATED } from '../actions/types';
 import { Actions } from 'react-native-router-flux';
 
 
@@ -10,6 +10,8 @@ export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case QUESTION_CHOSEN:
 			return { ...state, selectedQuestion: action.payload }
+		case GAME_CREATED:
+			return state
 		default:
 			return state;
 	}

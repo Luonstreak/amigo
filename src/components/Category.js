@@ -26,21 +26,14 @@ class Category extends Component {
 		]
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.question.selectedQuestion !== null) {
-			Actions.game()
-		}
-	}
-
 	_keyExtractor = (item, index) => item.id;
 
 	renderItem = ({ item }) => {
-		var player = this.props.player.selectedPlayer
 		return (
 			<Button
 				title={item.category}
 				buttonStyle={styles.option}
-				onPress={() => { this.props.fetchQuestionAndCreateGame(item.id, player) }}
+				onPress={() => { this.props.fetchQuestion(item.id) }}
 			/>
 		)
 	}

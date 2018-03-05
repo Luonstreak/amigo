@@ -28,12 +28,8 @@ const RouterComponent = () => {
 					/>
 					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
 					<Scene key='categories' component={Category} title='Pick a Question' />
-					<Scene key='game' component={Game} hideNavBar />
+					<Scene key='game' component={Game} />
 				</Scene>
-				{/* <Scene key='start'>
-					<Scene key='lobby' component={Lobby} title='Lobby Time' />
-					<Scene key='game' component={Game} title='Game Time' />
-				</Scene> */}
 			</Scene>
 		</Router>
 	);

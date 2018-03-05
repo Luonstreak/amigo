@@ -5,13 +5,13 @@ import { combineReducers } from 'redux';
 import LoginReducer from './LoginReducer';
 import UsernameReducer from './UsernameReducer';
 import PlayerListReducer from './PlayerListReducer';
-import CategoryReducer from './CategoryReducer';
+import GameReducer from './GameReducer';
 import DashboardReducer from './DashboardReducer';
 
 export default combineReducers({
 	login: LoginReducer,
 	username: UsernameReducer,
 	player: PlayerListReducer,
-	question: CategoryReducer,
+	question: GameReducer,
 	dash: DashboardReducer
 });

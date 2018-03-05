@@ -7,11 +7,12 @@ import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
 
 class Dashboard extends Component {
-	constructor(props) {
-		super(props)
+		
+	componentDidMount() {
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
-	}	
+		console.log('in the dashboard')
+	}
 
 	render() {
 		// const games = this.props.dash.games
@@ -22,7 +23,7 @@ class Dashboard extends Component {
 						rounded
 						backgroundColor='green'
 						title='Play Game'
-						onPress={() => Actions.playerList()}
+						onPress={() => {Actions.playerList(),  this.props.createGame()}}
 				/>
 					<Avatar
 						large
@@ -106,4 +107,4 @@ const mapStateToProps = state => {
 	return { dash: state.dash }
 }
 
-export default connect(null, actions)(Dashboard);
+export default connect(mapStateToProps, actions)(Dashboard);

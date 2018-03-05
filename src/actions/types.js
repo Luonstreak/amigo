@@ -15,6 +15,9 @@ export const PLAYER_SELECTED = 'player_selected';
 
 //DASHBOARD
 export const GAMES_FETCHED = "games_fetched"
+export const NEW_GAME = "new_game"
 
-//CATEGORY 
+//GAME
 export const QUESTION_CHOSEN = 'question_chosen';
+export const GAME_CREATED = 'game_created';
+

@@ -20,13 +20,13 @@ class Game extends Component {
 	state  = {
 		chatHeight: 100,
 		chooseCardVisible: false,
-		layer: 'overlay'
+		layer: 'game'
 	}
 
 	componentDidMount() {
-		setTimeout(() => {
-			this.setState({ layer: 'game' })
-		}, 2000);
+		// setTimeout(() => {
+		// 	this.setState({ layer: 'game' })
+		// }, 2000);
 	}
 	
 
@@ -50,7 +50,16 @@ class Game extends Component {
 		return null
 	}
 
+	select = (num) => {
+		const { questionNumber } = this.props.question.selectedQuestion
+		const opponent = this.props.player.selectedPlayer
+		this.props.saveAnswer(num, questionNumber, opponent)
+	}
+
 	renderLayer = () => {
+		const { option1, option2, option3, option4 } = this.props.question.selectedQuestion.choices
+		const { content } = this.props.question.selectedQuestion
+
 		if (this.state.layer === 'overlay') {
 			return <Overlay type={'loose'}/>
 		} else {
@@ -73,7 +82,7 @@ class Game extends Component {
 						showsVerticalScrollIndicator={false}
 					>
 						<View style={styles.header}>
-							<Text style={{ fontSize: 30 }}>{this.props.question.selectedQuestion.content}</Text>
+							<Text style={{ fontSize: 30 }}>{content}</Text>
 						</View>
 						<View style={styles.user}>
 							<Badge
@@ -86,22 +95,25 @@ class Game extends Component {
 							<Button
 								title={this.props.question.selectedQuestion.choices.option1}
 								buttonStyle={styles.option}
+								onPress={() => { this.select(1)}}
 							/>
 							<Button
 								title={this.props.question.selectedQuestion.choices.option2}
 								buttonStyle={styles.option}
+								onPress={() => { this.select(2) }}
 							/>
 							<Button
 								title={this.props.question.selectedQuestion.choices.option3}
-								buttonStyle={[styles.option, { backgroundColor: '#FB0068' }]}
+								buttonStyle={styles.option}
+								onPress={() => { this.select(3) }}
 							/>
 							<Button
 								title={this.props.question.selectedQuestion.choices.option4}
-								buttonStyle={[styles.option, { backgroundColor: '#6DC066' }]}
-								onPress={() => {
-
-									this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-								}}
+								buttonStyle={styles.option}
+								onPress={() => { this.select(4) }}
+								// onPress={() => {
+								// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
+								// }}
 							/>
 						</View>
 
@@ -205,7 +217,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
 	console.log(state.question)
-	return { question: state.question }
+	return { question: state.question, player: state.player }
 }
 
 export default connect(mapStateToProps, actions)(Game);
