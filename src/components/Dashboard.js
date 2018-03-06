@@ -125,7 +125,6 @@ class Dashboard extends Component {
 	}
 }
 
-const { height, width } = Dimensions.get('window');
 const styles = {
 	//header
 	headerStyle: {

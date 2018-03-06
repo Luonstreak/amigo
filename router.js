@@ -10,13 +10,14 @@ import Contacts from './src/components/Contacts';
 import PlayerList from './src/components/PlayerList';
 import Category from './src/components/Category';
 import Game from './src/components/Game';
+import Guess from './src/components/Guess';
 
 const RouterComponent = () => {
 	return (
 		<Router sceneStyle={{ backgroundColor: '#FFF' }}>
 			<Scene key='root' hideNavBar>
 				<Scene key='auth'>
-					<Scene key='login' component={Login} title='True Friends' initial />
+					<Scene key='guess' component={Guess} title='True Friends' hideNavBar initial />
 				</Scene>
 				<Scene key='username'>
 					<Scene key='login2' component={Username} title='Enter Your Username' />
