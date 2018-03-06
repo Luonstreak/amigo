@@ -5,6 +5,7 @@ import {
 	Text,
 	View,
 	ScrollView,
+	FlatList,
 	TextInput,
 	Dimensions
 } from 'react-native';
@@ -23,7 +24,7 @@ class Guess extends Component {
 		chatHeight: 100
 	}
 
-	renderCard = () => {
+	renderCard = (item) => {
 		return (
 			<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 				<View style={styles.question}>
@@ -80,18 +81,16 @@ class Guess extends Component {
 						containerStyle={styles.badge}
 					/>
 				</View>
-				<ScrollView
-					ref={'questionsList'}
-					horizontal={true}
+				<FlatList
+					horizontal
 					pagingEnabled={true}
+					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
+					keyExtractor={(item, index) => item.id}
+					initialScrollIndex={4}
 					showsHorizontalScrollIndicator={false}
-				>
-					{this.renderCard()}
-					{this.renderCard()}
-					{this.renderCard()}
-					{this.renderCard()}
-					{this.renderCard()}
-				</ScrollView>
+					data={[{}, {}, {}, {}, {}]}
+					renderItem={({ item }) => this.renderCard(item)}
+				/>
 				<Chat style={styles.chat} height={this.state.chatHeight} />
 			</View>
 		)
@@ -120,6 +119,7 @@ const styles = StyleSheet.create({
 	},
 	//card
 	card: {
+		flex: 1,
 		maxWidth: (width * .90),
 		margin: (width * .05),
 		backgroundColor: '#0D658D',

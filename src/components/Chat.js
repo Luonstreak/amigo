@@ -22,7 +22,7 @@ class Chat extends Component {
 	};
 	
 
-	componentWillMount() {
+	componentDidMount() {
 		const ref = firebase.database().ref('chat').on('value', snapshot => {
 			const list = snapshot.val();
 			const arr = []
@@ -36,7 +36,7 @@ class Chat extends Component {
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
 	}
 
-	componentWillUnmount() {
+	componentDidUnmount() {
 		this.keyboardDidShowListener.remove()
 		this.keyboardDidHideListener.remove()
 	}
@@ -52,9 +52,7 @@ class Chat extends Component {
 			bottomSpace: 10
 		})
 	}
-
-	_keyExtract = (item, index) => item.id
-
+	
 	_updateInput = (msg) => {
 		this.setState({ input: msg })
 	}
@@ -76,7 +74,7 @@ class Chat extends Component {
 					contentContainerStyle={[list, { height: this.props.height }]}
 					inverted
 					data={this.state.messages}
-					keyExtractor={this._keyExtract}
+					keyExtractor={(item, index) => item.id}
 					showsVerticalScrollIndicator={false}
 					renderItem={({ item }) => {
 						return <Text><Text style={title}>{item.username}: </Text><Text style={content}>{item.msg}</Text></Text>
