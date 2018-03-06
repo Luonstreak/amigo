@@ -15,8 +15,22 @@ export const fetchPlayers = () => {
 }
 
 export const playerSelect = (player) => {
-	return {
-		type: PLAYER_SELECTED,
-		payload: player
+	const { currentUser } = firebase.auth()
+	const ref  = firebase.database().ref(`opponentList/${currentUser.uid}`);
+	return async (dispatch) => {
+
+	await ref.once('value').then(snap => {
+		var opponent = snap.exists()
+
+		if (opponent) {
+			console.log('opponent exists')
+		}
+		else { 
+				dispatch({
+					type: PLAYER_SELECTED,
+					payload: player
+				})
+			}
+		})
 	}
 }

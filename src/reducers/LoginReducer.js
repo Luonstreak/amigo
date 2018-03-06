@@ -1,10 +1,11 @@
 // RELATIVE
-import { EMAIL_INPUT, PASSWORD_INPUT, LOGIN_SUCCESS, LOGIN_FAIL } from '../actions/types';
+import { EMAIL_INPUT, PASSWORD_INPUT, LOGIN_SUCCESS, LOGIN_FAIL, GAMES_FETCHED } from '../actions/types';
 
 const INITIAL_STATE = {
 	email: 'come@mebruh.com',
 	password: 'password',
-	user: null
+	user: null,
+	games: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -18,6 +19,8 @@ export default (state = INITIAL_STATE, action) => {
 		case LOGIN_FAIL:
 			console.log('fail');
 			return state
+		case GAMES_FETCHED:
+			return { ...state, games: action.payload }
 		default:
 			return state;
 	}

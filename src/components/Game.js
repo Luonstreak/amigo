@@ -12,6 +12,7 @@ import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import Overlay from './Overlay';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import * as actions from '../actions';
 
@@ -20,15 +21,20 @@ class Game extends Component {
 	state  = {
 		chatHeight: 100,
 		chooseCardVisible: false,
-		layer: 'overlay'
+		layer: 'game'
 	}
 
-	componentDidMount() {
-		setTimeout(() => {
-			this.setState({ layer: 'game' })
-		}, 2000);
+	
+	componentWillMount() {
+		console.log(this.props.lastFive, 'lastFive')
 	}
 	
+
+	componentDidMount() {
+		// setTimeout(() => {
+		// 	this.setState({ layer: 'game' })
+		// }, 2000);
+	}
 
 	renderChoice = () => {
 		if (this.state.chooseCardVisible) {
@@ -50,7 +56,16 @@ class Game extends Component {
 		return null
 	}
 
+	select = (num) => {
+		const { questionNumber } = this.props.game.selectedQuestion
+		const opponent = this.props.player.selectedPlayer
+		this.props.saveAnswer(num, questionNumber, opponent)
+	}
+
 	renderLayer = () => {
+		const { option1, option2, option3, option4 } = this.props.game.selectedQuestion.choices
+		const { content } = this.props.game.selectedQuestion
+
 		if (this.state.layer === 'overlay') {
 			return <Overlay type={'loose'}/>
 		} else {
@@ -73,7 +88,7 @@ class Game extends Component {
 						showsVerticalScrollIndicator={false}
 					>
 						<View style={styles.header}>
-							<Text style={{ fontSize: 30 }}>{this.props.question.selectedQuestion.content}</Text>
+							<Text style={{ fontSize: 30 }}>{content}</Text>
 						</View>
 						<View style={styles.user}>
 							<Badge
@@ -84,24 +99,27 @@ class Game extends Component {
 						</View>
 						<View style={styles.options}>
 							<Button
-								title={this.props.question.selectedQuestion.choices.option1}
+								title={this.props.game.selectedQuestion.choices.option1}
 								buttonStyle={styles.option}
+								onPress={() => { this.select(1)}}
 							/>
 							<Button
-								title={this.props.question.selectedQuestion.choices.option2}
+								title={this.props.game.selectedQuestion.choices.option2}
 								buttonStyle={styles.option}
+								onPress={() => { this.select(2) }}
 							/>
 							<Button
-								title={this.props.question.selectedQuestion.choices.option3}
-								buttonStyle={[styles.option, { backgroundColor: '#FB0068' }]}
+								title={this.props.game.selectedQuestion.choices.option3}
+								buttonStyle={styles.option}
+								onPress={() => { this.select(3) }}
 							/>
 							<Button
-								title={this.props.question.selectedQuestion.choices.option4}
-								buttonStyle={[styles.option, { backgroundColor: '#6DC066' }]}
-								onPress={() => {
-
-									this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-								}}
+								title={this.props.game.selectedQuestion.choices.option4}
+								buttonStyle={styles.option}
+								onPress={() => { this.select(4) }}
+								// onPress={() => {
+								// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
+								// }}
 							/>
 						</View>
 
@@ -204,7 +222,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { question: state.question }
+	const arr = []
+	_.forEach(state.game.lastFive, item => {
+		arr.push(item)
+	})
+	return { game: state.game, player: state.player, lastFive: arr }
 }
 
 export default connect(mapStateToProps, actions)(Game);

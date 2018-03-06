@@ -4,6 +4,7 @@ import { Actions } from 'react-native-router-flux';
 
 // RELATIVE
 import { EMAIL_INPUT, PASSWORD_INPUT, LOGIN_SUCCESS, LOGIN_FAIL, GAMES_FETCHED } from './types';
+import _ from 'lodash'
 
 export const emailInput = (text) => {
 	return {
@@ -31,13 +32,19 @@ export const userLogin = ({ email, password }) => {
 	};
 };
 
-const gameFetch = (dispatch, user) => {
-	const ref  = firebase.database().ref(`users/${user.uid}/games`);
-	// return (dispatch) => {
+export const gameFetch = () => {
+	const { currentUser } = firebase.auth()
+	const ref  = firebase.database().ref(`users/${currentUser.uid}/games`);
+	return (dispatch) => {
 		ref.once('value', snap => {
 			var games = snap.val()
 			
-			// var arr = Object.keys(games)
+			// var arr = []
+			// console.log(arr)
+			// _.map(games, item => {
+			// 	console.log(item)
+			// 	arr.push({item})
+			// })
 			// console.log(arr)
 			// for(var i=0; i<arr.length; i++) {
 			// 	const gameRef  = firebase.database().ref(`games/${arr[i]}`);
@@ -53,11 +60,11 @@ const gameFetch = (dispatch, user) => {
 
 			})
 		}) 
-	// }
+	}
 }
 
 const loginSuccess1 = (dispatch, user) => {
-	gameFetch(dispatch, user)
+	// gameFetch(dispatch, user)
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user

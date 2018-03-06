@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Dimensions, Text, View, ScrollView } from 'react-native';
+import { Dimensions, Text, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Avatar, Button, Card, List, ListItem } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
+import firebase from 'firebase';
 import _ from 'lodash';
 
 import * as actions from '../actions';
@@ -10,16 +11,30 @@ import * as actions from '../actions';
 class Dashboard extends Component {
 
 	componentWillMount(){
+		
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
+		this.props.gameFetch()
+	}
+
+	_renderGame = (game, status) => {
+		this.props.renderCard(game, status)
 	}
 
 	render() {
-		// const games = this.props.dash.games
+		const { currentUser } = firebase.auth();
 		const { headerStyle, bodyStyle, titleStyle, listStyle } = styles;
-		const list1 = [{ name: 'test_1' }, { name: 'test_2' }, { name: 'test_3' }, { name: 'test_4' }, { name: 'test_5' }]
-		const list2 = [{ name: 'test_6' }, { name: 'test_7' }, { name: 'test_8' }]
-		const list3 = [{ name: 'test_9' }]
+		const list1 = []
+		const list2 = []
+		const list3 = []
+		var list = _.forIn(this.props.login.games, (value, key) => {
+			value['gameKey'] = key;
+			if (value.status === 'pending') {
+				list3.push(value)
+			} else if (value.status === 'waiting') {
+				list2.push(value)
+			} else { list1.push(value) }
+		})
 		return (
 			<View style={{ marginTop: 20 }}>		
 				<View style={headerStyle}>
@@ -28,7 +43,7 @@ class Dashboard extends Component {
 						backgroundColor={'#FFC300'}
 						title={'INVITE FRIENDS'}
 						buttonStyle={{ padding: 5 }}
-						onPress={() => Actions.contacts()}
+						onPress={() => Actions.playerList()}
 					/>
 					<Avatar
 						rounded
@@ -47,7 +62,7 @@ class Dashboard extends Component {
 								hideChevron
 								avatar={{ uri: l.avatar_url }}
 								key={i}
-								title={l.name}
+								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
 								titleStyle={{ marginLeft: 20, color: '#FFC300'}}
 								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
 								badge={{ element: 
@@ -56,7 +71,7 @@ class Dashboard extends Component {
 										backgroundColor={'#FFC300'}
 										title={'PLAY'}
 										buttonStyle={{ padding: 5 }}
-										onPress={() => Actions.game()}
+										onPress={() => this._renderGame(l.gameKey, l.status)}
 									/>
 								}}
 								/>
@@ -71,7 +86,7 @@ class Dashboard extends Component {
 								hideChevron
 								avatar={{ uri: l.avatar_url }}
 								key={i}
-								title={l.name}
+								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
 								titleStyle={{ marginLeft: 20, color: '#FA3C4C'}}
 								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
 								badge={{
@@ -81,7 +96,7 @@ class Dashboard extends Component {
 											backgroundColor={'#FA3C4C'}
 											title={'NUDGE'}
 											buttonStyle={{ padding: 5 }}
-											onPress={() => Actions.game()}
+											onPress={() => this._renderGame(l.gameKey, l.status)}
 										/>
 								}}
 							/>
@@ -96,7 +111,7 @@ class Dashboard extends Component {
 								hideChevron
 								avatar={{ uri: l.avatar_url }}
 								key={i}
-								title={l.name}
+								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
 								titleStyle={{ marginLeft: 20, color: '#44BEC7'}}
 								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
 							/>
@@ -138,7 +153,7 @@ const styles = {
 
 const mapStateToProps = state => {
 	const arr = _.map(state.player.players)
-	return { dash: state.dash, players: arr }
+	return { login: state.login, players: arr }
 }
 
 export default connect(mapStateToProps, actions)(Dashboard);

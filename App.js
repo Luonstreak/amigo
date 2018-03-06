@@ -13,12 +13,12 @@ export default class App extends React.Component {
 	
 	componentWillMount() {
 		const config = {
-			apiKey: "AIzaSyDhsME9QEyPei2DVk5jwdyo7xcqGx3VKwM",
-			authDomain: "amigo-mio.firebaseapp.com",
-			databaseURL: "https://amigo-mio.firebaseio.com",
-			projectId: "amigo-mio",
-			storageBucket: "amigo-mio.appspot.com",
-			messagingSenderId: "426353750740"
+			apiKey: "AIzaSyDNjiMyWFbINDmGrCvpvfXy9WEVlm5ICaA",
+			authDomain: "friend-ec2f8.firebaseapp.com",
+			databaseURL: "https://friend-ec2f8.firebaseio.com",
+			projectId: "friend-ec2f8",
+			storageBucket: "friend-ec2f8.appspot.com",
+			messagingSenderId: "928170995322"
 		};
 		firebase.initializeApp(config);
 	}

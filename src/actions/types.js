@@ -14,7 +14,11 @@ export const PLAYERS_FETCH = 'players_fetch';
 export const PLAYER_SELECTED = 'player_selected';
 
 //DASHBOARD
-export const GAMES_FETCHED = "games_fetched"
+export const GAMES_FETCHED = "games_fetched";
+export const NEW_GAME = "new_game";
+export const FETCH_FIVE = "fetch_five";
 
-//CATEGORY 
+//GAME
 export const QUESTION_CHOSEN = 'question_chosen';
+export const GAME_CREATED = 'game_created';
+

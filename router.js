@@ -7,6 +7,7 @@ import Login from './src/components/Login';
 import Username from './src/components/Username';
 import Dashboard from './src/components/Dashboard';
 import Contacts from './src/components/Contacts';
+import PlayerList from './src/components/PlayerList';
 import Category from './src/components/Category';
 import Game from './src/components/Game';
 
@@ -26,14 +27,10 @@ const RouterComponent = () => {
 						component={Dashboard}
 						initial
 					/>
-					<Scene key='contacts' component={Contacts} title='Pick a friend' />
+					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
 					<Scene key='categories' component={Category} title='Pick a Question' />
-					<Scene key='game' component={Game} hideNavBar />
+					<Scene key='game' component={Game} />
 				</Scene>
-				{/* <Scene key='start'>
-					<Scene key='lobby' component={Lobby} title='Lobby Time' />
-					<Scene key='game' component={Game} title='Game Time' />
-				</Scene> */}
 			</Scene>
 		</Router>
 	);
