@@ -17,20 +17,25 @@ export const renderCard = (game, status) => {
 };
 
 export const fetchQuestion = (id) => {
-	const num = Math.floor(Math.random() * 2) + 1
-	const questionRef = id + num
-	console.log(questionRef)
-	console.log(num)
-	const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
-
+	const idRef = firebase.database().ref(`questions/${id}`);
 	return (dispatch) => {
-		ref.once('value', async snap => {
-			const obj = { questionNumber: snap.key, content: snap.val().content, choices: snap.val().choices }
-			console.log(obj)
-			await dispatch({ type: QUESTION_CHOSEN, payload: obj })
-			Actions.game()
-		})
-	}
+		idRef.once('value', async snap => {
+			const children = snap.numChildren()
+			const num = Math.floor(Math.random() * children) + 1
+
+			const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
+
+			await ref.once('value', snap => {
+				const obj = { 
+					questionNumber: snap.key, 
+					content: snap.val().content, 
+					choices: snap.val().choices 
+				}
+					dispatch({ type: QUESTION_CHOSEN, payload: obj })
+					Actions.game()
+				})
+			})
+		}
 }
 
 
