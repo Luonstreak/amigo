@@ -12,7 +12,6 @@ import {
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
-import Overlay from './Overlay';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 

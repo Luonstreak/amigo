@@ -11,7 +11,7 @@ export const renderCard = (game, status) => {
 			if (status == 'guess') {
 				Actions.guess()
 			}
-			// Actions.game();
+			// Actions.question();
 		})
 	}
 };
@@ -32,7 +32,7 @@ export const fetchQuestion = (id) => {
 					choices: snap.val().choices
 				}
 				dispatch({ type: QUESTION_CHOSEN, payload: obj })
-				Actions.game()
+				Actions.question()
 			})
 		})
 	}
