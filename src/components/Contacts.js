@@ -29,7 +29,7 @@ class Contacts extends Component {
 										backgroundColor={'#FFC300'}
 										title={'PLAY'}
 										buttonStyle={{ padding: 2.5 }}
-										onPress={() => Actions.game()}
+										onPress={() => Actions.question()}
 									/>
 							}}
 						/>

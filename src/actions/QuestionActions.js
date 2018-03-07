@@ -19,7 +19,7 @@ export const renderCard = (game, status, opponent) => {
 			if (status == 'guess') {
 				Actions.guess()
 			}
-			// Actions.game();
+			// Actions.question();
 		})
 	}
 };

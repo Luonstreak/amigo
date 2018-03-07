@@ -10,7 +10,6 @@ import {
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
-import Overlay from './Overlay';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -27,13 +26,6 @@ class Question extends Component {
 	
 	componentWillMount() {
 		console.log(this.props.lastFive, 'lastFive')
-	}
-	
-
-	componentDidMount() {
-		// setTimeout(() => {
-		// 	this.setState({ layer: 'game' })
-		// }, 2000);
 	}
 
 	renderChoice = () => {
@@ -69,78 +61,68 @@ class Question extends Component {
 		}
 	}
 
-	renderLayer = () => {
-		console.log('in render layer')
+	render() {
 		const { option1, option2, option3, option4 } = this.props.game.selectedQuestion.choices
 		const { content } = this.props.game.selectedQuestion
-
-		if (this.state.layer === 'overlay') {
-			return <Overlay type={'loose'}/>
-		} else {
-			return (
-				<View style={styles.container}>
-					<View style={styles.counter}>
+		return (
+			<View style={styles.container}>
+				<View style={styles.counter}>
+					<Badge
+						value={'user 1'}
+						textStyle={{ color: '#F7E7B4' }}
+						containerStyle={styles.badge}
+					/>
+					<Badge
+						value={'user 2'}
+						textStyle={{ color: '#F7E7B4' }}
+						containerStyle={styles.badge}
+					/>
+				</View>
+				<ScrollView
+					style={styles.card}
+					showsVerticalScrollIndicator={false}
+				>
+					<View style={styles.header}>
+						<Text style={{ fontSize: 30 }}>{content}</Text>
+					</View>
+					<View style={styles.user}>
 						<Badge
-							value={'user 1'}
-							textStyle={{ color: '#F7E7B4' }}
-							containerStyle={styles.badge}
-						/>
-						<Badge
-							value={'user 2'}
-							textStyle={{ color: '#F7E7B4' }}
-							containerStyle={styles.badge}
+							value={'Michael\'s answer was...'}
+							textStyle={{ color: '#FFF', fontSize: 20 }}
+							containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
 					</View>
-					<ScrollView
-						style={styles.card}
-						showsVerticalScrollIndicator={false}
-					>
-						<View style={styles.header}>
-							<Text style={{ fontSize: 30 }}>{content}</Text>
-						</View>
-						<View style={styles.user}>
-							<Badge
-								value={'Michael\'s answer was...'}
-								textStyle={{ color: '#FFF', fontSize: 20 }}
-								containerStyle={{ backgroundColor: '#F5D86B' }}
-							/>
-						</View>
-						<View style={styles.options}>
-							<Button
-								title={this.props.game.selectedQuestion.choices.option1}
-								buttonStyle={styles.option}
-								onPress={() => { this.select(1)}}
-							/>
-							<Button
-								title={this.props.game.selectedQuestion.choices.option2}
-								buttonStyle={styles.option}
-								onPress={() => { this.select(2) }}
-							/>
-							<Button
-								title={this.props.game.selectedQuestion.choices.option3}
-								buttonStyle={styles.option}
-								onPress={() => { this.select(3) }}
-							/>
-							<Button
-								title={this.props.game.selectedQuestion.choices.option4}
-								buttonStyle={styles.option}
-								onPress={() => { this.select(4) }}
-								// onPress={() => {
-								// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-								// }}
-							/>
-						</View>
+					<View style={styles.options}>
+						<Button
+							title={this.props.game.selectedQuestion.choices.option1}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(1) }}
+						/>
+						<Button
+							title={this.props.game.selectedQuestion.choices.option2}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(2) }}
+						/>
+						<Button
+							title={this.props.game.selectedQuestion.choices.option3}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(3) }}
+						/>
+						<Button
+							title={this.props.game.selectedQuestion.choices.option4}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(4) }}
+						// onPress={() => {
+						// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
+						// }}
+						/>
+					</View>
 
-					</ScrollView>
-					{this.renderChoice()}
-					<Chat style={styles.chat} height={this.state.chatHeight} />
-				</View>
-			);
-		}
-	}
-
-	render() {
-		return this.renderLayer()
+				</ScrollView>
+				{this.renderChoice()}
+				<Chat style={styles.chat} height={this.state.chatHeight} />
+			</View>
+		)
 	}
 }
 
@@ -151,10 +133,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		backgroundColor: '#DFE2E7',
 		paddingTop: 30
-	},
-	//overlay
-	overlay: {
-		position: 'absolute'
 	},
 	//header
 	counter: {
