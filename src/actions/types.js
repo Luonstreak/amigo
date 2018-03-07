@@ -22,4 +22,5 @@ export const RESET_GAME_KEY = 'reset_game_key';
 //GAME
 export const QUESTION_CHOSEN = 'question_chosen';
 export const GAME_CREATED = 'game_created';
+export const ADDED_ANSWER = 'added_answer';
 

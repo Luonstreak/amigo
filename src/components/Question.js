@@ -16,7 +16,7 @@ import _ from 'lodash';
 
 import * as actions from '../actions';
 
-class Game extends Component {
+class Question extends Component {
 
 	state  = {
 		chatHeight: 100,
@@ -237,4 +237,4 @@ const mapStateToProps = state => {
 	return { game: state.game, player: state.player, lastFive: arr }
 }
 
-export default connect(mapStateToProps, actions)(Game);
+export default connect(mapStateToProps, actions)(Question);

@@ -1,12 +1,20 @@
-import { GAME_CREATED, QUESTION_CHOSEN, FETCH_FIVE, RESET_GAME_KEY } from './types';
+import { 
+	GAME_CREATED, 
+	QUESTION_CHOSEN, 
+	FETCH_FIVE, 
+	RESET_GAME_KEY, 
+	ADDED_ANSWER 
+} from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
 
-export const renderCard = (game, status) => {
+export const renderCard = (game, status, opponent) => {
+	console.log('hit renderCard', game, status)
 	const ref = firebase.database().ref(`games/${game}`);
 	return (dispatch) => {
 		ref.limitToLast(5).once('value', async snap => {
-			const obj = { five: snap.val(), gameKey: game }
+			const obj = { five: snap.val(), gameKey: game, opponent: opponent }
+			console.log(obj)
 			await dispatch({ type: FETCH_FIVE, payload: obj })
 			if (status == 'guess') {
 				Actions.guess()
@@ -32,7 +40,7 @@ export const fetchQuestion = (id) => {
 					choices: snap.val().choices
 				}
 				dispatch({ type: QUESTION_CHOSEN, payload: obj })
-				Actions.game()
+				Actions.question()
 			})
 		})
 	}
@@ -166,5 +174,22 @@ export const creatingGame = (num, questionId, opponent) => {
 export const resetGameKey = () => {
 	return {
 		type: RESET_GAME_KEY
+	}
+}
+
+export const checkAnswers = (num, questionKey, gameKey, opponentAnswer) => {
+	const { currentUser } = firebase.auth();
+	const choice = `option${num}`
+	firebase.database().ref(`games/${gameKey}/${questionKey}/${currentUser.uid}`).set(choice);
+	firebase.database().ref(`result/${gameKey}/${currentUser.uid}`).set(choice);
+
+	return (dispatch) => {
+		dispatch({ type: ADDED_ANSWER })
+		if (choice === opponentAnswer) {
+			Actions.guessResult({text: 'win', choice})
+		}
+		else {
+			Actions.guessResult({text: 'lose', opponentAnswer, choice})
+		}
 	}
 }
