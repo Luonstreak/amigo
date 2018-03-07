@@ -59,10 +59,18 @@ class Game extends Component {
 	select = (num) => {
 		const { questionNumber } = this.props.game.selectedQuestion
 		const opponent = this.props.player.selectedPlayer
-		this.props.saveAnswer(num, questionNumber, opponent)
+		const { gameKey } = this.props.game
+
+		if (gameKey) {
+			this.props.saveAnswer(num, questionNumber, opponent, gameKey)
+		}
+		else {
+			this.props.creatingGame(num, questionNumber, opponent)
+		}
 	}
 
 	renderLayer = () => {
+		console.log('in render layer')
 		const { option1, option2, option3, option4 } = this.props.game.selectedQuestion.choices
 		const { content } = this.props.game.selectedQuestion
 

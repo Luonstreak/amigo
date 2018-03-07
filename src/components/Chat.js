@@ -36,7 +36,7 @@ class Chat extends Component {
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
 	}
 
-	componentDidUnmount() {
+	componentWillUnmount() {
 		this.keyboardDidShowListener.remove()
 		this.keyboardDidHideListener.remove()
 	}

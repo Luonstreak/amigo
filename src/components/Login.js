@@ -14,7 +14,6 @@ class Login extends Component {
 		this.state = { keyboard: false }
 	}
 
-
 	componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this.setState({ keyboard: false }));

@@ -11,10 +11,11 @@ import * as actions from '../actions';
 class Dashboard extends Component {
 
 	componentWillMount(){
-		
+		console.log('in the dashboard CWM')
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
 		this.props.gameFetch()
+		this.props.resetGameKey()
 	}
 
 	_renderGame = (game, status) => {
@@ -36,7 +37,7 @@ class Dashboard extends Component {
 			} else { list1.push(value) }
 		})
 		return (
-			<View style={{ marginTop: 20 }}>		
+			<View style={{ marginTop: 20 }}>
 				<View style={headerStyle}>
 					<Button
 						rounded

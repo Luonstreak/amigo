@@ -9,8 +9,8 @@ import {
 	TextInput,
 	Dimensions
 } from 'react-native';
-	import { Button, Badge } from 'react-native-elements';
-	import { Actions } from 'react-native-router-flux';
+import { Button, Badge } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import Overlay from './Overlay';
 import { connect } from 'react-redux';
@@ -19,7 +19,7 @@ import _ from 'lodash';
 import * as actions from '../actions';
 
 class Guess extends Component {
-
+	
 	state = {
 		chatHeight: 100
 	}
@@ -28,7 +28,7 @@ class Guess extends Component {
 		return (
 			<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 				<View style={styles.question}>
-					<Text style={{ fontSize: 30 }}>{'Sample question, sample question, sample question'}</Text>
+					<Text style={{ fontSize: 30 }}>{item.content}</Text>
 				</View>
 				<View style={styles.user}>
 					<Badge
@@ -39,22 +39,22 @@ class Guess extends Component {
 				</View>
 				<View style={styles.options}>
 					<Button
-						title={'option1'}
+						title={item.choices.option1}
 						buttonStyle={styles.option}
 						onPress={() => alert('option1')}
 					/>
 					<Button
-						title={'option2'}
+						title={item.choices.option2}
 						buttonStyle={styles.option}
 						onPress={() => alert('option2')}
 					/>
 					<Button
-						title={'option3'}
+						title={item.choices.option3}
 						buttonStyle={styles.option}
 						onPress={() => alert('option3')}
 					/>
 					<Button
-						title={'option4'}
+						title={item.choices.option4}
 						buttonStyle={styles.option}
 						onPress={() => alert('option4')}
 					// onPress={() => {
@@ -67,6 +67,8 @@ class Guess extends Component {
 		}
 
 	render() {
+		const data = this.props.lastFive;
+		console.log('data',data)
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -86,9 +88,9 @@ class Guess extends Component {
 					pagingEnabled={true}
 					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
 					keyExtractor={(item, index) => item.id}
-					initialScrollIndex={4}
+					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
-					data={[{}, {}, {}, {}, {}]}
+					data={data}
 					renderItem={({ item }) => this.renderCard(item)}
 				/>
 				<Chat style={styles.chat} height={this.state.chatHeight} />
@@ -101,8 +103,7 @@ const styles = StyleSheet.create({
 	//global
 	container: {
 		flex: 1,
-		backgroundColor: '#DFE2E7',
-		paddingTop: 30
+		backgroundColor: '#DFE2E7'
 	},
 	//header
 	counter: {
@@ -179,4 +180,12 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default connect(null, actions)(Guess);
+const mapStateToProps = state => {
+	const arr = []
+	_.forIn(state.game.lastFive, (value, key) => {
+		arr.push(value)
+	})
+	return { lastFive: arr };
+};
+
+export default connect(mapStateToProps, actions)(Guess);

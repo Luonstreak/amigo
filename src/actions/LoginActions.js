@@ -64,7 +64,6 @@ export const gameFetch = () => {
 }
 
 const loginSuccess1 = (dispatch, user) => {
-	// gameFetch(dispatch, user)
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user
