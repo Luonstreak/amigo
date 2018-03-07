@@ -18,8 +18,9 @@ class Dashboard extends Component {
 		this.props.resetGameKey()
 	}
 
-	_renderGame = (game, status) => {
-		this.props.renderCard(game, status)
+	_renderGame = (game, status, opponent) => {
+
+		this.props.renderCard(game, status, opponent)
 	}
 
 	render() {
@@ -72,7 +73,7 @@ class Dashboard extends Component {
 										backgroundColor={'#FFC300'}
 										title={'PLAY'}
 										buttonStyle={{ padding: 5 }}
-										onPress={() => this._renderGame(l.gameKey, l.status)}
+										onPress={() => this._renderGame(l.gameKey, l.status, l.player1 !== currentUser.uid ? l.player1 : l.player2)}
 									/>
 								}}
 								/>

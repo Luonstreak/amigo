@@ -12,25 +12,74 @@ import {
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
-import Overlay from './Overlay';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import * as actions from '../actions';
 
-class Guess extends Component {
-	
+class GuessResult extends Component {
 	state = {
 		chatHeight: 100
 	}
 
-	select = (num, questionKey, opponentAnswer) => {
-		const { gameKey} = this.props.game
-		this.props.checkAnswers(num, questionKey, gameKey, opponentAnswer)
+	renderColor = (option) => {
+		if (this.props.choice === option) {
+			return 'green' 
+		}
+		if (this.props.opponentAnswer === option) {
+			return 'red' 
+		}
+		else { 
+			return '#0099FF'
+		}
 	}
 
 	renderCard = (item) => {
 		const { opponent } = this.props.game
+		if (this.props.text == 'win') {
+			return (
+				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
+				<View style={styles.question}>
+					<Text style={{ fontSize: 30 }}>{item.value.content}</Text>
+				</View>
+				<View style={styles.user}>
+					<Badge
+						value={'Michael\'s answer was...'}
+						textStyle={{ color: '#FFF', fontSize: 20 }}
+						containerStyle={{ backgroundColor: '#F5D86B' }}
+						/>
+					<Badge
+						value='You guessed right!'
+						textStyle={{ color: 'green', fontSize: 20 }}
+						containerStyle={{ backgroundColor: '#F5D86B' }}
+						/>
+				</View>
+				<View style={styles.options}>
+					<Button
+						title={item.value.choices.option1}
+						buttonStyle={[styles.option, {backgroundColor: this.renderColor('option1')}]}
+						onPress={() => { this.select(1, item.key, item.value[opponent]) }}
+						/>
+					<Button
+						title={item.value.choices.option2}
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor('option2') }]}
+						onPress={() => { this.select(2, item.key, item.value[opponent]) }}
+						/>
+					<Button
+						title={item.value.choices.option3}
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor('option3') }]}
+						onPress={() => { this.select(3, item.key, item.value[opponent]) }}
+						/>
+					<Button
+						title={item.value.choices.option4}
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor('option4') }]}
+						onPress={() => { this.select(4, item.key, item.value[opponent]) }}
+						/>
+				</View>
+			</ScrollView>
+			)
+		}
+		else {
 			return (
 				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 					<View style={styles.question}>
@@ -42,39 +91,43 @@ class Guess extends Component {
 							textStyle={{ color: '#FFF', fontSize: 20 }}
 							containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
+						<Badge
+							value='You guessed wrong!'
+							textStyle={{ color: 'red', fontSize: 20 }}
+							containerStyle={{ backgroundColor: '#F5D86B' }}
+						/>
 					</View>
 					<View style={styles.options}>
 						<Button
 							title={item.value.choices.option1}
-							buttonStyle={styles.option}
-							onPress={() => {this.select(1, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option1') }]}
+							onPress={() => { this.select(1, item.key, item.value[opponent]) }}
 						/>
 						<Button
 							title={item.value.choices.option2}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(2, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option2') }]}
+							onPress={() => { this.select(2, item.key, item.value[opponent]) }}
 						/>
 						<Button
 							title={item.value.choices.option3}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(3, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option3') }]}
+							onPress={() => { this.select(3, item.key, item.value[opponent]) }}
 						/>
 						<Button
 							title={item.value.choices.option4}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(4, item.key, item.value[opponent])}}
-						// onPress={() => {
-						// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-						// }}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option4') }]}
+							onPress={() => { this.select(4, item.key, item.value[opponent]) }}
 						/>
 					</View>
 				</ScrollView>
-				)
+			)
+
 		}
+	}
 
 	render() {
-		const data = this.props.lastFive;
-		console.log('data',data)
+			const data = this.props.lastFive;
+			console.log('data', data)
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -189,9 +242,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
 	const arr = []
 	_.forIn(state.game.lastFive, (value, key) => {
-		arr.push({key,value})
+		arr.push({ key, value })
 	})
 	return { lastFive: arr, game: state.game };
 };
 
-export default connect(mapStateToProps, actions)(Guess);
+export default connect(mapStateToProps, actions)(GuessResult);

@@ -10,8 +10,9 @@ import Contacts from './src/components/Contacts';
 import PlayerList from './src/components/PlayerList';
 // import Result from './src/components/Result';
 import Category from './src/components/Category';
-import Game from './src/components/Game';
+import Question from './src/components/Question';
 import Guess from './src/components/Guess';
+import GuessResult from './src/components/GuessResult';
 
 const RouterComponent = () => {
 	return (
@@ -33,7 +34,8 @@ const RouterComponent = () => {
 					{/* <Scene key='result' component={Result} /> */}
 					<Scene key='guess' component={Guess} />
 					<Scene key='categories' component={Category} title='Pick a Question' />
-					<Scene key='game' component={Game} />
+					<Scene key='question' component={Question} />
+					<Scene key='guessResult' component={GuessResult} />
 				</Scene>
 			</Scene>
 		</Router>
