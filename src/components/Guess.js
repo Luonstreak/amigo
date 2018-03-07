@@ -30,6 +30,7 @@ class Guess extends Component {
 
 	renderCard = (item) => {
 		const { opponent } = this.props.game
+		console.log(item,  '======================')
 			return (
 				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 					<View style={styles.question}>
@@ -73,7 +74,7 @@ class Guess extends Component {
 
 	render() {
 		const data = this.props.lastFive;
-		console.log('data',data)
+		console.log('data',data.length - 1)
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -92,7 +93,7 @@ class Guess extends Component {
 					horizontal
 					pagingEnabled={true}
 					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
-					keyExtractor={(item, index) => item.id}
+					keyExtractor={(item, index) => item.key}
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
 					data={data}
@@ -190,6 +191,7 @@ const mapStateToProps = state => {
 	_.forIn(state.game.lastFive, (value, key) => {
 		arr.push({key,value})
 	})
+	console.log(arr, arr.length)
 	return { lastFive: arr, game: state.game };
 };
 

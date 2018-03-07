@@ -23,11 +23,14 @@ class GuessResult extends Component {
 	}
 
 	renderColor = (option) => {
-		if (this.props.choice === option) {
+		if (this.props.text == 'win' && this.props.choice === option) {
 			return 'green' 
 		}
-		if (this.props.opponentAnswer === option) {
+		if (this.props.text == 'lose' && this.props.choice === option) {
 			return 'red' 
+		}
+		if (this.props.opponentAnswer === option) {
+			return 'green' 
 		}
 		else { 
 			return '#0099FF'
