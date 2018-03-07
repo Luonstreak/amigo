@@ -15,7 +15,7 @@ import _ from 'lodash';
 import Chat from './Chat';
 import * as actions from '../actions';
 
-class Response extends Component {
+class Result extends Component {
 	state = {
 		color: '#6DC066',
 		string: 'RIGHT',
@@ -196,4 +196,4 @@ const mapStateToProps = state => {
 	return { game: {status: 'waiting' } };
 };
 
-export default connect(mapStateToProps, actions)(Response);
+export default connect(mapStateToProps, actions)(Result);

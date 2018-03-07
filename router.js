@@ -12,7 +12,7 @@ import PlayerList from './src/components/PlayerList';
 import Category from './src/components/Category';
 import Question from './src/components/Question';
 import Guess from './src/components/Guess';
-import Response from './src/components/Response';
+import Result from './src/components/Result';
 
 const RouterComponent = () => {
 	return (
@@ -33,7 +33,7 @@ const RouterComponent = () => {
 					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
 					<Scene key='categories' component={Category} title='Pick a Question' />
 					<Scene key='question' component={Question} />
-					<Scene key='response' component={Response} />
+					<Scene key='result' component={Result} />
 					<Scene key='guess' component={Guess} />
 					{/* <Scene key='result' component={Result} /> */}
 				</Scene>
