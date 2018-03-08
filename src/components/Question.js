@@ -16,47 +16,22 @@ import _ from 'lodash';
 import * as actions from '../actions';
 
 class Question extends Component {
-
 	state  = {
-		chatHeight: 100,
-		chooseCardVisible: false,
 		layer: 'game'
-	}
-
-	
-	componentWillMount() {
-		console.log(this.props.lastFive, 'lastFive')
-	}
-
-	renderChoice = () => {
-		if (this.state.chooseCardVisible) {
-			return (
-				<View style={styles.chooseCard}>
-					<Button
-						title={'ASK BACK'}
-						buttonStyle={styles.choose_button}
-						onPress={() => { Actions.dashboard() }}
-					/>
-					<Button
-						title={'NEW QUESTION'}
-						buttonStyle={styles.choose_button}
-						onPress={() => { Actions.categories()}}
-					/>
-				</View>
-			)
-		} 
-		return null
 	}
 
 	select = (num) => {
 		const { questionNumber } = this.props.game.selectedQuestion
 		const opponent = this.props.player.selectedPlayer
 		const { gameKey } = this.props.game
+		const foe = this.props.game.opponent
 
 		if (gameKey) {
-			this.props.saveAnswer(num, questionNumber, opponent, gameKey)
+			console.log('saveAnswer')
+			this.props.saveAnswer(num, questionNumber, foe, gameKey)
 		}
 		else {
+			console.log('creatingGame')
 			this.props.creatingGame(num, questionNumber, opponent)
 		}
 	}
@@ -87,7 +62,7 @@ class Question extends Component {
 					</View>
 					<View style={styles.user}>
 						<Badge
-							value={'Michael\'s answer was...'}
+							value={'Your answer is...'}
 							textStyle={{ color: '#FFF', fontSize: 20 }}
 							containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
@@ -112,14 +87,10 @@ class Question extends Component {
 							title={this.props.game.selectedQuestion.choices.option4}
 							buttonStyle={styles.option}
 							onPress={() => { this.select(4) }}
-						// onPress={() => {
-						// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-						// }}
 						/>
 					</View>
 
 				</ScrollView>
-				{this.renderChoice()}
 				<Chat style={styles.chat} height={this.state.chatHeight} />
 			</View>
 		)
@@ -196,6 +167,7 @@ const styles = StyleSheet.create({
 	},
 	//footer - chat
 	chat: {
+		height: 100,
 		marginTop: 10,
 		backgroundColor: '#ADD8E6',
 	},
