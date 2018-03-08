@@ -103,6 +103,9 @@ export const creatingGame = (num, questionId, opponent) => {
 	const choice = `option${num}`
 	var pushId = null
 
+	firebase.database().ref(`opponents/${currentUser.uid}`).set({[opponent]: true})
+	firebase.database().ref(`opponents/${opponent}`).set({[currentUser.uid]: true})
+
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
 		const option2 = snap.val().choices.option2
