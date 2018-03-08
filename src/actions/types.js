@@ -12,6 +12,7 @@ export const USERNAME_FETCH = 'username_fetch';
 // PLAYERS LIST 
 export const PLAYERS_FETCH = 'players_fetch';
 export const PLAYER_SELECTED = 'player_selected';
+export const FAIL_SELECT = 'fail_select';
 
 //DASHBOARD
 export const GAMES_FETCHED = "games_fetched";
@@ -23,4 +24,6 @@ export const RESET_GAME_KEY = 'reset_game_key';
 export const QUESTION_CHOSEN = 'question_chosen';
 export const GAME_CREATED = 'game_created';
 export const ADDED_ANSWER = 'added_answer';
+export const GOT_RESULT = 'got_result';
+export const STATUS_UPDATE = 'status_update';
 
