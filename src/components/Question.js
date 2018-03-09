@@ -16,9 +16,6 @@ import _ from 'lodash';
 import * as actions from '../actions';
 
 class Question extends Component {
-	state  = {
-		layer: 'game'
-	}
 
 	select = (num) => {
 		const { questionNumber } = this.props.game.selectedQuestion
@@ -27,28 +24,50 @@ class Question extends Component {
 		const foe = this.props.game.opponent
 
 		if (gameKey) {
-			console.log('saveAnswer')
 			this.props.saveAnswer(num, questionNumber, foe, gameKey)
 		}
 		else {
-			console.log('creatingGame')
 			this.props.creatingGame(num, questionNumber, opponent)
+		}
+	}
+
+	renderQuestionButton = () => {
+		const { gameKey } = this.props.game;
+		if (true) {
+			return (
+				<Button
+					title={'SHOW NEW QUESTION'}
+					rounded
+					backgroundColor={'mediumseagreen'}
+					onPress={() => {this.props.fetchQuestion(this.props.category, gameKey)}}
+				/>
+			)
+		} else {
+			return (
+				<Text
+					rounded
+					backgroundColor={'lightgray'}
+				>ONLY 3 QUESTIONS PER ROUND</Text>
+			)
 		}
 	}
 
 	render() {
 		const { option1, option2, option3, option4 } = this.props.game.selectedQuestion.choices
 		const { content } = this.props.game.selectedQuestion
+		const { score } = this.props.game
+		const { uid } = this.props.user
+		const { opponent } = this.props.game
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
 					<Badge
-						value={'user 1'}
+						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
 					<Badge
-						value={'user 2'}
+						value={score ? score[opponent] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
@@ -89,9 +108,11 @@ class Question extends Component {
 							onPress={() => { this.select(4) }}
 						/>
 					</View>
-
 				</ScrollView>
-				<Chat style={styles.chat} height={this.state.chatHeight} />
+				<View>
+					{this.props.game.gameKey ? this.renderQuestionButton() : null }
+				</View>
+				<Chat style={styles.chat} />
 			</View>
 		)
 	}
@@ -167,7 +188,7 @@ const styles = StyleSheet.create({
 	},
 	//footer - chat
 	chat: {
-		height: 100,
+		height: 50,
 		marginTop: 10,
 		backgroundColor: '#ADD8E6',
 	},
@@ -184,7 +205,11 @@ const mapStateToProps = state => {
 	_.forEach(state.game.lastFive, item => {
 		arr.push(item)
 	})
-	return { game: state.game, player: state.player, lastFive: arr }
+	return { 
+		game: state.game, 
+		player: state.player, 
+		lastFive: arr, 
+		user: state.login.user}
 }
 
 export default connect(mapStateToProps, actions)(Question);

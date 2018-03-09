@@ -1,7 +1,8 @@
 import { 
 	QUESTION_CHOSEN, 
 	GAME_CREATED, 
-	FETCH_FIVE, 
+	FETCH_FIVE,
+	FETCH_SCORE, 
 	RESET_GAME_KEY, 
 	ADDED_ANSWER,
 	GOT_RESULT,
@@ -15,7 +16,8 @@ const INITIAL_STATE = {
 	lastFive: null,
 	gameKey: null,
 	opponent: null,
-	result: null
+	result: null,
+	score: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -25,7 +27,9 @@ export default (state = INITIAL_STATE, action) => {
 		case GAME_CREATED:
 			return state
 		case ADDED_ANSWER:
-			return state
+			return { ...state, lastFive: action.payload }
+		case FETCH_SCORE:
+			return { ...state, score: action.payload }
 		case STATUS_UPDATE:
 			return state
 		case GOT_RESULT:
