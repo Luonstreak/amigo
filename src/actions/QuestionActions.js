@@ -3,22 +3,33 @@ import {
 	QUESTION_CHOSEN, 
 	FETCH_FIVE, 
 	RESET_GAME_KEY, 
-	ADDED_ANSWER 
+	ADDED_ANSWER, 
+	GOT_RESULT,
+	STATUS_UPDATE 
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
 
 export const renderCard = (game, status, opponent) => {
-	console.log('hit renderCard', game, status)
 	const ref = firebase.database().ref(`games/${game}`);
 	return (dispatch) => {
 		ref.limitToLast(5).once('value', async snap => {
 			const obj = { five: snap.val(), gameKey: game, opponent: opponent }
-			console.log(obj)
+	
 			await dispatch({ type: FETCH_FIVE, payload: obj })
-			if (status == 'guess') {
-				Actions.guess()
+			if (status == 'result') {
+				console.log('hit result')
+				firebase.database().ref(`result/${game}`).once('value', async snap => {
+						await dispatch({ type: GOT_RESULT, payload: snap.val() })
+						Actions.result()
+					})
 			}
+			else if (status == 'guess') {
+				Actions.guess()
+			} 
+			else if (status == 'guessResult') {
+				Actions.guessResult()
+			} 
 			// Actions.question();
 		})
 	}
@@ -46,9 +57,10 @@ export const fetchQuestion = (id) => {
 	}
 }
 
-export const saveAnswer = (num, questionId, opponent, key) => {
+export const saveAnswer = (num, questionId, opponent, gameKey) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
+	console.log(gameKey)
 
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
@@ -57,7 +69,7 @@ export const saveAnswer = (num, questionId, opponent, key) => {
 		const option4 = snap.val().choices.option4
 		const content = snap.val().content
 
-		pushId = firebase.database().ref(`games/${key}`).push({
+		pushId = firebase.database().ref(`games/${gameKey}`).push({
 				content: content,
 				choices: {
 					option1: option1,
@@ -68,44 +80,18 @@ export const saveAnswer = (num, questionId, opponent, key) => {
 				[currentUser.uid]: choice,
 				[opponent]: ""
 			})
-		const key = pushId.getKey()
 
-		firebase.database().ref(`result/${key}`).set({
-			content: content,
-			choices: {
-				option1: option1,
-				option2: option2,
-				option3: option3,
-				option4: option4
-			},
-			[currentUser.uid]: choice,
-			[opponent]: "",
+		firebase.database().ref(`usedQuestions/${gameKey}/${questionId}`).set(true)
+
+		firebase.database().ref(`users/${currentUser.uid}/games/${gameKey}`).update({
+			status: 'waiting'
 		})
-		firebase.database().ref(`usedQuestions/${key}/${questionId}`).set(true)
-		firebase.database().ref(`users/${currentUser.uid}/games/${key}`).once('value', snap => {
-			const gameKey = snap.exists()
-			if (!gameKey) {
-				firebase.database().ref(`users/${currentUser.uid}/games/${key}`).set({
-					player1: currentUser.uid,
-					player2: opponent,
-					status: 'pending'
-				})
-				firebase.database().ref(`users/${opponent}/games/${key}`).set({
-					player1: currentUser.uid,
-					player2: opponent,
-					status: 'guess'
-				})
-			}
-			else {
-				firebase.database().ref(`users/${currentUser.uid}/games/${key}`).set({
-					status: 'guess'
-				})
-				firebase.database().ref(`users/${opponent}/games/${key}`).set({
-					status: 'waiting'
-				})
-			}
+
+		firebase.database().ref(`users/${opponent}/games/${gameKey}`).update({
+			status: 'result'
 		})
 	})
+
 	return (dispatch) => {
 		dispatch({ type: GAME_CREATED })
 		Actions.dashboard()
@@ -116,6 +102,9 @@ export const creatingGame = (num, questionId, opponent) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
 	var pushId = null
+
+	firebase.database().ref(`opponents/${currentUser.uid}`).set({[opponent]: true})
+	firebase.database().ref(`opponents/${opponent}`).set({[currentUser.uid]: true})
 
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
@@ -137,18 +126,6 @@ export const creatingGame = (num, questionId, opponent) => {
 			[currentUser.uid]: choice,
 			[opponent]: ""
 		})
-
-		firebase.database().ref(`result/${key}`).set({
-			content: content,
-			choices: {
-				option1: option1,
-				option2: option2,
-				option3: option3,
-				option4: option4
-			},
-			[currentUser.uid]: choice,
-			[opponent]: "",
-		})
 			
 		firebase.database().ref(`usedQuestions/${key}/${questionId}`).set(true)
 
@@ -166,7 +143,7 @@ export const creatingGame = (num, questionId, opponent) => {
 
 	return (dispatch) => {
 		dispatch({ type: GAME_CREATED })
-		console.log('right before going to dash')
+
 		Actions.dashboard()
 	}
 }
@@ -177,11 +154,30 @@ export const resetGameKey = () => {
 	}
 }
 
-export const checkAnswers = (num, questionKey, gameKey, opponentAnswer) => {
+export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer, item) => {
+	console.log(item)
 	const { currentUser } = firebase.auth();
 	const choice = `option${num}`
 	firebase.database().ref(`games/${gameKey}/${questionKey}/${currentUser.uid}`).set(choice);
-	firebase.database().ref(`result/${gameKey}/${currentUser.uid}`).set(choice);
+
+	const option1 = item.value.choices.option1
+	const option2 = item.value.choices.option2
+	const option3 = item.value.choices.option3
+	const option4 = item.value.choices.option4
+	const content = item.value.content
+
+	firebase.database().ref(`result/${gameKey}`).set({
+		content: content,
+		choices: {
+			option1: option1,
+			option2: option2,
+			option3: option3,
+			option4: option4
+		},
+		[currentUser.uid]: choice,
+		[opponent]: opponentAnswer,
+		result: choice === opponentAnswer ? true : false
+	})
 
 	return (dispatch) => {
 		dispatch({ type: ADDED_ANSWER })
@@ -190,6 +186,21 @@ export const checkAnswers = (num, questionKey, gameKey, opponentAnswer) => {
 		}
 		else {
 			Actions.guessResult({text: 'lose', opponentAnswer, choice})
+		}
+	}
+}
+
+export const changeStatus = (status, currentUserId, gameKey ) => {
+	return (dispatch) => {
+		if (status === 'guess') {
+			firebase.database().ref(`users/${currentUserId}/games/${gameKey}/status`).set(status)
+			dispatch({ type: STATUS_UPDATE })
+			Actions.guess()
+		}
+		if (status === 'guessResult') {
+			firebase.database().ref(`users/${currentUserId}/games/${gameKey}/status`).set(status)
+			dispatch({ type: STATUS_UPDATE })
+			Actions.guessResult()
 		}
 	}
 }

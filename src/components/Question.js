@@ -16,25 +16,30 @@ import _ from 'lodash';
 import * as actions from '../actions';
 
 class Question extends Component {
-
 	state  = {
 		layer: 'game'
 	}
 
+<<<<<<< HEAD
 	
 	componentWillMount() {
 		console.log(this.props.lastFive, 'lastFive')
 	}
 
+=======
+>>>>>>> ff4477631a657b462fafe70915f44053c2e4c788
 	select = (num) => {
 		const { questionNumber } = this.props.game.selectedQuestion
 		const opponent = this.props.player.selectedPlayer
 		const { gameKey } = this.props.game
+		const foe = this.props.game.opponent
 
 		if (gameKey) {
-			this.props.saveAnswer(num, questionNumber, opponent, gameKey)
+			console.log('saveAnswer')
+			this.props.saveAnswer(num, questionNumber, foe, gameKey)
 		}
 		else {
+			console.log('creatingGame')
 			this.props.creatingGame(num, questionNumber, opponent)
 		}
 	}
@@ -65,7 +70,7 @@ class Question extends Component {
 					</View>
 					<View style={styles.user}>
 						<Badge
-							value={'Michael\'s answer was...'}
+							value={'Your answer is...'}
 							textStyle={{ color: '#FFF', fontSize: 20 }}
 							containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
@@ -94,7 +99,6 @@ class Question extends Component {
 					</View>
 
 				</ScrollView>
-				{this.renderChoice()}
 				<Chat style={styles.chat} height={this.state.chatHeight} />
 			</View>
 		)
@@ -171,6 +175,7 @@ const styles = StyleSheet.create({
 	},
 	//footer - chat
 	chat: {
+		height: 100,
 		marginTop: 10,
 		backgroundColor: '#ADD8E6',
 	},

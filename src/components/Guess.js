@@ -14,6 +14,7 @@ import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import firebase from 'firebase';
 
 import * as actions from '../actions';
 
@@ -23,13 +24,31 @@ class Guess extends Component {
 		chatHeight: 100
 	}
 
-	select = (num, questionKey, opponentAnswer) => {
-		const { gameKey} = this.props.game
-		this.props.checkAnswers(num, questionKey, gameKey, opponentAnswer)
+	renderColor = (userAnswer, opponentAnswer, option) => {
+		console.log(userAnswer, opponentAnswer)
+		if (userAnswer == option && opponentAnswer !== option) {
+			return 'red'
+		}
+		else if (opponentAnswer == option && userAnswer !== option) {
+			return 'green'
+		}
+		else if (userAnswer == option && opponentAnswer == option) {
+			return 'green'
+		}
+		else {
+			return '#0099FF'
+		}
 	}
 
-	renderCard = (item) => {
+	select = (num, questionKey, opponentAnswer, item, uid) => {
+		const { gameKey, opponent } = this.props.game
+		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item)
+		this.props.changeStatus('guessResult', uid, gameKey)
+	}
+
+	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game
+		const { uid } = this.props.user
 			return (
 				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 					<View style={styles.question}>
@@ -37,7 +56,7 @@ class Guess extends Component {
 					</View>
 					<View style={styles.user}>
 						<Badge
-							value={'Michael\'s answer was...'}
+							value={index % 2 === 0 ? `${opponent}'s answer was...` : "Your answer was..."}
 							textStyle={{ color: '#FFF', fontSize: 20 }}
 							containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
@@ -45,23 +64,23 @@ class Guess extends Component {
 					<View style={styles.options}>
 						<Button
 							title={item.value.choices.option1}
-							buttonStyle={styles.option}
-							onPress={() => {this.select(1, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option1') }: null ]}
+							onPress={() => {index == length - 1 ? this.select(1, item.key, item.value[opponent], item, uid) : null}}
 						/>
 						<Button
 							title={item.value.choices.option2}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(2, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option2') } : null]}
+							onPress={() => {index == length - 1 ? this.select(2, item.key, item.value[opponent], item, uid) : null }}
 						/>
 						<Button
 							title={item.value.choices.option3}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(3, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option3') } : null]}
+							onPress={() => {index == length - 1 ? this.select(3, item.key, item.value[opponent], item, uid) : null }}
 						/>
 						<Button
 							title={item.value.choices.option4}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(4, item.key, item.value[opponent])}}
+							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option4') } : null]}
+							onPress={() => {index == length - 1 ? this.select(4, item.key, item.value[opponent], item, uid) : null }}
 						// onPress={() => {
 						// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
 						// }}
@@ -73,7 +92,6 @@ class Guess extends Component {
 
 	render() {
 		const data = this.props.lastFive;
-		console.log('data',data)
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -92,13 +110,13 @@ class Guess extends Component {
 					horizontal
 					pagingEnabled={true}
 					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
-					keyExtractor={(item, index) => item.id}
+					keyExtractor={(item, index) => item.key}
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
 					data={data}
-					renderItem={({ item }) => this.renderCard(item)}
+					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 				/>
-				<Chat style={styles.chat} height={this.state.chatHeight} />
+				<Chat style={styles.chat} />
 			</View>
 		)
 	}
@@ -190,7 +208,7 @@ const mapStateToProps = state => {
 	_.forIn(state.game.lastFive, (value, key) => {
 		arr.push({key,value})
 	})
-	return { lastFive: arr, game: state.game };
+	return { lastFive: arr, game: state.game, user: state.login.user };
 };
 
 export default connect(mapStateToProps, actions)(Guess);

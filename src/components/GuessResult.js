@@ -18,16 +18,16 @@ import _ from 'lodash';
 import * as actions from '../actions';
 
 class GuessResult extends Component {
-	state = {
-		chatHeight: 100
-	}
 
 	renderColor = (option) => {
-		if (this.props.choice === option) {
+		if (this.props.text == 'win' && this.props.choice === option) {
 			return 'green' 
 		}
-		if (this.props.opponentAnswer === option) {
+		if (this.props.text == 'lose' && this.props.choice === option) {
 			return 'red' 
+		}
+		if (this.props.opponentAnswer === option) {
+			return 'green' 
 		}
 		else { 
 			return '#0099FF'
@@ -36,7 +36,6 @@ class GuessResult extends Component {
 
 	renderCard = (item) => {
 		const { opponent } = this.props.game
-		if (this.props.text == 'win') {
 			return (
 				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 				<View style={styles.question}>
@@ -44,12 +43,12 @@ class GuessResult extends Component {
 				</View>
 				<View style={styles.user}>
 					<Badge
-						value={'Michael\'s answer was...'}
+						value={`${opponent}'s answer was...`}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
 					<Badge
-						value='You guessed right!'
+						value={this.props.text === 'win' ? 'You guessed right!' : 'You guessed wrong!'}
 						textStyle={{ color: 'green', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 						/>
@@ -76,58 +75,14 @@ class GuessResult extends Component {
 						onPress={() => { this.select(4, item.key, item.value[opponent]) }}
 						/>
 				</View>
+				<View>
+				</View>
 			</ScrollView>
 			)
 		}
-		else {
-			return (
-				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
-					<View style={styles.question}>
-						<Text style={{ fontSize: 30 }}>{item.value.content}</Text>
-					</View>
-					<View style={styles.user}>
-						<Badge
-							value={'Michael\'s answer was...'}
-							textStyle={{ color: '#FFF', fontSize: 20 }}
-							containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
-						<Badge
-							value='You guessed wrong!'
-							textStyle={{ color: 'red', fontSize: 20 }}
-							containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
-					</View>
-					<View style={styles.options}>
-						<Button
-							title={item.value.choices.option1}
-							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option1') }]}
-							onPress={() => { this.select(1, item.key, item.value[opponent]) }}
-						/>
-						<Button
-							title={item.value.choices.option2}
-							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option2') }]}
-							onPress={() => { this.select(2, item.key, item.value[opponent]) }}
-						/>
-						<Button
-							title={item.value.choices.option3}
-							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option3') }]}
-							onPress={() => { this.select(3, item.key, item.value[opponent]) }}
-						/>
-						<Button
-							title={item.value.choices.option4}
-							buttonStyle={[styles.option, { backgroundColor: this.renderColor('option4') }]}
-							onPress={() => { this.select(4, item.key, item.value[opponent]) }}
-						/>
-					</View>
-				</ScrollView>
-			)
-
-		}
-	}
 
 	render() {
-			const data = this.props.lastFive;
-			console.log('data', data)
+		const data = this.props.lastFive;
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -146,7 +101,7 @@ class GuessResult extends Component {
 					horizontal
 					pagingEnabled={true}
 					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
-					keyExtractor={(item, index) => item.id}
+					keyExtractor={(item, index) => item.key}
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
 					data={data}
@@ -156,7 +111,11 @@ class GuessResult extends Component {
 					<Button
 						title={'ASK BACK'}
 						buttonStyle={styles.choose_button}
+<<<<<<< HEAD
 						onPress={() => { Actions.dashboard() }}
+=======
+						// onPress={() => { Actions.dashboard() }}
+>>>>>>> ff4477631a657b462fafe70915f44053c2e4c788
 					/>
 					<Button
 						title={'NEW QUESTION'}
@@ -164,7 +123,11 @@ class GuessResult extends Component {
 						onPress={() => { Actions.categories() }}
 					/>
 				</View>
+<<<<<<< HEAD
 				<Chat style={styles.chat} height={this.state.chatHeight} />
+=======
+				<Chat style={styles.chat} />
+>>>>>>> ff4477631a657b462fafe70915f44053c2e4c788
 			</View>
 		)
 	}
@@ -240,6 +203,7 @@ const styles = StyleSheet.create({
 	},
 	//footer - chat
 	chat: {
+		height: 50,
 		marginTop: 10,
 		backgroundColor: '#ADD8E6',
 	},

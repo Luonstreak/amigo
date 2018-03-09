@@ -17,33 +17,44 @@ import * as actions from '../actions';
 
 class Result extends Component {
 	state = {
-		color: '#6DC066',
-		string: 'RIGHT',
-		layer: true,
-		chatHeight: 50
+		layer: true
 	};
 
-	componentWillMount() {
-		if (false) {
-			this.setState({ color: '#6DC066', string: 'RIGHT' })
-		} else {
-			this.setState({ color: '#FF4444', string: 'WRONG' })
+	// componentWillMount() {
+	// 	const { gameKey } = this.props.game
+	// 	this.props.getResult(gameKey)
+	// }
+	renderColor = (userAnswer, opponentAnswer, option) => {
+		console.log(userAnswer, opponentAnswer)
+		if (userAnswer == option && opponentAnswer !== option) {
+			return 'red'
+		}
+		else if (opponentAnswer == option && userAnswer !== option) {
+			return 'green'
+		}
+		else if (userAnswer == option && opponentAnswer == option) {
+			return 'green'
+		}
+		else {
+			return '#0099FF'
 		}
 	}
 
 	renderView = () => {
+		const { opponent, result, gameKey } = this.props.game
+		const { uid } = this.props.user
 		if (this.state.layer) {
 			return (
 				<View style={styles.overlayContainer}>
 					<Avatar
 						rounded
 						xlarge
-						avatarStyle={{ marginTop: 300, borderWidth: 10, borderColor: this.state.color }}
+						avatarStyle={{ marginTop: 300, borderWidth: 10, borderColor: result.result ? '#6DC066' : '#FF4444' }}
 						source={{ uri: 'https://pbs.twimg.com/profile_images/764466597788614656/bw2IMmNk_400x400.jpg' }}
 					/>
 					<View style={styles.message}>
-						<Text style={{ fontSize: 30, color: '#F7F7F7' }}>LEGO GOT IT</Text>
-						<Text style={{ fontSize: 26, fontWeight: 'bold', color: this.state.color }}>{this.state.string}</Text>
+						<Text style={{ fontSize: 30, color: result.result ? '#6DC066' : '#FF4444' }}>{opponent} GOT IT</Text>
+						<Text style={{ fontSize: 26, fontWeight: 'bold', color: result.result ? '#6DC066' : '#FF4444' }}>{result.result ? 'RIGHT' : 'WRONG'}</Text>
 						<Button
 							rounded
 							title="Continue"
@@ -72,42 +83,43 @@ class Result extends Component {
 					</View>
 					<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 						<View style={styles.question}>
-							<Text style={{ fontSize: 30 }}>{'Sample Question Conten In Here...'}</Text>
+							<Text style={{ fontSize: 30 }}>{result.content}</Text>
 						</View>
 						<View style={styles.user}>
 							<Badge
-								value={'Michael\'s answer was...'}
+								value={`${opponent}'s answer was...`}
 								textStyle={{ color: '#FFF', fontSize: 20 }}
 								containerStyle={{ backgroundColor: '#F5D86B' }}
 							/>
 						</View>
 						<View style={styles.options}>
 							<Button
-								title={'option1'}
-								buttonStyle={styles.option}
-								onPress={() => alert('option1')}
+								title={result.choices.option1}
+								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option1') }]}
 							/>
 							<Button
-								title={'option2'}
-								buttonStyle={styles.option}
-								onPress={() => alert('option2')}
+								title={result.choices.option2}
+								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option2') }]}
 							/>
 							<Button
-								title={'option3'}
-								buttonStyle={styles.option}
-								onPress={() => alert('option3')}
+								title={result.choices.option3}
+								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option3') }]}
 							/>
 							<Button
-								title={'option4'}
-								buttonStyle={styles.option}
-								onPress={() => alert('option4')}
-							// onPress={() => {
-							// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-							// }}
+								title={result.choices.option4}
+								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option4') }]}
 							/>
 						</View>
 					</ScrollView>
-					<Chat style={styles.chat} height={this.state.chatHeight} />
+					<Button
+						rounded
+						title="Continue"
+						titleTextColor={'#F7F7F7'}
+						backgroundColor={this.state.color}
+						buttonStyle={{ width: 200, marginTop: 100 }}
+						onPress={() => this.props.changeStatus('guess', uid, gameKey)}
+					/>
+					<Chat style={styles.chat} />
 				</View>
 			)
 		}
@@ -181,6 +193,7 @@ const styles = StyleSheet.create({
 	},
 	//footer - chat
 	chat: {
+		height: 50,
 		marginTop: (width * .05),
 		backgroundColor: '#ADD8E6',
 	},
@@ -193,7 +206,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { game: {status: 'waiting' } };
+	return { game: state.game, user: state.login.user };
 };
 
 export default connect(mapStateToProps, actions)(Result);

@@ -11,7 +11,6 @@ import * as actions from '../actions';
 class Dashboard extends Component {
 
 	componentWillMount(){
-		console.log('in the dashboard CWM')
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
 		this.props.gameFetch()
@@ -19,7 +18,6 @@ class Dashboard extends Component {
 	}
 
 	_renderGame = (game, status, opponent) => {
-
 		this.props.renderCard(game, status, opponent)
 	}
 
