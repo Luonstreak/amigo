@@ -18,34 +18,12 @@ import * as actions from '../actions';
 class Question extends Component {
 
 	state  = {
-		chatHeight: 100,
-		chooseCardVisible: false,
 		layer: 'game'
 	}
 
 	
 	componentWillMount() {
 		console.log(this.props.lastFive, 'lastFive')
-	}
-
-	renderChoice = () => {
-		if (this.state.chooseCardVisible) {
-			return (
-				<View style={styles.chooseCard}>
-					<Button
-						title={'ASK BACK'}
-						buttonStyle={styles.choose_button}
-						onPress={() => { Actions.dashboard() }}
-					/>
-					<Button
-						title={'NEW QUESTION'}
-						buttonStyle={styles.choose_button}
-						onPress={() => { Actions.categories()}}
-					/>
-				</View>
-			)
-		} 
-		return null
 	}
 
 	select = (num) => {
@@ -112,9 +90,6 @@ class Question extends Component {
 							title={this.props.game.selectedQuestion.choices.option4}
 							buttonStyle={styles.option}
 							onPress={() => { this.select(4) }}
-						// onPress={() => {
-						// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-						// }}
 						/>
 					</View>
 

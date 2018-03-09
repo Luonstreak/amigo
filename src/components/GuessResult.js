@@ -152,6 +152,18 @@ class GuessResult extends Component {
 					data={data}
 					renderItem={({ item }) => this.renderCard(item)}
 				/>
+				<View style={styles.chooseCard}>
+					<Button
+						title={'ASK BACK'}
+						buttonStyle={styles.choose_button}
+						onPress={() => { Actions.dashboard() }}
+					/>
+					<Button
+						title={'NEW QUESTION'}
+						buttonStyle={styles.choose_button}
+						onPress={() => { Actions.categories() }}
+					/>
+				</View>
 				<Chat style={styles.chat} height={this.state.chatHeight} />
 			</View>
 		)
