@@ -19,20 +19,20 @@ import firebase from 'firebase';
 import * as actions from '../actions';
 
 class Guess extends Component {
-	
+
 	state = {
 		chatHeight: 100
 	}
 
 	renderColor = (userAnswer, opponentAnswer, option) => {
 		if (userAnswer == option && opponentAnswer !== option) {
-			return 'red'
+			return 'tomato'
 		}
 		else if (opponentAnswer == option && userAnswer !== option) {
-			return 'green'
+			return 'mediumseagreen'
 		}
 		else if (userAnswer == option && opponentAnswer == option) {
-			return 'green'
+			return 'mediumseagreen'
 		}
 		else {
 			return '#0099FF'
@@ -40,55 +40,55 @@ class Guess extends Component {
 	}
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
-		const { gameKey, opponent } = this.props.game
-		const score = this.props.game.score[uid]
-		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, score)
+		const { gameKey, opponent, score } = this.props.game
+		const newScore = score[uid] ? score[uid] : 0
+		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}
 
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game
 		const { uid } = this.props.user
-			return (
-				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
-					<View style={styles.question}>
-						<Text style={{ fontSize: 30 }}>{item.value.content}</Text>
-					</View>
-					<View style={styles.user}>
-						<Badge
-							value={index % 2 === 0 ? `${opponent}'s answer was...` : "Your answer was..."}
-							textStyle={{ color: '#FFF', fontSize: 20 }}
-							containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
-					</View>
-					<View style={styles.options}>
-						<Button
-							title={item.value.choices.option1}
-							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option1') }: null ]}
-							onPress={() => {index == length - 1 ? this.select(1, item.key, item.value[opponent], item, uid) : null}}
-						/>
-						<Button
-							title={item.value.choices.option2}
-							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option2') } : null]}
-							onPress={() => {index == length - 1 ? this.select(2, item.key, item.value[opponent], item, uid) : null }}
-						/>
-						<Button
-							title={item.value.choices.option3}
-							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option3') } : null]}
-							onPress={() => {index == length - 1 ? this.select(3, item.key, item.value[opponent], item, uid) : null }}
-						/>
-						<Button
-							title={item.value.choices.option4}
-							buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option4') } : null]}
-							onPress={() => {index == length - 1 ? this.select(4, item.key, item.value[opponent], item, uid) : null }}
-						// onPress={() => {
-						// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
-						// }}
-						/>
-					</View>
-				</ScrollView>
-				)
-		}
+		return (
+			<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
+				<View style={styles.question}>
+					<Text style={{ fontSize: 30 }}>{item.value.content}</Text>
+				</View>
+				<View style={styles.user}>
+					<Badge
+						value={index % 2 === 0 ? `${opponent}'s answer was...` : "Your answer was..."}
+						textStyle={{ color: '#FFF', fontSize: 20 }}
+						containerStyle={{ backgroundColor: '#F5D86B' }}
+					/>
+				</View>
+				<View style={styles.options}>
+					<Button
+						title={item.value.choices.option1}
+						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option1') } : null]}
+						onPress={() => { index == length - 1 ? this.select(1, item.key, item.value[opponent], item, uid) : null }}
+					/>
+					<Button
+						title={item.value.choices.option2}
+						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option2') } : null]}
+						onPress={() => { index == length - 1 ? this.select(2, item.key, item.value[opponent], item, uid) : null }}
+					/>
+					<Button
+						title={item.value.choices.option3}
+						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option3') } : null]}
+						onPress={() => { index == length - 1 ? this.select(3, item.key, item.value[opponent], item, uid) : null }}
+					/>
+					<Button
+						title={item.value.choices.option4}
+						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option4') } : null]}
+						onPress={() => { index == length - 1 ? this.select(4, item.key, item.value[opponent], item, uid) : null }}
+					// onPress={() => {
+					// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
+					// }}
+					/>
+				</View>
+			</ScrollView>
+		)
+	}
 
 	render() {
 		const data = this.props.lastFive;
@@ -112,7 +112,7 @@ class Guess extends Component {
 				<FlatList
 					horizontal
 					pagingEnabled={true}
-					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
+					getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}
 					keyExtractor={(item, index) => item.key}
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
 	//card
 	card: {
 		flex: 1,
-		maxWidth: (width * .90),
+		width: (width * .90),
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
 	const arr = []
 	_.forIn(state.game.lastFive, (value, key) => {
-		arr.push({key,value})
+		arr.push({ key, value })
 	})
 	return { lastFive: arr, game: state.game, user: state.login.user };
 };

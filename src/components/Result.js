@@ -84,7 +84,7 @@ class Result extends Component {
 					title="Continue"
 					titleTextColor={'#F7F7F7'}
 					backgroundColor={'#6DC066'}
-					buttonStyle={{ width: 200, marginTop: 100 }}
+					buttonStyle={{ justifyContent: 'center', width: width * 0.8, margin: width * 0.1 }}
 					onPress={() => this.props.changeStatus('guess', uid, gameKey)}
 				/>
 				<Chat style={styles.chat} />
@@ -97,6 +97,7 @@ const { height, width } = Dimensions.get('window');
 const styles = StyleSheet.create({
 	//global
 	container: {
+		margin: 0,
 		marginTop: 20,
 		flex: 1,
 		backgroundColor: '#DFE2E7'
