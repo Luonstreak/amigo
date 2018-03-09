@@ -25,20 +25,26 @@ class Category extends Component {
 			{ id: 'e', category: 'my personality' },
 		]
 	}
+	componentDidMount() {
+		console.log('in Category cdm ====================')
+	}
+	
 
 	_keyExtractor = (item, index) => item.id;
 
 	renderItem = ({ item }) => {
+		const { gameKey } = this.props.game;
 		return (
 			<Button
 				title={item.category}
 				buttonStyle={styles.option}
-				onPress={() => { this.props.fetchQuestion(item.id) }}
+				onPress={() => { this.props.fetchQuestion(item.id, gameKey)}}
 			/>
 		)
 	}
 
 	render() {
+		console.log('in render')
 		return (
 			<View style={styles.container}>
 				<ScrollView
@@ -103,7 +109,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { question: state.game, player: state.player }
+	return { game: state.game, player: state.player }
 }
 
 export default connect(mapStateToProps, actions)(Category)

@@ -16,8 +16,10 @@ class Dashboard extends Component {
 		this.props.gameFetch()
 		this.props.resetGameKey()
 	}
-
+	
 	_renderGame = (game, status, opponent) => {
+		const { uid } = this.props.login.user
+		this.props.fetchScore(game, uid)
 		this.props.renderCard(game, status, opponent)
 	}
 

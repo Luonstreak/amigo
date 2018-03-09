@@ -8,11 +8,12 @@ import Username from './src/components/Username';
 import Dashboard from './src/components/Dashboard';
 import Contacts from './src/components/Contacts';
 import PlayerList from './src/components/PlayerList';
-import Category from './src/components/Category';
-import Question from './src/components/Question';
+import Modal from './src/components/Modal';
+import Result from './src/components/Result';
 import Guess from './src/components/Guess';
 import GuessResult from './src/components/GuessResult';
-import Result from './src/components/Result';
+import Category from './src/components/Category';
+import Question from './src/components/Question';
 
 const RouterComponent = () => {
 	return (
@@ -25,18 +26,14 @@ const RouterComponent = () => {
 					<Scene key='login2' component={Username} title='Enter Your Username' />
 				</Scene>
 				<Scene key='main'>
-					<Scene
-						key='dashboard'
-						component={Dashboard}
-						initial
-					/>
+					<Scene key='dashboard' component={Dashboard} hideNavBar initial />
 					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
-					<Scene key='categories' component={Category} title='Pick a Question' />
+					<Scene key='categories' component={Category} />
 					<Scene key='question' component={Question} />
-					<Scene key='guessResult' component={GuessResult} />
-					<Scene key='result' component={Result} />
-					<Scene key='guess' component={Guess} />
-					{/* <Scene key='result' component={Result} /> */}
+					<Scene key='modal' component={Modal} hideNavBar />
+					<Scene key='result' component={Result} hideNavBar />
+					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.main()}} />
+					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => { Actions.main() }} />
 				</Scene>
 			</Scene>
 		</Router>

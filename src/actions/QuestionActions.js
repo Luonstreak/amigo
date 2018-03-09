@@ -2,6 +2,7 @@ import {
 	GAME_CREATED, 
 	QUESTION_CHOSEN, 
 	FETCH_FIVE, 
+	FETCH_SCORE, 
 	RESET_GAME_KEY, 
 	ADDED_ANSWER, 
 	GOT_RESULT,
@@ -18,14 +19,14 @@ export const renderCard = (game, status, opponent) => {
 	
 			await dispatch({ type: FETCH_FIVE, payload: obj })
 			if (status == 'result') {
-				console.log('hit result')
 				firebase.database().ref(`result/${game}`).once('value', async snap => {
-						await dispatch({ type: GOT_RESULT, payload: snap.val() })
-						Actions.result()
-					})
+					await dispatch({ type: GOT_RESULT, payload: snap.val() })
+					Actions.modal()
+				})
 			}
 			else if (status == 'guess') {
 				Actions.guess()
+
 			} 
 			else if (status == 'guessResult') {
 				Actions.guessResult()
@@ -35,15 +36,35 @@ export const renderCard = (game, status, opponent) => {
 	}
 };
 
-export const fetchQuestion = (id) => {
+export const fetchQuestion = (id, gameKey) => {
 	const idRef = firebase.database().ref(`questions/${id}`);
 	return (dispatch) => {
 		idRef.once('value', async snap => {
 			const children = snap.numChildren()
 			const num = Math.floor(Math.random() * children) + 1
-
+			var functionWillRepeat = true;
+			// if (gameKey) {
+			// 	while (functionWillRepeat){
+			// 		console.log('runs functionWillRepeat :o')
+			// 		firebase.database().ref(`usedQuestions/${gameKey}/${id}${num}`).once('value', async snap => {
+			// 			let question = await snap.exists();
+			// 			console.log('usedQuestionSnap', snap.exists())
+			// 			console.log('inside usedQuestions')
+			// 			if (!question) {
+			// 				firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).once('value', async snap => {
+			// 					let question = await snap.exists();
+			// 					console.log('questionChoicesSnap', snap.exists())
+			// 					console.log('inside questionChoises')
+			// 					if (!question) {
+			// 						firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true)
+			// 						functionWillRepeat = false;
+			// 					}
+			// 				})
+			// 			}
+			// 		})
+			// 	}
+			// }
 			const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
-
 			await ref.once('value', snap => {
 				const obj = {
 					questionNumber: snap.key,
@@ -51,16 +72,16 @@ export const fetchQuestion = (id) => {
 					choices: snap.val().choices
 				}
 				dispatch({ type: QUESTION_CHOSEN, payload: obj })
-				Actions.question()
+				Actions.question({category:id})
 			})
 		})
 	}
 }
 
+
 export const saveAnswer = (num, questionId, opponent, gameKey) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
-	console.log(gameKey)
 
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
@@ -125,6 +146,11 @@ export const creatingGame = (num, questionId, opponent) => {
 			},
 			[currentUser.uid]: choice,
 			[opponent]: ""
+
+		})
+		firebase.database().ref(`scores/${key}`).set({
+			[currentUser.uid]: 0,
+			[opponent]: 0
 		})
 			
 		firebase.database().ref(`usedQuestions/${key}/${questionId}`).set(true)
@@ -154,18 +180,17 @@ export const resetGameKey = () => {
 	}
 }
 
-export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer, item) => {
-	console.log(item)
+export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer, item, score) => {
 	const { currentUser } = firebase.auth();
 	const choice = `option${num}`
 	firebase.database().ref(`games/${gameKey}/${questionKey}/${currentUser.uid}`).set(choice);
-
+	
 	const option1 = item.value.choices.option1
 	const option2 = item.value.choices.option2
 	const option3 = item.value.choices.option3
 	const option4 = item.value.choices.option4
 	const content = item.value.content
-
+	
 	firebase.database().ref(`result/${gameKey}`).set({
 		content: content,
 		choices: {
@@ -178,19 +203,31 @@ export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer
 		[opponent]: opponentAnswer,
 		result: choice === opponentAnswer ? true : false
 	})
-
-	return (dispatch) => {
-		dispatch({ type: ADDED_ANSWER })
+	
+	return async (dispatch) => {
 		if (choice === opponentAnswer) {
-			Actions.guessResult({text: 'win', choice})
+			const updatedScore = score + 1
+			firebase.database().ref(`scores/${gameKey}`).update({
+				[currentUser.uid]: updatedScore
+			})
+			const ref = firebase.database().ref(`scores/${gameKey}`)
+				ref.once('value', async snap => {
+					await dispatch({
+						type: FETCH_SCORE,
+						payload: snap.val()
+					})
+				})		
 		}
-		else {
-			Actions.guessResult({text: 'lose', opponentAnswer, choice})
-		}
+	
+		const ref = firebase.database().ref(`games/${gameKey}`);
+		ref.limitToLast(5).once('value', async snap => {
+			await dispatch({ type: ADDED_ANSWER, payload: snap.val() })
+			Actions.guessResult()
+		})
 	}
 }
 
-export const changeStatus = (status, currentUserId, gameKey ) => {
+export const changeStatus = (status, currentUserId, gameKey) => {
 	return (dispatch) => {
 		if (status === 'guess') {
 			firebase.database().ref(`users/${currentUserId}/games/${gameKey}/status`).set(status)
@@ -202,5 +239,17 @@ export const changeStatus = (status, currentUserId, gameKey ) => {
 			dispatch({ type: STATUS_UPDATE })
 			Actions.guessResult()
 		}
+	}
+}
+
+export const fetchScore = (gameKey, uid) => {
+	const ref = firebase.database().ref(`scores/${gameKey}`)
+	return (dispatch) => {
+		ref.once('value', snap => {
+			dispatch({
+				type: FETCH_SCORE,
+				payload: snap.val()
+			})
+		})
 	}
 }

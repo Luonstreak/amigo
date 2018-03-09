@@ -25,7 +25,6 @@ class Guess extends Component {
 	}
 
 	renderColor = (userAnswer, opponentAnswer, option) => {
-		console.log(userAnswer, opponentAnswer)
 		if (userAnswer == option && opponentAnswer !== option) {
 			return 'red'
 		}
@@ -42,7 +41,8 @@ class Guess extends Component {
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
 		const { gameKey, opponent } = this.props.game
-		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item)
+		const score = this.props.game.score[uid]
+		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, score)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}
 
@@ -92,16 +92,19 @@ class Guess extends Component {
 
 	render() {
 		const data = this.props.lastFive;
+		const { score } = this.props.game
+		const { uid } = this.props.user
+		const { opponent } = this.props.game
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
 					<Badge
-						value={'user 1'}
+						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
 					<Badge
-						value={'user 2'}
+						value={score ? score[opponent] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
