@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Dimensions, Text, View, ScrollView, FlatList } from 'react-native';
+import { Dimensions, Text, View, ScrollView, FlatList, RefreshControl
+ } from 'react-native';
 import { connect } from 'react-redux';
 import { Avatar, Button, Card, List, ListItem } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -10,13 +11,25 @@ import * as actions from '../actions';
 
 class Dashboard extends Component {
 
-	componentWillMount(){
+	state = {
+		refreshing: false
+	}
+
+	componentWillMount() {
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
 		this.props.gameFetch()
 		this.props.resetGameKey()
 	}
-	
+
+	_onRefresh = () => {
+		this.setState({ refreshing: true });
+		setTimeout(() => {
+			this.props.gameFetch()
+			this.setState({ refreshing: false })
+		}, 1000);
+	}
+
 	_renderGame = (game, status, opponent) => {
 		const { uid } = this.props.login.user
 		this.props.fetchScore(game, uid)
@@ -54,7 +67,15 @@ class Dashboard extends Component {
 						source={{ uri: 'https://randomuser.me/api/portraits/lego/1.jpg' }}
 					/>
 				</View>
-				<ScrollView style={bodyStyle}>
+				<ScrollView
+					style={bodyStyle}
+					refreshControl={
+						<RefreshControl
+							refreshing={this.state.refreshing}
+							onRefresh={this._onRefresh}
+							tintColor={'#FFC300'}
+						/>
+					}>
 					{/* YOUR TURN */}
 					<Text style={[titleStyle, { backgroundColor: '#FFC300' }]}>Your Turn</Text>
 					<List containerStyle={listStyle}>
