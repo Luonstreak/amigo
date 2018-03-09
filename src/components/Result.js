@@ -16,140 +16,90 @@ import Chat from './Chat';
 import * as actions from '../actions';
 
 class Result extends Component {
-	state = {
-		layer: true
-	};
 
-	// componentWillMount() {
-	// 	const { gameKey } = this.props.game
-	// 	this.props.getResult(gameKey)
-	// }
 	renderColor = (userAnswer, opponentAnswer, option) => {
-		console.log(userAnswer, opponentAnswer)
 		if (userAnswer == option && opponentAnswer !== option) {
-			return 'red'
+			return 'mediumseagreen'
 		}
 		else if (opponentAnswer == option && userAnswer !== option) {
-			return 'green'
+			return 'tomato'
 		}
 		else if (userAnswer == option && opponentAnswer == option) {
-			return 'green'
+			return 'mediumseagreen'
 		}
 		else {
 			return '#0099FF'
 		}
 	}
 
-	renderView = () => {
-		const { opponent, result, gameKey } = this.props.game
-		const { uid } = this.props.user
-		if (this.state.layer) {
-			return (
-				<View style={styles.overlayContainer}>
-					<Avatar
-						rounded
-						xlarge
-						avatarStyle={{ marginTop: 300, borderWidth: 10, borderColor: result.result ? '#6DC066' : '#FF4444' }}
-						source={{ uri: 'https://pbs.twimg.com/profile_images/764466597788614656/bw2IMmNk_400x400.jpg' }}
-					/>
-					<View style={styles.message}>
-						<Text style={{ fontSize: 30, color: result.result ? '#6DC066' : '#FF4444' }}>{opponent} GOT IT</Text>
-						<Text style={{ fontSize: 26, fontWeight: 'bold', color: result.result ? '#6DC066' : '#FF4444' }}>{result.result ? 'RIGHT' : 'WRONG'}</Text>
-						<Button
-							rounded
-							title="Continue"
-							titleTextColor={'#F7F7F7'}
-							backgroundColor={this.state.color}
-							buttonStyle={{ width: 200, marginTop: 100 }}
-							onPress={() => this.setState({ layer: false })}
-						/>
-					</View>
-				</View>
-			)
-		} else {
-			return (
-				<View style={styles.container}>
-					<View style={styles.counter}>
-						<Badge
-							value={'user 1'}
-							textStyle={{ color: '#F7E7B4' }}
-							containerStyle={styles.badge}
-						/>
-						<Badge
-							value={'user 2'}
-							textStyle={{ color: '#F7E7B4' }}
-							containerStyle={styles.badge}
-						/>
-					</View>
-					<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
-						<View style={styles.question}>
-							<Text style={{ fontSize: 30 }}>{result.content}</Text>
-						</View>
-						<View style={styles.user}>
-							<Badge
-								value={`${opponent}'s answer was...`}
-								textStyle={{ color: '#FFF', fontSize: 20 }}
-								containerStyle={{ backgroundColor: '#F5D86B' }}
-							/>
-						</View>
-						<View style={styles.options}>
-							<Button
-								title={result.choices.option1}
-								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option1') }]}
-							/>
-							<Button
-								title={result.choices.option2}
-								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option2') }]}
-							/>
-							<Button
-								title={result.choices.option3}
-								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option3') }]}
-							/>
-							<Button
-								title={result.choices.option4}
-								buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option4') }]}
-							/>
-						</View>
-					</ScrollView>
-					<Button
-						rounded
-						title="Continue"
-						titleTextColor={'#F7F7F7'}
-						backgroundColor={this.state.color}
-						buttonStyle={{ width: 200, marginTop: 100 }}
-						onPress={() => this.props.changeStatus('guess', uid, gameKey)}
-					/>
-					<Chat style={styles.chat} />
-				</View>
-			)
-		}
-	}
-
 	render() {
-		return this.renderView()
+		const { opponent, result, gameKey, score } = this.props.game
+		const { uid } = this.props.user
+		return (
+			<View style={styles.container}>
+				<View style={styles.counter}>
+					<Badge
+						value={score ? score[uid] : 0}
+						textStyle={{ color: '#F7E7B4' }}
+						containerStyle={styles.badge}
+					/>
+					<Badge
+						value={score ? score[opponent] : 0}
+						textStyle={{ color: '#F7E7B4' }}
+						containerStyle={styles.badge}
+					/>
+				</View>
+				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
+					<View style={styles.question}>
+						<Text style={{ fontSize: 30 }}>{result.content}</Text>
+					</View>
+					<View style={styles.user}>
+						<Badge
+							value={`${opponent}'s answer was...`}
+							textStyle={{ color: '#FFF', fontSize: 20 }}
+							containerStyle={{ backgroundColor: '#F5D86B' }}
+						/>
+					</View>
+					<View style={styles.options}>
+						<Button
+							title={result.choices.option1}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option1') }]}
+						/>
+						<Button
+							title={result.choices.option2}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option2') }]}
+						/>
+						<Button
+							title={result.choices.option3}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option3') }]}
+						/>
+						<Button
+							title={result.choices.option4}
+							buttonStyle={[styles.option, { backgroundColor: this.renderColor(result[uid], result[opponent], 'option4') }]}
+						/>
+					</View>
+				</ScrollView>
+				<Button
+					rounded
+					title="Continue"
+					titleTextColor={'#F7F7F7'}
+					backgroundColor={'#6DC066'}
+					buttonStyle={{ width: 200, marginTop: 100 }}
+					onPress={() => this.props.changeStatus('guess', uid, gameKey)}
+				/>
+				<Chat style={styles.chat} />
+			</View>
+		)
 	}
-
 }
 
 const { height, width } = Dimensions.get('window');
 const styles = StyleSheet.create({
 	//global
-	overlayContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#000'
-	},
 	container: {
 		marginTop: 20,
 		flex: 1,
 		backgroundColor: '#DFE2E7'
-	},
-	//modal
-	message: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center'
 	},
 	//header
 	counter: {

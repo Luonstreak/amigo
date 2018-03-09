@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, action) => {
 		case LOGIN_SUCCESS:
 			return { ...state, user: action.payload };
 		case LOGIN_FAIL:
-			console.log('fail');
+			console.log('login fail');
 			return state
 		case GAMES_FETCHED:
 			return { ...state, games: action.payload }

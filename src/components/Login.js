@@ -4,7 +4,6 @@ import { Text, View, TextInput, Dimensions, Keyboard } from 'react-native';
 import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { LinearGradient } from 'expo';
-
 // RELATIVE
 import * as actions from '../actions';
 

@@ -19,23 +19,21 @@ import * as actions from '../actions';
 
 class GuessResult extends Component {
 
-	renderColor = (option) => {
-		if (this.props.text == 'win' && this.props.choice === option) {
-			return 'green' 
-		}
-		if (this.props.text == 'lose' && this.props.choice === option) {
-			return 'red' 
-		}
-		if (this.props.opponentAnswer === option) {
-			return 'green' 
-		}
-		else { 
-			return '#0099FF'
+	renderColor = (userAnswer, opponentAnswer, option) => {
+		if (userAnswer === opponentAnswer) {
+			if (option === userAnswer) { return 'mediumseagreen' }
+			else if (option === opponentAnswer) { return 'mediumseagreen' }
+			else { return '#0099FF' }
+		} else {
+			if (option === userAnswer) { return 'tomato' }
+			else if (option === opponentAnswer) { return 'mediumseagreen' }
+			else { return '#0099FF' }
 		}
 	}
 
 	renderCard = (item) => {
-		const { opponent } = this.props.game
+		const { opponent } = this.props.game;
+		const { uid } = this.props.user;
 			return (
 				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 				<View style={styles.question}>
@@ -46,36 +44,30 @@ class GuessResult extends Component {
 						value={`${opponent}'s answer was...`}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
+					/>
 					<Badge
-						value={this.props.text === 'win' ? 'You guessed right!' : 'You guessed wrong!'}
-						textStyle={{ color: 'green', fontSize: 20 }}
-						containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
+							value={item.value[uid] == item.value[opponent] ? 'You guessed right!' : 'You guessed wrong!'}
+							textStyle={{ color: item.value[uid] == item.value[opponent] ? 'mediumseagreen' : 'tomato' , fontSize: 20 }}
+						containerStyle={{ backgroundColor: 'transparent' }}
+					/>
 				</View>
 				<View style={styles.options}>
 					<Button
 						title={item.value.choices.option1}
-						buttonStyle={[styles.option, {backgroundColor: this.renderColor('option1')}]}
-						onPress={() => { this.select(1, item.key, item.value[opponent]) }}
-						/>
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option1') }]}
+					/>
 					<Button
 						title={item.value.choices.option2}
-						buttonStyle={[styles.option, { backgroundColor: this.renderColor('option2') }]}
-						onPress={() => { this.select(2, item.key, item.value[opponent]) }}
-						/>
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option2') }]}
+					/>
 					<Button
 						title={item.value.choices.option3}
-						buttonStyle={[styles.option, { backgroundColor: this.renderColor('option3') }]}
-						onPress={() => { this.select(3, item.key, item.value[opponent]) }}
-						/>
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option3') }]}
+					/>
 					<Button
 						title={item.value.choices.option4}
-						buttonStyle={[styles.option, { backgroundColor: this.renderColor('option4') }]}
-						onPress={() => { this.select(4, item.key, item.value[opponent]) }}
-						/>
-				</View>
-				<View>
+						buttonStyle={[styles.option, { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option4') }]}
+					/>
 				</View>
 			</ScrollView>
 			)
@@ -83,16 +75,19 @@ class GuessResult extends Component {
 
 	render() {
 		const data = this.props.lastFive;
+		const { score } = this.props.game
+		const { uid } = this.props.user
+		const { opponent } = this.props.game
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
 					<Badge
-						value={'user 1'}
+						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
 					<Badge
-						value={'user 2'}
+						value={score ? score[opponent] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
@@ -220,7 +215,7 @@ const mapStateToProps = state => {
 	_.forIn(state.game.lastFive, (value, key) => {
 		arr.push({ key, value })
 	})
-	return { lastFive: arr, game: state.game };
+	return { lastFive: arr, game: state.game, user: state.login.user };
 };
 
 export default connect(mapStateToProps, actions)(GuessResult);
