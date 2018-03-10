@@ -20,14 +20,6 @@ import * as actions from '../actions';
 
 class Question extends Component {
 
-<<<<<<< HEAD
-	
-	componentWillMount() {
-		console.log(this.props.lastFive, 'lastFive')
-	}
-
-=======
->>>>>>> ff4477631a657b462fafe70915f44053c2e4c788
 	select = (num) => {
 		const { questionNumber } = this.props.game.selectedQuestion
 		const opponent = this.props.player.selectedPlayer

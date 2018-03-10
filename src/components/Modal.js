@@ -20,20 +20,6 @@ class Modal extends Component {
 	// 	const { gameKey } = this.props.game
 	// 	this.props.getResult(gameKey)
 	// }
-	renderColor = (userAnswer, opponentAnswer, option) => {
-		if (userAnswer == option && opponentAnswer !== option) {
-			return 'red'
-		}
-		else if (opponentAnswer == option && userAnswer !== option) {
-			return 'green'
-		}
-		else if (userAnswer == option && opponentAnswer == option) {
-			return 'green'
-		}
-		else {
-			return '#0099FF'
-		}
-	}
 
 	whereToRouteTo = () => {
 		const { text, opponentAnswer, choice } = this.props;
@@ -83,12 +69,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#000'
+		backgroundColor: '#000',
+		padding: 20
 	},
 	message: {
 		flex: 1,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		marginTop: 50
 	},
 	//footer - chat
 	chat: {

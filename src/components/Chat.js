@@ -71,7 +71,7 @@ class Chat extends Component {
 		return (
 			<View style={container}>
 				<FlatList
-					contentContainerStyle={[list, { height: this.props.height }]}
+					contentContainerStyle={list}
 					inverted
 					data={this.state.messages}
 					keyExtractor={(item, index) => item.id}
@@ -80,7 +80,7 @@ class Chat extends Component {
 						return <Text><Text style={title}>{item.username}: </Text><Text style={content}>{item.msg}</Text></Text>
 					}}
 				/>
-				<Text style={{ backgroundColor: 'transparent', height: 50 }}></Text>
+				{/* <Text style={{ backgroundColor: 'transparent', height: 50 }}></Text> */}
 				<TextInput
 					style={[input, { bottom: this.state.bottomSpace}]}
 					value={this.state.input}
@@ -95,15 +95,14 @@ class Chat extends Component {
 		);
 	}
 }
-
+const { height, width } = Dimensions.get('window');
 const styles = {
 	container: {
-		padding: 10,
-		justifyContent: 'flex-end'
+		justifyContent: 'flex-end',
+		margin: width * 0.05
 	},
 	list: {
 		alignItems: 'flex-start',
-		marginLeft: 15
 	},
 	input: {
 		position: 'absolute',
