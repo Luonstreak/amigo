@@ -27,7 +27,7 @@ class Dashboard extends Component {
 		setTimeout(() => {
 			this.props.gameFetch()
 			this.setState({ refreshing: false })
-		}, 1000);
+		}, 500);
 	}
 
 	_renderGame = (game, status, opponent) => {
@@ -51,7 +51,7 @@ class Dashboard extends Component {
 			} else { list1.push(value) }
 		})
 		return (
-			<View style={{ marginTop: 20 }}>
+			<View style={{ flex: 1, marginTop: 20 }}>
 				<View style={headerStyle}>
 					<Button
 						rounded

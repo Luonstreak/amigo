@@ -30,11 +30,16 @@ class GuessResult extends Component {
 			else { return '#0099FF' }
 		}
 	}
-
-	renderCard = (item, index) => {
+	
+	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game;
 		const { uid } = this.props.user;
-		const whos = index % 2 === 1 ? 'your opponent' : 'you';
+		var whos
+		if (length % 2 === 0) {
+			whos = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+		} else {
+			whos = index % 2 === 1 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+		}
 			return (
 				<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 				<View style={styles.question}>
@@ -42,12 +47,12 @@ class GuessResult extends Component {
 				</View>
 				<View style={styles.user}>
 					<Badge
-							value={item.value[uid] == item.value[opponent] ? `${whos} guessed right!` : `${whos} guessed wrong!`}
+							value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
 						textStyle={{ color: item.value[uid] == item.value[opponent] ? 'mediumseagreen' : 'tomato' , fontSize: 20 }}
 						containerStyle={{ backgroundColor: 'transparent' }}
 					/>
 					<Badge
-							value={`${index % 2 === 1 ? 'your' : 'your opponent\'s'} answer was...`}
+							value={whos[1] + ' answer was..'}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 					/>
@@ -101,7 +106,7 @@ class GuessResult extends Component {
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
 					data={data}
-					renderItem={({ item, index }) => this.renderCard(item, index)}
+					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 				/>
 				<View style={styles.chooseCard}>
 					<Button

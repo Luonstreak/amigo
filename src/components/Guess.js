@@ -25,23 +25,20 @@ class Guess extends Component {
 	}
 
 	renderColor = (userAnswer, opponentAnswer, option) => {
-		if (userAnswer == option && opponentAnswer !== option) {
-			return 'tomato'
-		}
-		else if (opponentAnswer == option && userAnswer !== option) {
-			return 'mediumseagreen'
-		}
-		else if (userAnswer == option && opponentAnswer == option) {
-			return 'mediumseagreen'
-		}
-		else {
-			return '#0099FF'
+		if (userAnswer === opponentAnswer) {
+			if (option === userAnswer) { return 'mediumseagreen' }
+			else if (option === opponentAnswer) { return 'mediumseagreen' }
+			else { return '#0099FF' }
+		} else {
+			if (option === userAnswer) { return 'tomato' }
+			else if (option === opponentAnswer) { return 'mediumseagreen' }
+			else { return '#0099FF' }
 		}
 	}
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
 		const { gameKey, opponent, score } = this.props.game
-		const newScore = score[uid] ? score[uid] : 0
+		const newScore = score ? score[uid] : 0
 		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}
@@ -49,18 +46,38 @@ class Guess extends Component {
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game
 		const { uid } = this.props.user
+		var whos
+		if (length % 2 === 0) {
+			whos = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+		} else {
+			whos = index % 2 === 1 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+		}
+
 		return (
 			<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 				<View style={styles.question}>
 					<Text style={{ fontSize: 30 }}>{item.value.content}</Text>
 				</View>
+				{ index === length - 1 ? (
 				<View style={styles.user}>
 					<Badge
-						value={index % 2 === 0 ? `${opponent}'s answer was...` : "Your answer was..."}
+						value={'your opponent\'s answer was..'}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 					/>
-				</View>
+				</View>) : (
+				<View style={styles.user}>
+					<Badge
+						value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
+						textStyle={{ color: item.value[uid] == item.value[opponent] ? 'mediumseagreen' : 'tomato', fontSize: 20 }}
+						containerStyle={{ backgroundColor: 'transparent' }}
+					/>
+					<Badge
+						value={whos[1] + ' answer was..'}
+						textStyle={{ color: '#FFF', fontSize: 20 }}
+						containerStyle={{ backgroundColor: '#F5D86B' }}
+					/>
+				</View>)}
 				<View style={styles.options}>
 					<Button
 						title={item.value.choices.option1}
@@ -119,7 +136,7 @@ class Guess extends Component {
 					data={data}
 					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 				/>
-				<Chat style={styles.chat} />
+				<Chat />
 			</View>
 		)
 	}
@@ -192,18 +209,7 @@ const styles = StyleSheet.create({
 		paddingRight: 10,
 		borderRadius: 10,
 		backgroundColor: '#0099FF'
-	},
-	//footer - chat
-	chat: {
-		marginTop: 10,
-		backgroundColor: '#ADD8E6',
-	},
-	input: {
-		backgroundColor: '#96EAD7',
-		margin: 10,
-		borderRadius: 10,
-		padding: 10
-	},
+	}
 });
 
 const mapStateToProps = state => {
