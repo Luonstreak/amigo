@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Notifications } from 'expo';
 import { Dimensions, Text, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Avatar, Button, Card, List, ListItem } from 'react-native-elements';
@@ -7,6 +8,7 @@ import firebase from 'firebase';
 import _ from 'lodash';
 
 import * as actions from '../actions';
+import registerForNotifications from '../../services/push_notifications'
 
 class Dashboard extends Component {
 
@@ -16,6 +18,20 @@ class Dashboard extends Component {
 		this.props.gameFetch()
 		this.props.resetGameKey()
 	}
+	// componentDidMount() {
+	// 	registerForNotifications();
+	// 	Notifications.addListener((notification) => {
+	// 		const { data: { text }, origin } = notification;
+	// 		if (origin === 'received' && text) {
+	// 			Alert.alert(
+	// 				'New Push Notification',
+	// 				text,
+	// 				[{ text: 'Ok' }]
+	// 			)
+	// 		}
+	// 	})
+	// }
+	
 	
 	_renderGame = (game, status, opponent) => {
 		const { uid } = this.props.login.user

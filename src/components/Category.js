@@ -11,6 +11,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { Button, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 
 import * as actions from '../actions';
 
@@ -25,12 +26,46 @@ class Category extends Component {
 			{ id: 'e', category: 'my personality' },
 		]
 	}
-	componentDidMount() {
-		console.log('in Category cdm ====================')
-	}
-	
 
 	_keyExtractor = (item, index) => item.id;
+
+	_checkUsedQuestion = (id, gameKey) => {
+		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+			if (snap.numChildren() >= 3) {		
+				console.log('more than 3')
+				Actions.question({ category: id })
+			}
+			else {
+				firebase.database().ref(`questions/${id}`).once('value', snap => {
+					const children = snap.numChildren();
+					const num = Math.floor(Math.random() * children) + 1;
+					if (gameKey) {
+						firebase.database().ref(`usedQuestions/${gameKey}`).once('value', snap => {
+							var question = snap.child(`${id}${num}`).exists();
+							if (question) {
+								return this._checkUsedQuestion(id, gameKey);
+							}
+							else {
+								firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+									var choice = snap.child(`${id}${num}`).exists();
+									if (choice) {
+										return this._checkUsedQuestion(id, gameKey);
+									}
+									else {
+										firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+										this.props.fetchQuestion(id, num);
+									}
+								})
+							}
+						})
+					}
+					else {
+						this.props.fetchQuestion(id, num);
+					}
+				})
+			}
+		})
+	}
 
 	renderItem = ({ item }) => {
 		const { gameKey } = this.props.game;
@@ -38,13 +73,12 @@ class Category extends Component {
 			<Button
 				title={item.category}
 				buttonStyle={styles.option}
-				onPress={() => { this.props.fetchQuestion(item.id, gameKey)}}
+				onPress={() => { this._checkUsedQuestion(item.id, gameKey)}}
 			/>
 		)
 	}
 
 	render() {
-		console.log('in render')
 		return (
 			<View style={styles.container}>
 				<ScrollView

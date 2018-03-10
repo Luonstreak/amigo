@@ -17,13 +17,14 @@ const INITIAL_STATE = {
 	gameKey: null,
 	opponent: null,
 	result: null,
-	score: null
+	score: null,
+	chosenQuestionArr: []
 }
 
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case QUESTION_CHOSEN:
-			return { ...state, selectedQuestion: action.payload }
+			return { ...state, selectedQuestion: action.payload, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
 		case GAME_CREATED:
 			return state
 		case ADDED_ANSWER:
@@ -37,7 +38,7 @@ export default (state = INITIAL_STATE, action) => {
 		case FETCH_FIVE:
 			return { ...state, lastFive: action.payload.five, gameKey: action.payload.gameKey, opponent: action.payload.opponent }
 		case RESET_GAME_KEY:
-			return { ...state, gameKey: null }
+			return { ...state, gameKey: null, chosenQuestionArr: [] }
 		default:
 			return state;
 		}
