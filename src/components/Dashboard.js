@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
-import { Dimensions, Text, View, ScrollView, FlatList, RefreshControl
+import { 
+	Dimensions,
+	Text,
+	View,
+	ScrollView,
+	FlatList,
+	RefreshControl
  } from 'react-native';
+import { Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { Avatar, Button, Card, List, ListItem } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -8,6 +15,7 @@ import firebase from 'firebase';
 import _ from 'lodash';
 
 import * as actions from '../actions';
+import registerForNotifications from '../../services/push_notifications'
 
 class Dashboard extends Component {
 
@@ -30,6 +38,21 @@ class Dashboard extends Component {
 		}, 1000);
 	}
 
+	// componentDidMount() {
+	// 	registerForNotifications();
+	// 	Notifications.addListener((notification) => {
+	// 		const { data: { text }, origin } = notification;
+	// 		if (origin === 'received' && text) {
+	// 			Alert.alert(
+	// 				'New Push Notification',
+	// 				text,
+	// 				[{ text: 'Ok' }]
+	// 			)
+	// 		}
+	// 	})
+	// }
+	
+	
 	_renderGame = (game, status, opponent) => {
 		const { uid } = this.props.login.user
 		this.props.fetchScore(game, uid)

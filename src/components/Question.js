@@ -4,14 +4,17 @@ import {
 	StyleSheet,
 	Text,
 	View,
+	FlatList,
 	ScrollView,
 	TextInput,
+	Dimensions
 } from 'react-native';
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import firebase from 'firebase';
 
 import * as actions from '../actions';
 
@@ -39,33 +42,111 @@ class Question extends Component {
 		}
 	}
 
+	_checkUsedQuestion = (id, gameKey) => {
+		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+			if (snap.numChildren() >= 3) {
+				console.log('more than 3')
+				Actions.question({ category: id })
+			}
+			else {
+				firebase.database().ref(`questions/${id}`).once('value', snap => {
+					const children = snap.numChildren();
+					const num = Math.floor(Math.random() * children) + 1;
+					firebase.database().ref(`usedQuestions/${gameKey}`).once('value', snap => {
+						var question = snap.child(`${id}${num}`).exists();
+						if (question) {
+							return this._checkUsedQuestion(id, gameKey);
+						}
+						else {
+							firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+								var choice = snap.child(`${id}${num}`).exists();
+								if (choice) {
+									return this._checkUsedQuestion(id, gameKey);
+								}
+								else {
+									firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+									this.props.fetchQuestion(id, num);
+									Actions.refresh()
+								}
+							})
+						}
+					})
+				})
+			}
+		})
+	}
+
 	renderQuestionButton = () => {
-		const { gameKey } = this.props.game;
-		if (true) {
+		const { gameKey, chosenQuestionArr } = this.props.game;
+		if (chosenQuestionArr.length < 3) {
 			return (
 				<Button
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
-					onPress={() => {this.props.fetchQuestion(this.props.category, gameKey)}}
+					onPress={() => { this._checkUsedQuestion(this.props.category, gameKey)}}
 				/>
 			)
 		} else {
 			return (
-				<Text
+				<Button
+					title={'ONLY 3 QUESTIONS PER ROUND'}
 					rounded
 					backgroundColor={'lightgray'}
-				>ONLY 3 QUESTIONS PER ROUND</Text>
+				/>
 			)
 		}
 	}
 
-	render() {
-		const { option1, option2, option3, option4 } = this.props.game.selectedQuestion.choices
-		const { content } = this.props.game.selectedQuestion
-		const { score } = this.props.game
+	renderCard = (item) => {
+		console.log(item)
+		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
-		const { opponent } = this.props.game
+		return (
+				<ScrollView
+					style={styles.card}
+					showsVerticalScrollIndicator={false}
+				>
+					<View style={styles.question}>
+						<Text style={{ fontSize: 30 }}>{item.content}</Text>
+					</View>
+					<View style={styles.user}>
+						<Badge
+							value={'Your answer is...'}
+							textStyle={{ color: '#FFF', fontSize: 20 }}
+							containerStyle={{ backgroundColor: '#F5D86B' }}
+						/>
+					</View>
+					<View style={styles.options}>
+						<Button
+							title={item.choices.option1}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(1) }}
+						/>
+						<Button
+							title={item.choices.option2}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(2) }}
+						/>
+						<Button
+							title={item.choices.option3}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(3) }}
+						/>
+						<Button
+							title={item.choices.option4}
+							buttonStyle={styles.option}
+							onPress={() => { this.select(4) }}
+						/>
+					</View>
+				</ScrollView>
+		)
+	}
+
+	render() {
+		const { score, opponent } = this.props.game
+		const { uid } = this.props.user
+		const data = this.props.game.chosenQuestionArr;
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -80,45 +161,18 @@ class Question extends Component {
 						containerStyle={styles.badge}
 					/>
 				</View>
-				<ScrollView
-					style={styles.card}
-					showsVerticalScrollIndicator={false}
-				>
-					<View style={styles.header}>
-						<Text style={{ fontSize: 30 }}>{content}</Text>
-					</View>
-					<View style={styles.user}>
-						<Badge
-							value={'Your answer is...'}
-							textStyle={{ color: '#FFF', fontSize: 20 }}
-							containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
-					</View>
-					<View style={styles.options}>
-						<Button
-							title={this.props.game.selectedQuestion.choices.option1}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(1) }}
-						/>
-						<Button
-							title={this.props.game.selectedQuestion.choices.option2}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(2) }}
-						/>
-						<Button
-							title={this.props.game.selectedQuestion.choices.option3}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(3) }}
-						/>
-						<Button
-							title={this.props.game.selectedQuestion.choices.option4}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(4) }}
-						/>
-					</View>
-				</ScrollView>
+				<FlatList
+					horizontal
+					pagingEnabled={true}
+					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
+					keyExtractor={(item, index) => item.questionNumber}
+					initialScrollIndex={data.length - 1}
+					showsHorizontalScrollIndicator={false}
+					data={data}
+					renderItem={({ item }) => this.renderCard(item)}
+				/>
 				<View>
-					{this.props.game.gameKey ? this.renderQuestionButton() : null }
+					{this.props.game.gameKey ? this.renderQuestionButton() : null}
 				</View>
 				<Chat style={styles.chat} />
 			</View>
@@ -126,21 +180,20 @@ class Question extends Component {
 	}
 }
 
+const { height, width } = Dimensions.get('window');
 const styles = StyleSheet.create({
 	//global
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		backgroundColor: '#DFE2E7',
-		paddingTop: 30
+		backgroundColor: '#DFE2E7'
 	},
 	//header
 	counter: {
 		height: 50,
 		justifyContent: 'space-between',
+		alignItems: 'center',
 		paddingLeft: 30,
 		paddingRight: 30,
-		alignItems: 'center',
 		backgroundColor: '#83D0CD',
 		flexDirection: 'row'
 	},
@@ -149,18 +202,20 @@ const styles = StyleSheet.create({
 	},
 	//card
 	card: {
-		flex: 6,
+		flex: 1,
+		maxWidth: (width * .90),
+		margin: (width * .05),
 		backgroundColor: '#0D658D',
-		margin: 30,
-		marginBottom: 10,
 		padding: 20,
 		borderRadius: 20
 	},
-	header: {
+	question: {
+		marginBottom: 10,
 		flex: 2,
 		alignItems: 'center'
 	},
 	user: {
+		marginBottom: 10,
 		justifyContent: 'center'
 	},
 	options: {
@@ -196,7 +251,6 @@ const styles = StyleSheet.create({
 	},
 	//footer - chat
 	chat: {
-		height: 50,
 		marginTop: 10,
 		backgroundColor: '#ADD8E6',
 	},
