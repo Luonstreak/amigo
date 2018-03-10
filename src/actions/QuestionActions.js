@@ -36,44 +36,18 @@ export const renderCard = (game, status, opponent) => {
 	}
 };
 
-export const fetchQuestion = (id, gameKey) => {
-	const idRef = firebase.database().ref(`questions/${id}`);
+export const fetchQuestion = (id, num) => {
+	console.log(id, num, 'in fetchQuestion');
 	return (dispatch) => {
-		idRef.once('value', async snap => {
-			const children = snap.numChildren()
-			const num = Math.floor(Math.random() * children) + 1
-			var functionWillRepeat = true;
-			// if (gameKey) {
-			// 	while (functionWillRepeat){
-			// 		console.log('runs functionWillRepeat :o')
-			// 		firebase.database().ref(`usedQuestions/${gameKey}/${id}${num}`).once('value', async snap => {
-			// 			let question = await snap.exists();
-			// 			console.log('usedQuestionSnap', snap.exists())
-			// 			console.log('inside usedQuestions')
-			// 			if (!question) {
-			// 				firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).once('value', async snap => {
-			// 					let question = await snap.exists();
-			// 					console.log('questionChoicesSnap', snap.exists())
-			// 					console.log('inside questionChoises')
-			// 					if (!question) {
-			// 						firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true)
-			// 						functionWillRepeat = false;
-			// 					}
-			// 				})
-			// 			}
-			// 		})
-			// 	}
-			// }
-			const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
-			await ref.once('value', snap => {
-				const obj = {
-					questionNumber: snap.key,
-					content: snap.val().content,
-					choices: snap.val().choices
-				}
-				dispatch({ type: QUESTION_CHOSEN, payload: obj })
-				Actions.question({category:id})
-			})
+		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
+		ref.once('value', async snap => {
+			const obj = {
+				questionNumber: snap.key,
+				content: snap.val().content,
+				choices: snap.val().choices
+			}
+			await dispatch({ type: QUESTION_CHOSEN, payload: obj })
+			Actions.question({ category: id })
 		})
 	}
 }
@@ -101,6 +75,8 @@ export const saveAnswer = (num, questionId, opponent, gameKey) => {
 				[currentUser.uid]: choice,
 				[opponent]: ""
 			})
+
+		firebase.database().ref(`questionChoices/${gameKey}`).remove()
 
 		firebase.database().ref(`usedQuestions/${gameKey}/${questionId}`).set(true)
 
