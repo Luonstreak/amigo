@@ -19,6 +19,7 @@ export const GAMES_FETCHED = "games_fetched";
 export const NEW_GAME = "new_game";
 export const FETCH_FIVE = "fetch_five";
 export const FETCH_SCORE = "fetch_score";
+export const FETCH_CHOSEN_QUESTIONS = "fetch_chosen_questions";
 export const RESET_GAME_KEY = 'reset_game_key';
 
 //GAME

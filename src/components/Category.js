@@ -29,7 +29,14 @@ class Category extends Component {
 
 	_keyExtractor = (item, index) => item.id;
 
-	_checkUsedQuestion = (id, gameKey) => {
+	_checkUsedQuestion = (identification, gameKey) => {
+		var id = identification;
+		if (id === 'r') {
+			var arr = ['a', 'b', 'c', 'd', 'e']
+			var randNum = Math.floor(Math.random() * arr.length);
+			id = arr[randNum]
+		}
+		const { uid } = this.props.user;
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
 			if (snap.numChildren() >= 3) {		
 				Actions.question({ category: id })
@@ -51,15 +58,24 @@ class Category extends Component {
 										return this._checkUsedQuestion(id, gameKey);
 									}
 									else {
-										firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
-										this.props.fetchQuestion(id, num);
+										// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+										this.props.fetchQuestion(id, num, gameKey);
 									}
 								})
 							}
 						})
 					}
 					else {
-						this.props.fetchQuestion(id, num);
+						const { selectedPlayer } = this.props.player
+						firebase.database().ref(`questionChoices/${uid}/${selectedPlayer}`).once('value', snap => {
+							if (snap.numChildren() >= 3) {
+								console.log('more than 3 in undefined')
+								Actions.question({ category: id })
+							}
+							else {
+								this.props.fetchQuestion(id, num, null, selectedPlayer);
+							}
+						})
 					}
 				})
 			}
@@ -142,7 +158,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { game: state.game, player: state.player }
+	return { game: state.game, player: state.player, user: state.login.user }
 }
 
 export default connect(mapStateToProps, actions)(Category)

@@ -20,21 +20,18 @@ import * as actions from '../actions';
 
 class Question extends Component {
 
-	select = (num) => {
-		const { questionNumber } = this.props.game.selectedQuestion
-		const opponent = this.props.player.selectedPlayer
-		const { gameKey } = this.props.game
-		const foe = this.props.game.opponent
-
+	select = (num, questionNumber) => {
+		const { selectedPlayer } = this.props.player
+		const { gameKey, opponent } = this.props.game
 		if (gameKey) {
-			this.props.saveAnswer(num, questionNumber, foe, gameKey)
+			this.props.saveAnswer(num, questionNumber, opponent, gameKey)
 		}
 		else {
-			this.props.creatingGame(num, questionNumber, opponent)
+			this.props.creatingGame(num, questionNumber, selectedPlayer)
 		}
 	}
 
-	_checkUsedQuestion = (id, gameKey) => {
+	_checkUsedQuestion = async (id, gameKey) => {
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
 			if (snap.numChildren() >= 3) {
 				Actions.question({ category: id })
@@ -55,9 +52,8 @@ class Question extends Component {
 									return this._checkUsedQuestion(id, gameKey);
 								}
 								else {
-									firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
-									this.props.fetchQuestion(id, num);
-									Actions.refresh()
+									// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+									this.props.fetchQuestion(id, num, gameKey);
 								}
 							})
 						}
@@ -75,7 +71,10 @@ class Question extends Component {
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
-					onPress={() => { this._checkUsedQuestion(this.props.category, gameKey)}}
+					onPress={() => { 
+						// this._checkUsedQuestion(this.props.category, gameKey)
+						Actions.categories()
+					}}
 				/>
 			)
 		} else {
@@ -111,22 +110,22 @@ class Question extends Component {
 						<Button
 							title={item.choices.option1}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(1) }}
+							onPress={() => { this.select(1, item.questionNumber) }}
 						/>
 						<Button
 							title={item.choices.option2}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(2) }}
+							onPress={() => { this.select(2, item.questionNumber) }}
 						/>
 						<Button
 							title={item.choices.option3}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(3) }}
+							onPress={() => { this.select(3, item.questionNumber) }}
 						/>
 						<Button
 							title={item.choices.option4}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(4) }}
+							onPress={() => { this.select(4, item.questionNumber) }}
 						/>
 					</View>
 				</ScrollView>
@@ -159,6 +158,7 @@ class Question extends Component {
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
 					data={data}
+					extraData={this.props.game.chosenQuestionArr}
 					renderItem={({ item }) => this.renderCard(item)}
 				/>
 				<View>
@@ -193,7 +193,11 @@ const styles = StyleSheet.create({
 	//card
 	card: {
 		flex: 1,
+<<<<<<< HEAD
 		width: (width * .9),
+=======
+		width: (width * .90),
+>>>>>>> f3fb956363a91b5a2235d39901f62448808ec171
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,

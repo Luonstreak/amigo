@@ -19,6 +19,38 @@ import * as actions from '../actions';
 
 class GuessResult extends Component {
 
+	renderAskBackButton = (prevQ, oxtQ) => {
+		console.log(prevQ)
+		if (!prevQ || !oxtQ) {
+			return (
+				<Button
+					title={'ASK BACK'}
+					buttonStyle={styles.choose_button}
+					onPress={() => { this.helperFunction(prevQ) }}
+				/>
+			)
+		}
+		else if (prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
+			console.log(prevQ.value.questionNumber, oxtQ.value.questionNumber)
+			return (
+				<Button
+				title={'ASK BACK'}
+				buttonStyle={styles.choose_button}
+				onPress={() => { this.helperFunction(prevQ) }}
+				/>
+			)
+		}
+	}
+
+	helperFunction = (data) => {
+		console.log(data)
+		const { gameKey } = this.props.game
+		var key = data.value.questionNumber
+		var id = key.charAt(0)
+		var num = key.charAt(1)
+		this.props.fetchQuestion(id, num, gameKey);
+	}
+
 	renderColor = (userAnswer, opponentAnswer, option) => {
 		if (userAnswer === opponentAnswer) {
 			if (option === userAnswer) { return 'mediumseagreen' }
@@ -79,6 +111,7 @@ class GuessResult extends Component {
 			)
 		}
 
+
 	render() {
 		const data = this.props.lastFive;
 		const { score } = this.props.game
@@ -109,18 +142,14 @@ class GuessResult extends Component {
 					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 				/>
 				<View style={styles.chooseCard}>
-					<Button
-						title={'ASK BACK'}
-						buttonStyle={styles.choose_button}
-						// onPress={() => { Actions.dashboard() }}
-					/>
+					{this.renderAskBackButton(data[data.length - 1], data[data.length - 2])}
 					<Button
 						title={'NEW QUESTION'}
 						buttonStyle={styles.choose_button}
 						onPress={() => { Actions.categories() }}
 					/>
 				</View>
-				<Chat style={styles.chat} />
+				{/* <Chat style={styles.chat} /> */}
 			</View>
 		)
 	}
