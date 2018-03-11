@@ -20,8 +20,18 @@ import * as actions from '../actions';
 class GuessResult extends Component {
 
 	renderAskBackButton = (prevQ, oxtQ) => {
-		console.log(prevQ.value.questionNumber, oxtQ.value.questionNumber)
-		if (prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
+		console.log(prevQ)
+		if (!prevQ || !oxtQ) {
+			return (
+				<Button
+					title={'ASK BACK'}
+					buttonStyle={styles.choose_button}
+					onPress={() => { this.helperFunction(prevQ) }}
+				/>
+			)
+		}
+		else if (prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
+			console.log(prevQ.value.questionNumber, oxtQ.value.questionNumber)
 			return (
 				<Button
 				title={'ASK BACK'}

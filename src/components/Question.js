@@ -20,17 +20,14 @@ import * as actions from '../actions';
 
 class Question extends Component {
 
-	select = (num) => {
-		const { questionNumber } = this.props.game.selectedQuestion
-		const opponent = this.props.player.selectedPlayer
-		const { gameKey } = this.props.game
-		const foe = this.props.game.opponent
-
+	select = (num, questionNumber) => {
+		const { selectedPlayer } = this.props.player
+		const { gameKey, opponent } = this.props.game
 		if (gameKey) {
-			this.props.saveAnswer(num, questionNumber, foe, gameKey)
+			this.props.saveAnswer(num, questionNumber, opponent, gameKey)
 		}
 		else {
-			this.props.creatingGame(num, questionNumber, opponent)
+			this.props.creatingGame(num, questionNumber, selectedPlayer)
 		}
 	}
 
@@ -75,7 +72,10 @@ class Question extends Component {
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
-					onPress={() => { this._checkUsedQuestion(this.props.category, gameKey)}}
+					onPress={() => { 
+						// this._checkUsedQuestion(this.props.category, gameKey)
+						Actions.categories()
+					}}
 				/>
 			)
 		} else {
@@ -111,22 +111,22 @@ class Question extends Component {
 						<Button
 							title={item.choices.option1}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(1) }}
+							onPress={() => { this.select(1, item.questionNumber) }}
 						/>
 						<Button
 							title={item.choices.option2}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(2) }}
+							onPress={() => { this.select(2, item.questionNumber) }}
 						/>
 						<Button
 							title={item.choices.option3}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(3) }}
+							onPress={() => { this.select(3, item.questionNumber) }}
 						/>
 						<Button
 							title={item.choices.option4}
 							buttonStyle={styles.option}
-							onPress={() => { this.select(4) }}
+							onPress={() => { this.select(4, item.questionNumber) }}
 						/>
 					</View>
 				</ScrollView>

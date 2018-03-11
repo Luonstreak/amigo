@@ -13,7 +13,6 @@ import { Actions } from 'react-native-router-flux';
 
 
 const INITIAL_STATE = {
-	selectedQuestion: null,
 	lastFive: null,
 	gameKey: null,
 	opponent: null,
@@ -25,7 +24,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case QUESTION_CHOSEN:
-			return { ...state, selectedQuestion: action.payload, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
+			return { ...state, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
 		case FETCH_CHOSEN_QUESTIONS:
 			return { ...state, chosenQuestionArr: action.payload }
 		case GAME_CREATED:

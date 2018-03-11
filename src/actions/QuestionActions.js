@@ -39,7 +39,6 @@ export const renderCard = (game, status, opponent) => {
 
 export const fetchQuestion = (id, num, gameKey, opponent) => {
 	const { currentUser } = firebase.auth()
-	console.log(id, num, 'in fetchQuestion');
 	return (dispatch) => {
 		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
 		ref.once('value', async snap => {
@@ -49,7 +48,6 @@ export const fetchQuestion = (id, num, gameKey, opponent) => {
 				choices: snap.val().choices
 			}
 			if (!gameKey) {
-				console.log(opponent)
 				firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
 					questionNumber: snap.key,
 					content: snap.val().content,
@@ -127,6 +125,7 @@ export const creatingGame = (num, questionId, opponent) => {
 		pushId = firebase.database().ref('games').push()
 		const key = pushId.getKey()
 		firebase.database().ref(`games/${key}`).push({
+			questionNumber: questionId,
 			content: content,
 			choices: {
 				option1: option1,
