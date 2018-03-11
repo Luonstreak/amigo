@@ -14,7 +14,13 @@ export const fetchPlayers = () => {
 	}
 }
 
-export const playerSelect = (player) => {
+export const playerSelect = (player, uid) => {
+	const ref = firebase.database().ref(`questionChoices/${uid}/${player}`);
+	ref.once('value', snap => {
+		if (snap.val() !== null) {
+			ref.remove();
+		}
+	})
 	return (dispatch) => {
 		dispatch({
 			type: PLAYER_SELECTED,

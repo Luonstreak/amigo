@@ -54,9 +54,9 @@ class Dashboard extends Component {
 	
 	
 	_renderGame = (game, status, opponent) => {
-		const { uid } = this.props.login.user
-		this.props.fetchScore(game, uid)
+		this.props.fetchScore(game)
 		this.props.renderCard(game, status, opponent)
+		this.props.fetchChosenQuestions(game)
 	}
 
 	render() {

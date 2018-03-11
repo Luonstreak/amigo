@@ -6,7 +6,8 @@ import {
 	RESET_GAME_KEY, 
 	ADDED_ANSWER,
 	GOT_RESULT,
-	STATUS_UPDATE 
+	STATUS_UPDATE,
+	FETCH_CHOSEN_QUESTIONS 
 } from '../actions/types';
 import { Actions } from 'react-native-router-flux';
 
@@ -25,6 +26,8 @@ export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case QUESTION_CHOSEN:
 			return { ...state, selectedQuestion: action.payload, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
+		case FETCH_CHOSEN_QUESTIONS:
+			return { ...state, chosenQuestionArr: action.payload }
 		case GAME_CREATED:
 			return state
 		case ADDED_ANSWER:

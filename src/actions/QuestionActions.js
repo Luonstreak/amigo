@@ -6,7 +6,8 @@ import {
 	RESET_GAME_KEY, 
 	ADDED_ANSWER, 
 	GOT_RESULT,
-	STATUS_UPDATE 
+	STATUS_UPDATE,
+	FETCH_CHOSEN_QUESTIONS 
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
@@ -36,7 +37,8 @@ export const renderCard = (game, status, opponent) => {
 	}
 };
 
-export const fetchQuestion = (id, num) => {
+export const fetchQuestion = (id, num, gameKey, opponent) => {
+	const { currentUser } = firebase.auth()
 	console.log(id, num, 'in fetchQuestion');
 	return (dispatch) => {
 		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
@@ -45,6 +47,20 @@ export const fetchQuestion = (id, num) => {
 				questionNumber: snap.key,
 				content: snap.val().content,
 				choices: snap.val().choices
+			}
+			if (!gameKey) {
+				console.log(opponent)
+				firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
+					questionNumber: snap.key,
+					content: snap.val().content,
+					choices: snap.val().choices
+				});
+			} else {
+				firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set({
+					questionNumber: snap.key,
+					content: snap.val().content,
+					choices: snap.val().choices
+				});
 			}
 			await dispatch({ type: QUESTION_CHOSEN, payload: obj })
 			Actions.question({ category: id })
@@ -65,25 +81,23 @@ export const saveAnswer = (num, questionId, opponent, gameKey) => {
 		const content = snap.val().content
 
 		pushId = firebase.database().ref(`games/${gameKey}`).push({
-				content: content,
-				choices: {
-					option1: option1,
-					option2: option2,
-					option3: option3,
-					option4: option4
-				},
-				[currentUser.uid]: choice,
-				[opponent]: ""
-			})
+			questionNumber: questionId,
+			content: content,
+			choices: {
+				option1: option1,
+				option2: option2,
+				option3: option3,
+				option4: option4
+			},
+			[currentUser.uid]: choice,
+			[opponent]: ""
+		})
 
 		firebase.database().ref(`questionChoices/${gameKey}`).remove()
-
 		firebase.database().ref(`usedQuestions/${gameKey}/${questionId}`).set(true)
-
 		firebase.database().ref(`users/${currentUser.uid}/games/${gameKey}`).update({
 			status: 'waiting'
 		})
-
 		firebase.database().ref(`users/${opponent}/games/${gameKey}`).update({
 			status: 'result'
 		})
@@ -128,7 +142,7 @@ export const creatingGame = (num, questionId, opponent) => {
 			[currentUser.uid]: 0,
 			[opponent]: 0
 		})
-			
+		firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}`).remove()
 		firebase.database().ref(`usedQuestions/${key}/${questionId}`).set(true)
 
 		firebase.database().ref(`users/${currentUser.uid}/games/${key}`).set({
@@ -145,7 +159,6 @@ export const creatingGame = (num, questionId, opponent) => {
 
 	return (dispatch) => {
 		dispatch({ type: GAME_CREATED })
-
 		Actions.dashboard()
 	}
 }
@@ -226,6 +239,22 @@ export const fetchScore = (gameKey, uid) => {
 				type: FETCH_SCORE,
 				payload: snap.val()
 			})
+		})
+	}
+}
+export const fetchChosenQuestions = (gameKey) => {
+	const ref = firebase.database().ref(`questionChoices/${gameKey}`)
+	return (dispatch) => {
+	ref.once('value', async snap => {
+		// var snap = snap.exists()
+		if (snap.val() !== null) {
+			var snapVal = snap.val()
+			var arr = Object.values(snapVal)
+				await dispatch({
+					type: FETCH_CHOSEN_QUESTIONS,
+					payload: arr
+				})
+			}
 		})
 	}
 }

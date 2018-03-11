@@ -34,11 +34,11 @@ class Question extends Component {
 		}
 	}
 
-	_checkUsedQuestion = (id, gameKey) => {
+	_checkUsedQuestion = async (id, gameKey) => {
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
 			if (snap.numChildren() >= 3) {
 				console.log('more than 3')
-				Actions.question({ category: id })
+				// Actions.question({ category: id })
 			}
 			else {
 				firebase.database().ref(`questions/${id}`).once('value', snap => {
@@ -56,9 +56,8 @@ class Question extends Component {
 									return this._checkUsedQuestion(id, gameKey);
 								}
 								else {
-									firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
-									this.props.fetchQuestion(id, num);
-									Actions.refresh()
+									// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+									this.props.fetchQuestion(id, num, gameKey);
 								}
 							})
 						}
@@ -91,7 +90,6 @@ class Question extends Component {
 	}
 
 	renderCard = (item) => {
-		console.log(item)
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
 		return (
@@ -161,6 +159,7 @@ class Question extends Component {
 					initialScrollIndex={data.length - 1}
 					showsHorizontalScrollIndicator={false}
 					data={data}
+					extraData={this.props.game.chosenQuestionArr}
 					renderItem={({ item }) => this.renderCard(item)}
 				/>
 				<View>
@@ -195,7 +194,7 @@ const styles = StyleSheet.create({
 	//card
 	card: {
 		flex: 1,
-		maxWidth: (width * .90),
+		width: (width * .90),
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,
