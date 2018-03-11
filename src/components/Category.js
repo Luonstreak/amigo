@@ -32,7 +32,6 @@ class Category extends Component {
 	_checkUsedQuestion = (id, gameKey) => {
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
 			if (snap.numChildren() >= 3) {		
-				console.log('more than 3')
 				Actions.question({ category: id })
 			}
 			else {

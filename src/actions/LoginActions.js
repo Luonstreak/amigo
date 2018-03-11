@@ -40,17 +40,12 @@ export const gameFetch = () => {
 			var games = snap.val()
 			
 			// var arr = []
-			// console.log(arr)
 			// _.map(games, item => {
-			// 	console.log(item)
 			// 	arr.push({item})
 			// })
-			// console.log(arr)
 			// for(var i=0; i<arr.length; i++) {
 			// 	const gameRef  = firebase.database().ref(`games/${arr[i]}`);
-			// 	console.log(i)
 			// 	await gameRef.once('value', snap => {
-			// 		console.log(snap.val())
 			// 		finalArr.push(snap.val())
 			// 	})
 			// }

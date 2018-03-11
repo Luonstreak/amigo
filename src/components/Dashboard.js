@@ -15,12 +15,14 @@ import firebase from 'firebase';
 import _ from 'lodash';
 
 import * as actions from '../actions';
-import registerForNotifications from '../../services/push_notifications'
+import registerForNotifications from '../../services/push_notifications';
+import Chat from './Chat';
 
 class Dashboard extends Component {
 
 	state = {
-		refreshing: false
+		refreshing: false,
+		modal: -(height * 0.5)
 	}
 
 	componentWillMount() {
@@ -61,17 +63,18 @@ class Dashboard extends Component {
 
 	render() {
 		const { currentUser } = firebase.auth();
-		const { headerStyle, bodyStyle, titleStyle, listStyle } = styles;
-		const list1 = []
-		const list2 = []
-		const list3 = []
+		const { headerStyle, bodyStyle, titleStyle, listStyle, elementStyle } = styles;
+		const myTurnList = []
+		const theirTurnList = []
+		const pendingList = []
 		var list = _.forIn(this.props.login.games, (value, key) => {
 			value['gameKey'] = key;
+			value['opponent'] = currentUser.uid === value.player1 ? value.player2 : value.player1;
 			if (value.status === 'pending') {
-				list3.push(value)
+				pendingList.push(value)
 			} else if (value.status === 'waiting') {
-				list2.push(value)
-			} else { list1.push(value) }
+				theirTurnList.push(value)
+			} else { myTurnList.push(value) }
 		})
 		return (
 			<View style={{ flex: 1, marginTop: 20 }}>
@@ -99,78 +102,108 @@ class Dashboard extends Component {
 							tintColor={'#FFC300'}
 						/>
 					}>
-					{/* YOUR TURN */}
-					<Text style={[titleStyle, { backgroundColor: '#FFC300' }]}>Your Turn</Text>
-					<List containerStyle={listStyle}>
-						{list1.map((l, i) => (
-							<ListItem
-								roundAvatar
-								hideChevron
-								avatar={{ uri: l.avatar_url }}
-								key={i}
-								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
-								titleStyle={{ marginLeft: 20, color: '#FFC300'}}
-								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
-								badge={{ element: 
-									<Button 
-										rounded
-										backgroundColor={'#FFC300'}
-										title={'PLAY'}
-										buttonStyle={{ padding: 5 }}
-										onPress={() => this._renderGame(l.gameKey, l.status, l.player1 !== currentUser.uid ? l.player1 : l.player2)}
-									/>
-								}}
-								/>
-							))}
-					</List>
 					{/* MY TURN */}
+					<Text style={[titleStyle, { backgroundColor: '#FFC300' }]}>Your Turn</Text>
+					<FlatList
+						data={myTurnList}
+						containerStyle={listStyle}
+						keyExtractor={(item, index) => index}
+						renderItem={({ item, index }) =>
+							<View
+								style={elementStyle}
+							>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.avatar_url }}
+									containerStyle={{ marginRight: 20 }}
+								/>
+								<Text
+									style={{ flex: 1, fontSize: 20, color: '#FFC300' }}
+									onPress={(item) => {
+										this.setState({ modal: width * 0.05 })
+										setTimeout(() => {
+											this.setState({ modal: -(height * 0.5) })
+										}, 2000);
+									}}
+								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								<Button
+									rounded
+									backgroundColor={'#FFC300'}
+									title={'PLAY'}
+									buttonStyle={{ padding: 5, marginRight: -15 }}
+									onPress={() => this._renderGame(item.gameKey, item.status)}
+								/>
+							</View>
+						}
+					/>
+					{/* THEIR TURN */}
 					<Text style={[titleStyle, { backgroundColor: '#FA3C4C' }]}>Their Turn</Text>
-					<List containerStyle={listStyle}>
-						{list2.map((l, i) => (
-							<ListItem
-								roundAvatar
-								hideChevron
-								avatar={{ uri: l.avatar_url }}
-								key={i}
-								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
-								titleStyle={{ marginLeft: 20, color: '#FA3C4C'}}
-								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
-								badge={{
-									element:
-										<Button
-											rounded
-											backgroundColor={'#FA3C4C'}
-											title={'NUDGE'}
-											buttonStyle={{ padding: 5 }}
-											onPress={() => this._renderGame(l.gameKey, l.status)}
-										/>
-								}}
-							/>
-						))}
-					</List>
+					<FlatList
+						data={theirTurnList}
+						containerStyle={listStyle}
+						keyExtractor={(item, index) => index}
+						renderItem={({ item, index }) =>
+							<View
+								style={elementStyle}
+							>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.avatar_url }}
+									containerStyle={{ marginRight: 20 }}
+								/>
+								<Text
+									style={{ flex: 1, fontSize: 20, color: '#FA3C4C' }}
+									onPress={() => {
+										this.setState({ modal: width * 0.05 })
+										setTimeout(() => {
+											this.setState({ modal: -(height * 0.5) })
+										}, 2000);
+									}}
+								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								<Button
+									rounded
+									backgroundColor={'#FA3C4C'}
+									title={'NUDGE'}
+									buttonStyle={{ padding: 5, marginRight: -15 }}
+									onPress={() => alert('you nudged you friend!')}
+								/>
+							</View>
+						}
+					/>
 					{/* PENDING */}
 					<Text style={[titleStyle, { backgroundColor: '#44BEC7' }]}>Pending</Text>
-					<List containerStyle={listStyle}>
-						{list3.map((l, i) => (
-							<ListItem
-								roundAvatar
-								hideChevron
-								avatar={{ uri: l.avatar_url }}
-								key={i}
-								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
-								titleStyle={{ marginLeft: 20, color: '#44BEC7'}}
-								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
-							/>
-						))}
-					</List>
-					
-
+					<FlatList
+						data={pendingList}
+						containerStyle={listStyle}
+						keyExtractor={(item, index) => index}
+						renderItem={({ item, index }) => 
+							<View
+							style={elementStyle}
+							>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.avatar_url }}
+									containerStyle={{ marginRight: 20 }}
+								/>
+								<Text
+									style={{ flex: 1, fontSize: 20, color: '#44BEC7' }}
+								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+							</View>
+						}
+					/>
 				</ScrollView>
+				<View style={{ position: 'absolute', top: this.state.modal}}>
+					<Chat />
+				</View>
 			</View>
 		);
 	}
 }
 
+const { height, width } = Dimensions.get('window');
 const styles = {
 	//header
 	headerStyle: {
@@ -183,16 +216,26 @@ const styles = {
 	//body
 	titleStyle: {
 		fontWeight: 'bold',
+		fontSize: 18,
 		textAlign: 'center',
 		color: '#FFF',
-		padding: 2.5
+		padding: 5
 	},
 	listStyle: {
 		marginTop: 0,
 		marginLeft: 0,
 		marginRight: 0,
 		borderTopWidth: 0
-
+	},
+	elementStyle: {
+		width: width,
+		flexDirection: 'row',
+		alignItems: 'center',
+		padding: 10,
+		paddingLeft: 20,
+		paddingRight: 20,
+		borderBottomWidth: 1,
+		borderBottomColor: 'orange'
 	}
 }
 

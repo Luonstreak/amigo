@@ -15,8 +15,7 @@ export const renderCard = (game, status, opponent) => {
 	const ref = firebase.database().ref(`games/${game}`);
 	return (dispatch) => {
 		ref.limitToLast(5).once('value', async snap => {
-			const obj = { five: snap.val(), gameKey: game, opponent: opponent }
-	
+			const obj = { five: snap.val(), gameKey: game, opponent }
 			await dispatch({ type: FETCH_FIVE, payload: obj })
 			if (status == 'result') {
 				firebase.database().ref(`result/${game}`).once('value', async snap => {
@@ -37,7 +36,6 @@ export const renderCard = (game, status, opponent) => {
 };
 
 export const fetchQuestion = (id, num) => {
-	console.log(id, num, 'in fetchQuestion');
 	return (dispatch) => {
 		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
 		ref.once('value', async snap => {

@@ -20,10 +20,6 @@ import * as actions from '../actions';
 
 class Guess extends Component {
 
-	state = {
-		chatHeight: 100
-	}
-
 	renderColor = (userAnswer, opponentAnswer, option) => {
 		if (userAnswer === opponentAnswer) {
 			if (option === userAnswer) { return 'mediumseagreen' }
@@ -37,8 +33,10 @@ class Guess extends Component {
 	}
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
+
 		const { gameKey, opponent, score } = this.props.game
-		const newScore = score ? score[uid] : 0
+		const newScore = score[uid] || 0
+		console.log('opponent', opponent, 'opponentAnswer', opponentAnswer)
 		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}
@@ -46,11 +44,12 @@ class Guess extends Component {
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game
 		const { uid } = this.props.user
-		var whos
+		const isLast = (index !== length - 1) ? true : false;
+		var who
 		if (length % 2 === 0) {
-			whos = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+			who = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
 		} else {
-			whos = index % 2 === 1 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+			who = index % 2 === 1 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
 		}
 
 		return (
@@ -68,12 +67,12 @@ class Guess extends Component {
 				</View>) : (
 				<View style={styles.user}>
 					<Badge
-						value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
+						value={item.value[uid] == item.value[opponent] ? `${who[0]} guessed right!` : `${who[0]} guessed wrong!`}
 						textStyle={{ color: item.value[uid] == item.value[opponent] ? 'mediumseagreen' : 'tomato', fontSize: 20 }}
 						containerStyle={{ backgroundColor: 'transparent' }}
 					/>
 					<Badge
-						value={whos[1] + ' answer was..'}
+						value={who[1] + ' answer was..'}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 					/>
@@ -81,23 +80,23 @@ class Guess extends Component {
 				<View style={styles.options}>
 					<Button
 						title={item.value.choices.option1}
-						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option1') } : null]}
-						onPress={() => { index == length - 1 ? this.select(1, item.key, item.value[opponent], item, uid) : null }}
+						buttonStyle={[styles.option, isLast ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option1') } : null]}
+						onPress={() => { isLast ? null : this.select(1, item.key, item.value[opponent], item, uid) }}
 					/>
 					<Button
 						title={item.value.choices.option2}
-						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option2') } : null]}
-						onPress={() => { index == length - 1 ? this.select(2, item.key, item.value[opponent], item, uid) : null }}
+						buttonStyle={[styles.option, isLast ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option2') } : null]}
+						onPress={() => { isLast ? null : this.select(2, item.key, item.value[opponent], item, uid) }}
 					/>
 					<Button
 						title={item.value.choices.option3}
-						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option3') } : null]}
-						onPress={() => { index == length - 1 ? this.select(3, item.key, item.value[opponent], item, uid) : null }}
+						buttonStyle={[styles.option, isLast ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option3') } : null]}
+						onPress={() => { isLast ? null : this.select(3, item.key, item.value[opponent], item, uid) }}
 					/>
 					<Button
 						title={item.value.choices.option4}
-						buttonStyle={[styles.option, index !== length - 1 ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option4') } : null]}
-						onPress={() => { index == length - 1 ? this.select(4, item.key, item.value[opponent], item, uid) : null }}
+						buttonStyle={[styles.option, isLast ? { backgroundColor: this.renderColor(item.value[uid], item.value[opponent], 'option4') } : null]}
+						onPress={() => { isLast ? null : this.select(4, item.key, item.value[opponent], item, uid) }}
 					// onPress={() => {
 					// 	this.setState({ chatHeight: this.state.chatHeight === 50 ? 100 : 50, chooseCardVisible: !this.state.chooseCardVisible })
 					// }}
@@ -115,12 +114,12 @@ class Guess extends Component {
 			<View style={styles.container}>
 				<View style={styles.counter}>
 					<Badge
-						value={score ? score[uid] : 0}
+						value={score[uid] || 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
 					<Badge
-						value={score ? score[opponent] : 0}
+						value={score[opponent] || 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>

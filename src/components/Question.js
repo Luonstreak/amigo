@@ -37,7 +37,6 @@ class Question extends Component {
 	_checkUsedQuestion = (id, gameKey) => {
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
 			if (snap.numChildren() >= 3) {
-				console.log('more than 3')
 				Actions.question({ category: id })
 			}
 			else {
@@ -91,7 +90,6 @@ class Question extends Component {
 	}
 
 	renderCard = (item) => {
-		console.log(item)
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
 		return (
@@ -166,7 +164,7 @@ class Question extends Component {
 				<View>
 					{this.props.game.gameKey ? this.renderQuestionButton() : null}
 				</View>
-				<Chat style={styles.chat} />
+				{this.props.game.gameKey ? <Chat style={styles.chat} /> : null}
 			</View>
 		)
 	}
@@ -195,7 +193,7 @@ const styles = StyleSheet.create({
 	//card
 	card: {
 		flex: 1,
-		maxWidth: (width * .90),
+		width: (width * .9),
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,

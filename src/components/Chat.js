@@ -17,16 +17,16 @@ import * as actions from '../actions';
 class Chat extends Component {
 	state = {
 		input: '',
-		bottomSpace: 10,
+		bottomSpace: width * 0.025,
 		messages: []
 	};
 	
 
 	componentDidMount() {
-		const ref = firebase.database().ref('chat').on('value', snapshot => {
-			const list = snapshot.val();
+		const { gameKey } = this.props.game
+		const ref = firebase.database().ref(`chat/${gameKey}`).on('value', snapshot => {
 			const arr = []
-			_.forEach(list, item => {
+			_.forEach(snapshot.val(), item => {
 				item['id'] = Math.floor(Math.random() * 1000000)
 				arr.unshift(item)
 			})
@@ -49,7 +49,7 @@ class Chat extends Component {
 
 	_keyboardDidHide = (e) => {
 		this.setState({
-			bottomSpace: 10
+			bottomSpace: width * 0.025
 		})
 	}
 	
@@ -58,15 +58,17 @@ class Chat extends Component {
 	}
 
 	_sendMessage = () => {
-		const username = this.props.username.username
+		const { username } = this.props.username
+		const { gameKey } = this.props.game
 		const msg = this.state.input
 		if (msg.length > 1) {
-			firebase.database().ref('chat').push({ username, msg })
+			firebase.database().ref(`chat/${gameKey}`).push({ username, msg })
 			this.setState({ input: '' })
 		}
 	}
 
 	render() {
+		const { username } = this.props.username
 		const { container, list, input, title, content } = styles;
 		return (
 			<View style={container}>
@@ -77,10 +79,20 @@ class Chat extends Component {
 					keyExtractor={(item, index) => item.id}
 					showsVerticalScrollIndicator={false}
 					renderItem={({ item }) => {
-						return <Text><Text style={title}>{item.username}: </Text><Text style={content}>{item.msg}</Text></Text>
+						return (
+							<Text>
+								<Text 
+									style={{
+										fontWeight: 'bold',
+										color: item.username === username ? '#0099FF' : 'dodgerblue'
+									}}
+								>{item.username === username ? 'you' : item.username }: </Text>
+								<Text style={content}>{item.msg}</Text>
+							</Text>
+						)
 					}}
 				/>
-				{/* <Text style={{ backgroundColor: 'transparent', height: 50 }}></Text> */}
+				<Text style={{ backgroundColor: 'transparent', height: 60 }}></Text>
 				<TextInput
 					style={[input, { bottom: this.state.bottomSpace}]}
 					value={this.state.input}
@@ -98,16 +110,23 @@ class Chat extends Component {
 const { height, width } = Dimensions.get('window');
 const styles = {
 	container: {
+		paddingTop: 10,
+		backgroundColor: '#83D0CD',
+		borderRadius: 20,
 		justifyContent: 'flex-end',
-		margin: width * 0.05
+		margin: width * 0.05,
+		marginTop: 0,
+		height: width * 0.40,
+		width: width * .9
 	},
 	list: {
+		marginLeft: width * 0.05,
 		alignItems: 'flex-start',
 	},
 	input: {
 		position: 'absolute',
-		left: 10,
-		width: Dimensions.get('window').width - 20,
+		left: width * 0.05,
+		width: width * 0.8,
 		color: '#1D8FE1',
 		backgroundColor: '#FFF',
 		fontSize: 15,
@@ -116,16 +135,12 @@ const styles = {
 		paddingLeft: 20,
 		borderRadius: 20
 	},
-	title: {
-		fontWeight: 'bold',
-		color: '#22E1FF'
-	},
 	content: {
-		color: '#C4C4C4'
+		color: '#666'
 	}
 }
 
 const mapStateToProps = state => {
-	return { username: state.username };
+	return { username: state.username, game: state.game };
 }
 export default connect(mapStateToProps, actions)(Chat);
