@@ -7,7 +7,8 @@ import {
 	ADDED_ANSWER, 
 	GOT_RESULT,
 	STATUS_UPDATE,
-	FETCH_CHOSEN_QUESTIONS 
+	FETCH_CHOSEN_QUESTIONS,
+	DECREASE_NUDGE_COUNT 
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
@@ -67,7 +68,7 @@ export const fetchQuestion = (id, num, gameKey, opponent) => {
 }
 
 
-export const saveAnswer = (num, questionId, opponent, gameKey) => {
+export const saveAnswer = (num, questionId, opponent, gameKey, username) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
 
@@ -89,6 +90,19 @@ export const saveAnswer = (num, questionId, opponent, gameKey) => {
 			},
 			[currentUser.uid]: choice,
 			[opponent]: ""
+		})
+
+		const tokenRef = firebase.database().ref(`users/${opponent}/token`);
+		tokenRef.once('value', snap => {
+			var token = snap.val();
+			if (token) {
+				var message = `${username} asked you: ${content}`
+				firebase.database().ref('yourTurn').push({
+					from: currentUser.uid,
+					expoToken: token,
+					body: message
+				})
+			}
 		})
 
 		firebase.database().ref(`questionChoices/${gameKey}`).remove()
@@ -140,6 +154,10 @@ export const creatingGame = (num, questionId, opponent) => {
 		firebase.database().ref(`scores/${key}`).set({
 			[currentUser.uid]: 0,
 			[opponent]: 0
+		})
+		firebase.database().ref(`nudges/${key}`).set({
+			[currentUser.uid]: 5,
+			[opponent]: 5
 		})
 		firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}`).remove()
 		firebase.database().ref(`usedQuestions/${key}/${questionId}`).set(true)
@@ -257,3 +275,15 @@ export const fetchChosenQuestions = (gameKey) => {
 		})
 	}
 }
+
+export const decreaseNudgeCount = (key, uid, count) => {
+	var newNudgeCount = count - 1
+	firebase.database().ref(`nudges/${key}`).update({
+		[uid]: newNudgeCount
+	});
+	return async (dispatch) => {
+		await dispatch({
+			type: DECREASE_NUDGE_COUNT
+		})
+	}
+} 

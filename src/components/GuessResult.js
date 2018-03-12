@@ -20,35 +20,15 @@ import * as actions from '../actions';
 class GuessResult extends Component {
 
 	renderAskBackButton = (prevQ, oxtQ) => {
-		console.log(prevQ)
-		if (!prevQ || !oxtQ) {
+		if (!oxtQ || prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
 			return (
 				<Button
 					title={'ASK BACK'}
 					buttonStyle={styles.choose_button}
-					onPress={() => { this.helperFunction(prevQ) }}
+					onPress={() => { Actions.askBack({ prevQ }) }}
 				/>
 			)
 		}
-		else if (prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
-			console.log(prevQ.value.questionNumber, oxtQ.value.questionNumber)
-			return (
-				<Button
-				title={'ASK BACK'}
-				buttonStyle={styles.choose_button}
-				onPress={() => { this.helperFunction(prevQ) }}
-				/>
-			)
-		}
-	}
-
-	helperFunction = (data) => {
-		console.log(data)
-		const { gameKey } = this.props.game
-		var key = data.value.questionNumber
-		var id = key.charAt(0)
-		var num = key.charAt(1)
-		this.props.fetchQuestion(id, num, gameKey);
 	}
 
 	renderColor = (userAnswer, opponentAnswer, option) => {
@@ -66,7 +46,7 @@ class GuessResult extends Component {
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game;
 		const { uid } = this.props.user;
-		var whos
+		var whos;
 		if (length % 2 === 0) {
 			whos = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
 		} else {
@@ -79,12 +59,12 @@ class GuessResult extends Component {
 				</View>
 				<View style={styles.user}>
 					<Badge
-							value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
+						value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
 						textStyle={{ color: item.value[uid] == item.value[opponent] ? 'mediumseagreen' : 'tomato' , fontSize: 20 }}
 						containerStyle={{ backgroundColor: 'transparent' }}
 					/>
 					<Badge
-							value={whos[1] + ' answer was..'}
+						value={whos[1] + ' answer was..'}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 					/>

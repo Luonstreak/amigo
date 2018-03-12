@@ -7,7 +7,8 @@ import {
 	ADDED_ANSWER,
 	GOT_RESULT,
 	STATUS_UPDATE,
-	FETCH_CHOSEN_QUESTIONS 
+	FETCH_CHOSEN_QUESTIONS,
+	DECREASE_NUDGE_COUNT 
 } from '../actions/types';
 import { Actions } from 'react-native-router-flux';
 
@@ -28,6 +29,8 @@ export default (state = INITIAL_STATE, action) => {
 		case FETCH_CHOSEN_QUESTIONS:
 			return { ...state, chosenQuestionArr: action.payload }
 		case GAME_CREATED:
+			return state
+		case DECREASE_NUDGE_COUNT:
 			return state
 		case ADDED_ANSWER:
 			return { ...state, lastFive: action.payload }

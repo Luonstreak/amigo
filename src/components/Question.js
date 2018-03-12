@@ -23,46 +23,47 @@ class Question extends Component {
 	select = (num, questionNumber) => {
 		const { selectedPlayer } = this.props.player
 		const { gameKey, opponent } = this.props.game
+		const { username } = this.props.username
 		if (gameKey) {
-			this.props.saveAnswer(num, questionNumber, opponent, gameKey)
+			this.props.saveAnswer(num, questionNumber, opponent, gameKey, username)
 		}
 		else {
 			this.props.creatingGame(num, questionNumber, selectedPlayer)
 		}
 	}
 
-	_checkUsedQuestion = async (id, gameKey) => {
-		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
-			if (snap.numChildren() >= 3) {
-				console.log('more than 3')
-				// Actions.question({ category: id })
-			}
-			else {
-				firebase.database().ref(`questions/${id}`).once('value', snap => {
-					const children = snap.numChildren();
-					const num = Math.floor(Math.random() * children) + 1;
-					firebase.database().ref(`usedQuestions/${gameKey}`).once('value', snap => {
-						var question = snap.child(`${id}${num}`).exists();
-						if (question) {
-							return this._checkUsedQuestion(id, gameKey);
-						}
-						else {
-							firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
-								var choice = snap.child(`${id}${num}`).exists();
-								if (choice) {
-									return this._checkUsedQuestion(id, gameKey);
-								}
-								else {
-									// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
-									this.props.fetchQuestion(id, num, gameKey);
-								}
-							})
-						}
-					})
-				})
-			}
-		})
-	}
+	// _checkUsedQuestion = async (id, gameKey) => {
+	// 	firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+	// 		if (snap.numChildren() >= 3) {
+	// 			console.log('more than 3')
+	// 			// Actions.question({ category: id })
+	// 		}
+	// 		else {
+	// 			firebase.database().ref(`questions/${id}`).once('value', snap => {
+	// 				const children = snap.numChildren();
+	// 				const num = Math.floor(Math.random() * children) + 1;
+	// 				firebase.database().ref(`usedQuestions/${gameKey}`).once('value', snap => {
+	// 					var question = snap.child(`${id}${num}`).exists();
+	// 					if (question) {
+	// 						return this._checkUsedQuestion(id, gameKey);
+	// 					}
+	// 					else {
+	// 						firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+	// 							var choice = snap.child(`${id}${num}`).exists();
+	// 							if (choice) {
+	// 								return this._checkUsedQuestion(id, gameKey);
+	// 							}
+	// 							else {
+	// 								// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+	// 								this.props.fetchQuestion(id, num, gameKey);
+	// 							}
+	// 						})
+	// 					}
+	// 				})
+	// 			})
+	// 		}
+	// 	})
+	// }
 
 	renderQuestionButton = () => {
 		const { gameKey, chosenQuestionArr } = this.props.game;
@@ -92,44 +93,45 @@ class Question extends Component {
 	renderCard = (item) => {
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
+		console.log(item)
 		return (
-				<ScrollView
-					style={styles.card}
-					showsVerticalScrollIndicator={false}
-				>
-					<View style={styles.question}>
-						<Text style={{ fontSize: 30 }}>{item.content}</Text>
-					</View>
-					<View style={styles.user}>
-						<Badge
-							value={'Your answer is...'}
-							textStyle={{ color: '#FFF', fontSize: 20 }}
-							containerStyle={{ backgroundColor: '#F5D86B' }}
-						/>
-					</View>
-					<View style={styles.options}>
-						<Button
-							title={item.choices.option1}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(1, item.questionNumber) }}
-						/>
-						<Button
-							title={item.choices.option2}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(2, item.questionNumber) }}
-						/>
-						<Button
-							title={item.choices.option3}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(3, item.questionNumber) }}
-						/>
-						<Button
-							title={item.choices.option4}
-							buttonStyle={styles.option}
-							onPress={() => { this.select(4, item.questionNumber) }}
-						/>
-					</View>
-				</ScrollView>
+			<ScrollView
+				style={styles.card}
+				showsVerticalScrollIndicator={false}
+			>
+				<View style={styles.question}>
+					<Text style={{ fontSize: 30 }}>{item.content}</Text>
+				</View>
+				<View style={styles.user}>
+					<Badge
+						value={'Your answer is...'}
+						textStyle={{ color: '#FFF', fontSize: 20 }}
+						containerStyle={{ backgroundColor: '#F5D86B' }}
+					/>
+				</View>
+				<View style={styles.options}>
+					<Button
+						title={item.choices.option1}
+						buttonStyle={styles.option}
+						onPress={() => { this.select(1, item.questionNumber) }}
+					/>
+					<Button
+						title={item.choices.option2}
+						buttonStyle={styles.option}
+						onPress={() => { this.select(2, item.questionNumber) }}
+					/>
+					<Button
+						title={item.choices.option3}
+						buttonStyle={styles.option}
+						onPress={() => { this.select(3, item.questionNumber) }}
+					/>
+					<Button
+						title={item.choices.option4}
+						buttonStyle={styles.option}
+						onPress={() => { this.select(4, item.questionNumber) }}
+					/>
+				</View>
+			</ScrollView>
 		)
 	}
 
@@ -262,7 +264,9 @@ const mapStateToProps = state => {
 		game: state.game, 
 		player: state.player, 
 		lastFive: arr, 
-		user: state.login.user}
+		user: state.login.user,
+		username: state.username
+	}
 }
 
 export default connect(mapStateToProps, actions)(Question);
