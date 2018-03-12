@@ -49,6 +49,11 @@ const executeFbLogin = async dispatch => {
 }
 
 const loginSuccess = (dispatch, user) => {
+	console.log(user,'loginSuccess')
+	firebase.database().ref(`users/${user.uid}`).update({
+		username: user.displayName, 
+		photo: user.photoURL
+	})
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user

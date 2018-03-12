@@ -11,8 +11,11 @@ export const getUser = (data) => {
 			_.forEach(snapshot.val().games, async (value, key) => {
 				friends += 1
 				var opponent = value.player1 !== currentUser.uid ? value.player1 : value.player2;
-				await firebase.database().ref(`users/${opponent}/username`)
-					.on('value', usernameSnap => opponent = usernameSnap.val())
+				await firebase.database().ref(`users/${opponent}`)
+					.on('value', userSnap => {
+						opponent = userSnap.val().username
+						obj['photo'] = userSnap.val().photo
+					})
 				firebase.database().ref(`games/${key}`)
 				.on('value', rankSnap => list.push({ opponent, rank: rankSnap.numChildren()}))
 			})

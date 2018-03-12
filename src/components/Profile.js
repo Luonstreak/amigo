@@ -10,6 +10,7 @@ class Profile extends Component {
 	render() {
 		const { profileUser } = this.props.profile
 		const { headerStyle, titleStyle, listStyle, elementStyle} = styles;
+		console.log(profileUser)
 		return (
 			<View style={{ flex: 1 }}>
 				<View style={headerStyle}>
@@ -26,6 +27,7 @@ class Profile extends Component {
 						rounded
 						xlarge
 						containerStyle={{ margin: width * 0.025 }}
+						source={{uri: profileUser.photo}}
 					/>
 					<Text style={{ fontSize: 22 }}>{profileUser.username}</Text>
 					<Text style={{ fontSize: 18 }}>{profileUser.friends} FRIENDS</Text>

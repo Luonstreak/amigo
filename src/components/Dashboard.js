@@ -60,8 +60,8 @@ class Dashboard extends Component {
 
 	// PROFILE
 
-	_getProfile = (game) => {
-		this.props.getUser(game)
+	_getProfile = (userName) => {
+		this.props.getUser(userName)
 	}
 	
 	// GAME
@@ -73,8 +73,7 @@ class Dashboard extends Component {
 	}
 	_addNudge = (opponent, key) => {
 		console.log(opponent)
-		const { uid } = this.props.login.user
-		const { username } = this.props.username
+		const { uid, displayName } = this.props.login.user
 
 		const ref = firebase.database().ref(`nudges/${key}/${uid}`);
 		ref.once('value', snap => {
@@ -88,7 +87,7 @@ class Dashboard extends Component {
 					var token  = snap.val();
 					if (token) {
 						alert(`You have ${count - 1} nudge(s) left for this game.`)
-						var message = `${username} nudged you! Play them back!`
+						var message = `${displayName} nudged you! Play them back!`
 						await firebase.database().ref('nudge').push({
 							from: uid,
 							expoToken: token,
@@ -111,6 +110,7 @@ class Dashboard extends Component {
 		const list2 = []
 		const list3 = []
 		var list = _.forIn(this.props.login.games, (value, key) => {
+			console.log(value)
 			value['opponent'] = currentUser.uid === value.player1 ? value.player2 : value.player1;
 			value['gameKey'] = key;
 			if (value.status === 'pending') {
@@ -207,7 +207,7 @@ class Dashboard extends Component {
 									backgroundColor={'#FA3C4C'}
 									title={'NUDGE'}
 									buttonStyle={{ padding: 5 }}
-									onPress={() => this._addNudge(l.player1 !== currentUser.uid ? l.player1 : l.player2, l.gameKey)}
+									onPress={() => this._addNudge(item.player1 !== currentUser.uid ? item.player1 : item.player2, item.gameKey)}
 								/>
 							</View>
 						}
@@ -227,10 +227,10 @@ class Dashboard extends Component {
 									medium
 									source={{ uri: item.avatar_url }}
 									containerStyle={{ marginRight: 20 }}
+									onPress={() => this._getProfile(item.opponent)}
 								/>
 								<Text
 									style={{ flex: 1, fontSize: 20, color: '#44BEC7' }}
-									onPress={() => this._getProfile(item.opponent)}
 								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
 							</View>
 						}

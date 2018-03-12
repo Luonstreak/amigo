@@ -67,7 +67,7 @@ export const fetchQuestion = (id, num, gameKey, opponent) => {
 }
 
 
-export const saveAnswer = (num, questionId, opponent, gameKey, username) => {
+export const saveAnswer = (num, questionId, opponent, gameKey, displayName) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
 
@@ -95,7 +95,7 @@ export const saveAnswer = (num, questionId, opponent, gameKey, username) => {
 		tokenRef.once('value', snap => {
 			var token = snap.val();
 			if (token) {
-				var message = `${username} asked you: ${content}`
+				var message = `${displayName} asked you: ${content}`
 				firebase.database().ref('yourTurn').push({
 					from: currentUser.uid,
 					expoToken: token,
