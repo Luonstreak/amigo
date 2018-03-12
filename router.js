@@ -14,6 +14,7 @@ import Guess from './src/components/Guess';
 import GuessResult from './src/components/GuessResult';
 import Category from './src/components/Category';
 import Question from './src/components/Question';
+import Profile from './src/components/Profile';
 
 const RouterComponent = () => {
 	return (
@@ -34,6 +35,7 @@ const RouterComponent = () => {
 					<Scene key='result' component={Result} hideNavBar />
 					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.main()}} />
 					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => { Actions.main() }} />
+					<Scene key='profile' component={Profile} hideNavBar />
 				</Scene>
 			</Scene>
 		</Router>

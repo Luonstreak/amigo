@@ -29,3 +29,9 @@ export const ADDED_ANSWER = 'added_answer';
 export const GOT_RESULT = 'got_result';
 export const STATUS_UPDATE = 'status_update';
 
+//CHAT
+export const CHAT_VISIBLE = 'chat_visible';
+
+//PROFILE
+export const GET_USER = 'get_user';
+

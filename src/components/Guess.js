@@ -33,10 +33,8 @@ class Guess extends Component {
 	}
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
-
 		const { gameKey, opponent, score } = this.props.game
 		const newScore = score[uid] || 0
-		console.log('opponent', opponent, 'opponentAnswer', opponentAnswer)
 		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}

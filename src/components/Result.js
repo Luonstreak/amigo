@@ -87,7 +87,7 @@ class Result extends Component {
 					buttonStyle={{ justifyContent: 'center', width: width * 0.8, margin: width * 0.1 }}
 					onPress={() => this.props.changeStatus('guess', uid, gameKey)}
 				/>
-				<Chat style={styles.chat} />
+				<Chat />
 			</View>
 		)
 	}

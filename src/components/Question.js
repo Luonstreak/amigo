@@ -164,7 +164,7 @@ class Question extends Component {
 				<View>
 					{this.props.game.gameKey ? this.renderQuestionButton() : null}
 				</View>
-				{this.props.game.gameKey ? <Chat style={styles.chat} /> : null}
+				{this.props.game.gameKey ? <Chat /> : null}
 			</View>
 		)
 	}
@@ -193,11 +193,7 @@ const styles = StyleSheet.create({
 	//card
 	card: {
 		flex: 1,
-<<<<<<< HEAD
-		width: (width * .9),
-=======
 		width: (width * .90),
->>>>>>> f3fb956363a91b5a2235d39901f62448808ec171
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,
@@ -242,18 +238,7 @@ const styles = StyleSheet.create({
 		paddingRight: 10,
 		borderRadius: 10,
 		backgroundColor: '#0099FF'
-	},
-	//footer - chat
-	chat: {
-		marginTop: 10,
-		backgroundColor: '#ADD8E6',
-	},
-	input: {
-		backgroundColor: '#96EAD7',
-		margin: 10,
-		borderRadius: 10,
-		padding: 10
-	},
+	}
 });
 
 const mapStateToProps = state => {

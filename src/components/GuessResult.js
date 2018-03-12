@@ -20,7 +20,6 @@ import * as actions from '../actions';
 class GuessResult extends Component {
 
 	renderAskBackButton = (prevQ, oxtQ) => {
-		console.log(prevQ)
 		if (!prevQ || !oxtQ) {
 			return (
 				<Button
@@ -31,7 +30,6 @@ class GuessResult extends Component {
 			)
 		}
 		else if (prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
-			console.log(prevQ.value.questionNumber, oxtQ.value.questionNumber)
 			return (
 				<Button
 				title={'ASK BACK'}
@@ -43,7 +41,6 @@ class GuessResult extends Component {
 	}
 
 	helperFunction = (data) => {
-		console.log(data)
 		const { gameKey } = this.props.game
 		var key = data.value.questionNumber
 		var id = key.charAt(0)
@@ -149,7 +146,7 @@ class GuessResult extends Component {
 						onPress={() => { Actions.categories() }}
 					/>
 				</View>
-				{/* <Chat style={styles.chat} /> */}
+				<Chat />
 			</View>
 		)
 	}
