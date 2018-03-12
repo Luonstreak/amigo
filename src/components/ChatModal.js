@@ -22,7 +22,8 @@ class ChatModal extends Component {
 	
 
 	componentDidMount() {
-		const ref = firebase.database().ref(`chat/${this.props.auxKey}`).on('value', snapshot => {
+		const { auxKey } = this.props;
+		const ref = firebase.database().ref(`chat/${auxKey}`).on('value', snapshot => {
 			const arr = []
 			_.forEach(snapshot.val(), item => {
 				item['id'] = Math.floor(Math.random() * 1000000)
@@ -38,7 +39,7 @@ class ChatModal extends Component {
 
 	_sendMessage = () => {
 		const { username } = this.props.username
-		const { auxKey } = this.props.chat
+		const { auxKey } = this.props
 		const msg = this.state.input
 		if (msg.length > 1) {
 			firebase.database().ref(`chat/${auxKey}`).push({ username, msg })

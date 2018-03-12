@@ -6,9 +6,9 @@ import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
 
 class Profile extends Component {
-	
+		
 	render() {
-		const { user } = this.props.profile
+		const { profileUser } = this.props.profile
 		const { headerStyle, titleStyle, listStyle, elementStyle} = styles;
 		return (
 			<View style={{ flex: 1 }}>
@@ -27,14 +27,14 @@ class Profile extends Component {
 						xlarge
 						containerStyle={{ margin: width * 0.025 }}
 					/>
-					<Text style={{ fontSize: 22 }}>{user.username}</Text>
-					<Text style={{ fontSize: 18 }}>{0} FRIENDS</Text>
+					<Text style={{ fontSize: 22 }}>{profileUser.username}</Text>
+					<Text style={{ fontSize: 18 }}>{profileUser.friends} FRIENDS</Text>
 				</View>
 				{/* LIST */}
 				<ScrollView>
 					<Text style={titleStyle}>TOP 3 FRIENDOS</Text>
 					<FlatList
-						data={user.games}
+						data={profileUser.games}
 						keyExtractor={(item, index) => index}
 						renderItem={({ item }) => {
 							return (
@@ -57,9 +57,9 @@ class Profile extends Component {
 							)
 						}}
 					/>
-					<Text style={titleStyle}>EVERYONE ELSE</Text>
-					<FlatList
-						data={[]}
+					{/* <Text style={titleStyle}>EVERYONE ELSE</Text>
+					 <FlatList
+						data={others}
 						keyExtractor={(item, index) => index}
 						renderItem={({ item }) =>
 							<View
@@ -81,7 +81,7 @@ class Profile extends Component {
 								/>
 							</View>
 						}
-					/>
+					/> */}
 				</ScrollView>
 			</View>
 		);

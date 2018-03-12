@@ -24,13 +24,14 @@ class Dashboard extends Component {
 		auxKey: null
 	}
 
-	componentWilllMount() {
+	
+	componentWillMount() {
 		this.props.fetchPlayers()
-		this.props.gameFetch()
 		this.props.usernameFetch()
+		this.props.gameFetch()
 		this.props.resetGameKey()
 	}
-
+	
 	// SPINNER
 
 	_onRefresh = () => {

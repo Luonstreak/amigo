@@ -6,17 +6,19 @@ import _ from 'lodash';
 export const getUser = (data) => {
 	const { currentUser } = firebase.auth();
 	return (dispatch) => {
-		firebase.database().ref(`users/${data}`).on('value', async snap => {
-			var obj = {}
-			var list = [];
-			_.forEach(snap.val().games,(value, key) => {
+		firebase.database().ref(`users/${data}`).on('value', async snapshot => {
+			var obj = {}, list = [], friends = 0, top = [], rest = [];
+			_.forEach(snapshot.val().games, async (value, key) => {
+				friends += 1
 				var opponent = value.player1 !== currentUser.uid ? value.player1 : value.player2;
-				firebase.database().ref(`games/${key}`).on('value', snap => {
-					list.push({ name: opponent, rank: snap.numChildren() })
-				})
-			});
-			obj['username'] = snap.val().username;
+				await firebase.database().ref(`users/${opponent}/username`)
+					.on('value', usernameSnap => opponent = usernameSnap.val())
+				firebase.database().ref(`games/${key}`)
+				.on('value', rankSnap => list.push({ opponent, rank: rankSnap.numChildren()}))
+			})
+			obj['username'] = snapshot.val().username;
 			obj['games'] = list;
+			obj['friends'] = friends;
 			await dispatch({ type: GET_USER, payload: obj })
 			Actions.profile()
 		})

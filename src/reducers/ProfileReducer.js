@@ -6,7 +6,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case GET_USER:
-			return { ...state, user: action.payload };
+			return { ...state, profileUser: action.payload };
 		default:
 			return state;
 	}
