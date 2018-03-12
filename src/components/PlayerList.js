@@ -12,16 +12,15 @@ import { Actions } from 'react-native-router-flux';
 class PlayerList extends Component {
 
 	selectPlayer = (player) => {
-		const { currentUser } = firebase.auth()
-		const ref = firebase.database().ref(`opponents/${currentUser.uid}`).orderByKey().equalTo(player)
-
+		const { uid } = this.props.user
+		const ref = firebase.database().ref(`opponents/${uid}`).orderByKey().equalTo(player)
 		ref.once('value').then(async snap => {
 			var opponent = await snap.exists()
 			if (opponent) {
 				alert('You are currently playing a game with this person.')
 			}
 			else {
-				this.props.playerSelect(player)
+				this.props.playerSelect(player, uid)
 			}
 		})
 	}
@@ -62,7 +61,7 @@ class PlayerList extends Component {
 }
 
 const mapStateToProps = state => {
-	return { player: state.player }
+	return { player: state.player, user: state.login.user }
 }
 
 export default connect(mapStateToProps, actions)(PlayerList);

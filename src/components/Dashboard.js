@@ -28,6 +28,7 @@ class Dashboard extends Component {
 		this.props.usernameFetch()
 		this.props.gameFetch()
 		this.props.resetGameKey()
+		registerForNotifications();
 	}
 
 	_onRefresh = () => {
@@ -38,25 +39,46 @@ class Dashboard extends Component {
 		}, 500);
 	}
 
-	// componentDidMount() {
-	// 	registerForNotifications();
-	// 	Notifications.addListener((notification) => {
-	// 		const { data: { text }, origin } = notification;
-	// 		if (origin === 'received' && text) {
-	// 			Alert.alert(
-	// 				'New Push Notification',
-	// 				text,
-	// 				[{ text: 'Ok' }]
-	// 			)
-	// 		}
-	// 	})
-	// }
+	componentDidMount() {
+	}
 	
 	
 	_renderGame = (game, status, opponent) => {
-		const { uid } = this.props.login.user
-		this.props.fetchScore(game, uid)
+		this.props.fetchScore(game)
 		this.props.renderCard(game, status, opponent)
+		this.props.fetchChosenQuestions(game)
+	}
+	_addNudge = (opponent, key) => {
+		console.log(opponent)
+		const { uid } = this.props.login.user
+		const { username } = this.props.username
+
+		const ref = firebase.database().ref(`nudges/${key}/${uid}`);
+		ref.once('value', snap => {
+			var count = snap.val();
+			if (count === 0 ) {
+				alert('Sorry, you have no more nudges left for this game.')
+			}
+			else {
+				const tokenRef = firebase.database().ref(`users/${opponent}/token`);
+				tokenRef.once('value', async snap => {
+					var token  = snap.val();
+					if (token) {
+						alert(`You have ${count - 1} nudge(s) left for this game.`)
+						var message = `${username} nudged you! Play them back!`
+						await firebase.database().ref('nudge').push({
+							from: uid,
+							expoToken: token,
+							body: message
+						})
+						this.props.decreaseNudgeCount(key, uid, count)
+					}
+					else {
+						alert('Tell your friend to turn on their notifications!')
+					}
+				})
+			}
+		})
 	}
 
 	render() {
@@ -87,7 +109,7 @@ class Dashboard extends Component {
 						rounded
 						medium
 						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
-						source={{ uri: 'https://randomuser.me/api/portraits/lego/1.jpg' }}
+						// source={{ uri: !currentUser.photoURL ? null :currentUser.photoURL }}
 					/>
 				</View>
 				<ScrollView
@@ -142,7 +164,7 @@ class Dashboard extends Component {
 											backgroundColor={'#FA3C4C'}
 											title={'NUDGE'}
 											buttonStyle={{ padding: 5 }}
-											onPress={() => this._renderGame(l.gameKey, l.status)}
+											onPress={() => this._addNudge(l.player1 !== currentUser.uid ? l.player1 : l.player2, l.gameKey)}
 										/>
 								}}
 							/>
@@ -198,7 +220,7 @@ const styles = {
 
 const mapStateToProps = state => {
 	const arr = _.map(state.player.players)
-	return { login: state.login, players: arr }
+	return { login: state.login, username: state.username, players: arr }
 }
 
 export default connect(mapStateToProps, actions)(Dashboard);

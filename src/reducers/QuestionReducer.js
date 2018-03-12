@@ -6,13 +6,14 @@ import {
 	RESET_GAME_KEY, 
 	ADDED_ANSWER,
 	GOT_RESULT,
-	STATUS_UPDATE 
+	STATUS_UPDATE,
+	FETCH_CHOSEN_QUESTIONS,
+	DECREASE_NUDGE_COUNT 
 } from '../actions/types';
 import { Actions } from 'react-native-router-flux';
 
 
 const INITIAL_STATE = {
-	selectedQuestion: null,
 	lastFive: null,
 	gameKey: null,
 	opponent: null,
@@ -24,8 +25,12 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case QUESTION_CHOSEN:
-			return { ...state, selectedQuestion: action.payload, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
+			return { ...state, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
+		case FETCH_CHOSEN_QUESTIONS:
+			return { ...state, chosenQuestionArr: action.payload }
 		case GAME_CREATED:
+			return state
+		case DECREASE_NUDGE_COUNT:
 			return state
 		case ADDED_ANSWER:
 			return { ...state, lastFive: action.payload }

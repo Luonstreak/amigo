@@ -19,6 +19,18 @@ import * as actions from '../actions';
 
 class GuessResult extends Component {
 
+	renderAskBackButton = (prevQ, oxtQ) => {
+		if (!oxtQ || prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
+			return (
+				<Button
+					title={'ASK BACK'}
+					buttonStyle={styles.choose_button}
+					onPress={() => { Actions.askBack({ prevQ }) }}
+				/>
+			)
+		}
+	}
+
 	renderColor = (userAnswer, opponentAnswer, option) => {
 		if (userAnswer === opponentAnswer) {
 			if (option === userAnswer) { return 'mediumseagreen' }
@@ -34,7 +46,7 @@ class GuessResult extends Component {
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game;
 		const { uid } = this.props.user;
-		var whos
+		var whos;
 		if (length % 2 === 0) {
 			whos = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
 		} else {
@@ -47,12 +59,12 @@ class GuessResult extends Component {
 				</View>
 				<View style={styles.user}>
 					<Badge
-							value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
+						value={item.value[uid] == item.value[opponent] ? `${whos[0]} guessed right!` : `${whos[0]} guessed wrong!`}
 						textStyle={{ color: item.value[uid] == item.value[opponent] ? 'mediumseagreen' : 'tomato' , fontSize: 20 }}
 						containerStyle={{ backgroundColor: 'transparent' }}
 					/>
 					<Badge
-							value={whos[1] + ' answer was..'}
+						value={whos[1] + ' answer was..'}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 					/>
@@ -78,6 +90,7 @@ class GuessResult extends Component {
 			</ScrollView>
 			)
 		}
+
 
 	render() {
 		const data = this.props.lastFive;
@@ -109,18 +122,14 @@ class GuessResult extends Component {
 					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 				/>
 				<View style={styles.chooseCard}>
-					<Button
-						title={'ASK BACK'}
-						buttonStyle={styles.choose_button}
-						// onPress={() => { Actions.dashboard() }}
-					/>
+					{this.renderAskBackButton(data[data.length - 1], data[data.length - 2])}
 					<Button
 						title={'NEW QUESTION'}
 						buttonStyle={styles.choose_button}
 						onPress={() => { Actions.categories() }}
 					/>
 				</View>
-				<Chat style={styles.chat} />
+				{/* <Chat style={styles.chat} /> */}
 			</View>
 		)
 	}

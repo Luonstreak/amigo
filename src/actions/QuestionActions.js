@@ -6,7 +6,9 @@ import {
 	RESET_GAME_KEY, 
 	ADDED_ANSWER, 
 	GOT_RESULT,
-	STATUS_UPDATE 
+	STATUS_UPDATE,
+	FETCH_CHOSEN_QUESTIONS,
+	DECREASE_NUDGE_COUNT 
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
@@ -36,8 +38,8 @@ export const renderCard = (game, status, opponent) => {
 	}
 };
 
-export const fetchQuestion = (id, num) => {
-	console.log(id, num, 'in fetchQuestion');
+export const fetchQuestion = (id, num, gameKey, opponent) => {
+	const { currentUser } = firebase.auth()
 	return (dispatch) => {
 		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
 		ref.once('value', async snap => {
@@ -46,6 +48,19 @@ export const fetchQuestion = (id, num) => {
 				content: snap.val().content,
 				choices: snap.val().choices
 			}
+			if (!gameKey) {
+				firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
+					questionNumber: snap.key,
+					content: snap.val().content,
+					choices: snap.val().choices
+				});
+			} else {
+				firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set({
+					questionNumber: snap.key,
+					content: snap.val().content,
+					choices: snap.val().choices
+				});
+			}
 			await dispatch({ type: QUESTION_CHOSEN, payload: obj })
 			Actions.question({ category: id })
 		})
@@ -53,7 +68,7 @@ export const fetchQuestion = (id, num) => {
 }
 
 
-export const saveAnswer = (num, questionId, opponent, gameKey) => {
+export const saveAnswer = (num, questionId, opponent, gameKey, username) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
 
@@ -65,25 +80,36 @@ export const saveAnswer = (num, questionId, opponent, gameKey) => {
 		const content = snap.val().content
 
 		pushId = firebase.database().ref(`games/${gameKey}`).push({
-				content: content,
-				choices: {
-					option1: option1,
-					option2: option2,
-					option3: option3,
-					option4: option4
-				},
-				[currentUser.uid]: choice,
-				[opponent]: ""
-			})
+			questionNumber: questionId,
+			content: content,
+			choices: {
+				option1: option1,
+				option2: option2,
+				option3: option3,
+				option4: option4
+			},
+			[currentUser.uid]: choice,
+			[opponent]: ""
+		})
+
+		const tokenRef = firebase.database().ref(`users/${opponent}/token`);
+		tokenRef.once('value', snap => {
+			var token = snap.val();
+			if (token) {
+				var message = `${username} asked you: ${content}`
+				firebase.database().ref('yourTurn').push({
+					from: currentUser.uid,
+					expoToken: token,
+					body: message
+				})
+			}
+		})
 
 		firebase.database().ref(`questionChoices/${gameKey}`).remove()
-
 		firebase.database().ref(`usedQuestions/${gameKey}/${questionId}`).set(true)
-
 		firebase.database().ref(`users/${currentUser.uid}/games/${gameKey}`).update({
 			status: 'waiting'
 		})
-
 		firebase.database().ref(`users/${opponent}/games/${gameKey}`).update({
 			status: 'result'
 		})
@@ -113,6 +139,7 @@ export const creatingGame = (num, questionId, opponent) => {
 		pushId = firebase.database().ref('games').push()
 		const key = pushId.getKey()
 		firebase.database().ref(`games/${key}`).push({
+			questionNumber: questionId,
 			content: content,
 			choices: {
 				option1: option1,
@@ -128,7 +155,11 @@ export const creatingGame = (num, questionId, opponent) => {
 			[currentUser.uid]: 0,
 			[opponent]: 0
 		})
-			
+		firebase.database().ref(`nudges/${key}`).set({
+			[currentUser.uid]: 5,
+			[opponent]: 5
+		})
+		firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}`).remove()
 		firebase.database().ref(`usedQuestions/${key}/${questionId}`).set(true)
 
 		firebase.database().ref(`users/${currentUser.uid}/games/${key}`).set({
@@ -145,7 +176,6 @@ export const creatingGame = (num, questionId, opponent) => {
 
 	return (dispatch) => {
 		dispatch({ type: GAME_CREATED })
-
 		Actions.dashboard()
 	}
 }
@@ -229,3 +259,31 @@ export const fetchScore = (gameKey, uid) => {
 		})
 	}
 }
+export const fetchChosenQuestions = (gameKey) => {
+	const ref = firebase.database().ref(`questionChoices/${gameKey}`)
+	return (dispatch) => {
+	ref.once('value', async snap => {
+		// var snap = snap.exists()
+		if (snap.val() !== null) {
+			var snapVal = snap.val()
+			var arr = Object.values(snapVal)
+				await dispatch({
+					type: FETCH_CHOSEN_QUESTIONS,
+					payload: arr
+				})
+			}
+		})
+	}
+}
+
+export const decreaseNudgeCount = (key, uid, count) => {
+	var newNudgeCount = count - 1
+	firebase.database().ref(`nudges/${key}`).update({
+		[uid]: newNudgeCount
+	});
+	return async (dispatch) => {
+		await dispatch({
+			type: DECREASE_NUDGE_COUNT
+		})
+	}
+} 
