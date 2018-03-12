@@ -133,7 +133,7 @@ class Dashboard extends Component {
 						rounded
 						medium
 						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
-						source={{ uri: 'https://randomuser.me/api/portraits/lego/1.jpg' }}
+						source={{ uri: currentUser.photoURL }}
 						onPress={() => this._getProfile(currentUser.uid)}
 					/>
 				</View>
@@ -183,29 +183,35 @@ class Dashboard extends Component {
 					/>
 					{/* THEIR TURN */}
 					<Text style={[titleStyle, { backgroundColor: '#FA3C4C' }]}>Their Turn</Text>
-					<List containerStyle={listStyle}>
-						{list2.map((l, i) => (
-							<ListItem
-								roundAvatar
-								hideChevron
-								avatar={{ uri: l.avatar_url }}
-								key={i}
-								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
-								titleStyle={{ marginLeft: 20, color: '#FA3C4C'}}
-								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
-								badge={{
-									element:
-										<Button
-											rounded
-											backgroundColor={'#FA3C4C'}
-											title={'NUDGE'}
-											buttonStyle={{ padding: 5 }}
-											onPress={() => this._addNudge(l.player1 !== currentUser.uid ? l.player1 : l.player2, l.gameKey)}
-										/>
-								}}
-							/>
-						))}
-					</List>
+					<FlatList
+						data={list2}
+						containerStyle={listStyle}
+						keyExtractor={(item, index) => index}
+						renderItem={({ item }) =>
+							<View
+								style={elementStyle}
+							>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.avatar_url }}
+									containerStyle={{ marginRight: 20 }}
+									onPress={() => this._getProfile(item.opponent)}
+								/>
+								<Text
+									style={{ flex: 1, fontSize: 20, color: '#FA3C4C' }}
+									onPress={() => this._getChatInfo(item.gameKey)}
+								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								<Button
+									rounded
+									backgroundColor={'#FA3C4C'}
+									title={'NUDGE'}
+									buttonStyle={{ padding: 5 }}
+									onPress={() => this._addNudge(l.player1 !== currentUser.uid ? l.player1 : l.player2, l.gameKey)}
+								/>
+							</View>
+						}
+					/>
 					{/* PENDING */}
 					<Text style={[titleStyle, { backgroundColor: '#44BEC7' }]}>Pending</Text>
 					<FlatList
