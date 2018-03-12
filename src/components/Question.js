@@ -32,6 +32,7 @@ class Question extends Component {
 		}
 	}
 
+<<<<<<< HEAD
 	// _checkUsedQuestion = async (id, gameKey) => {
 	// 	firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
 	// 		if (snap.numChildren() >= 3) {
@@ -64,6 +65,39 @@ class Question extends Component {
 	// 		}
 	// 	})
 	// }
+=======
+	_checkUsedQuestion = async (id, gameKey) => {
+		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+			if (snap.numChildren() >= 3) {
+				Actions.question({ category: id })
+			}
+			else {
+				firebase.database().ref(`questions/${id}`).once('value', snap => {
+					const children = snap.numChildren();
+					const num = Math.floor(Math.random() * children) + 1;
+					firebase.database().ref(`usedQuestions/${gameKey}`).once('value', snap => {
+						var question = snap.child(`${id}${num}`).exists();
+						if (question) {
+							return this._checkUsedQuestion(id, gameKey);
+						}
+						else {
+							firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
+								var choice = snap.child(`${id}${num}`).exists();
+								if (choice) {
+									return this._checkUsedQuestion(id, gameKey);
+								}
+								else {
+									// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
+									this.props.fetchQuestion(id, num, gameKey);
+								}
+							})
+						}
+					})
+				})
+			}
+		})
+	}
+>>>>>>> lucio
 
 	renderQuestionButton = () => {
 		const { gameKey, chosenQuestionArr } = this.props.game;
@@ -167,7 +201,7 @@ class Question extends Component {
 				<View>
 					{this.props.game.gameKey ? this.renderQuestionButton() : null}
 				</View>
-				<Chat style={styles.chat} />
+				{this.props.game.gameKey ? <Chat /> : null}
 			</View>
 		)
 	}
@@ -241,18 +275,7 @@ const styles = StyleSheet.create({
 		paddingRight: 10,
 		borderRadius: 10,
 		backgroundColor: '#0099FF'
-	},
-	//footer - chat
-	chat: {
-		marginTop: 10,
-		backgroundColor: '#ADD8E6',
-	},
-	input: {
-		backgroundColor: '#96EAD7',
-		margin: 10,
-		borderRadius: 10,
-		padding: 10
-	},
+	}
 });
 
 const mapStateToProps = state => {

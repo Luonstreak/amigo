@@ -3,53 +3,33 @@ import {
 	View,
 	TextInput,
 	Text,
-	ScrollView,
 	FlatList,
 	Keyboard,
 	Dimensions,
-	DeviceEventEmitter } from 'react-native';
+	DeviceEventEmitter 
+} from 'react-native';
+import { Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import _ from 'lodash';
-import { LinearGradient } from 'expo';
 import * as actions from '../actions';
 
-class Chat extends Component {
+class ChatModal extends Component {
 	state = {
 		input: '',
-		bottomSpace: width * 0.025,
 		messages: []
 	};
 	
 
 	componentDidMount() {
-		const { gameKey } = this.props.game
-		const ref = firebase.database().ref(`chat/${gameKey}`).on('value', snapshot => {
+		const { auxKey } = this.props;
+		const ref = firebase.database().ref(`chat/${auxKey}`).on('value', snapshot => {
 			const arr = []
 			_.forEach(snapshot.val(), item => {
 				item['id'] = Math.floor(Math.random() * 1000000)
 				arr.unshift(item)
 			})
 			this.setState({ messages: arr })
-		})
-		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-	}
-
-	componentWillUnmount() {
-		this.keyboardDidShowListener.remove()
-		this.keyboardDidHideListener.remove()
-	}
-
-	_keyboardDidShow = (e) => {
-		this.setState({
-			bottomSpace: e.endCoordinates.height + 10
-		})
-	}
-
-	_keyboardDidHide = (e) => {
-		this.setState({
-			bottomSpace: width * 0.025
 		})
 	}
 	
@@ -59,19 +39,36 @@ class Chat extends Component {
 
 	_sendMessage = () => {
 		const { username } = this.props.username
-		const { gameKey } = this.props.game
+		const { auxKey } = this.props
 		const msg = this.state.input
 		if (msg.length > 1) {
-			firebase.database().ref(`chat/${gameKey}`).push({ username, msg })
+			firebase.database().ref(`chat/${auxKey}`).push({ username, msg })
 			this.setState({ input: '' })
 		}
 	}
-	
+
+	_collapseChat = () => {
+		this.props.visibleChat(false)
+	}
+
 	render() {
 		const { username } = this.props.username
 		const { container, list, input, title, content } = styles;
 		return (
-			<View style={container}>
+			<View>
+				<View style={{
+					alignItems: 'flex-end',
+					marginRight: width * .02,
+				}}>
+					<Icon
+						name='close-circle'
+						type='material-community'
+						color='dodgerblue'
+						underlayColor='transparent'
+						size={32}
+						onPress={() => this._collapseChat()}
+					/>
+				</View>
 				<FlatList
 					contentContainerStyle={list}
 					inverted
@@ -92,7 +89,6 @@ class Chat extends Component {
 						)
 					}}
 				/>
-				<Text style={{ backgroundColor: 'transparent', height: 60 }}></Text>
 				<TextInput
 					style={[input, { bottom: this.state.bottomSpace}]}
 					value={this.state.input}
@@ -109,30 +105,19 @@ class Chat extends Component {
 }
 const { height, width } = Dimensions.get('window');
 const styles = {
-	container: {
-		paddingTop: 10,
-		backgroundColor: '#83D0CD',
-		borderRadius: 20,
-		justifyContent: 'flex-end',
-		margin: width * 0.05,
-		marginTop: 0,
-		maxHeight: height * 0.3,
-		width: width * .9
-	},
 	list: {
 		marginLeft: width * 0.05,
 		alignItems: 'flex-start',
 	},
 	input: {
-		position: 'absolute',
-		left: width * 0.05,
-		width: width * 0.8,
-		color: '#1D8FE1',
-		backgroundColor: '#FFF',
-		fontSize: 15,
 		height: 40,
 		padding: 5,
 		paddingLeft: 20,
+		width: width * 0.8,
+		margin: width * 0.05,
+		color: '#1D8FE1',
+		backgroundColor: '#FFF',
+		fontSize: 15,
 		borderRadius: 20
 	},
 	content: {
@@ -141,6 +126,6 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { username: state.username, game: state.game };
+	return { username: state.username, chat: state.chat };
 }
-export default connect(mapStateToProps, actions)(Chat);
+export default connect(mapStateToProps, actions)(ChatModal);

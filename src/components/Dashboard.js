@@ -9,20 +9,22 @@ import {
  } from 'react-native';
 import { Notifications } from 'expo';
 import { connect } from 'react-redux';
-import { Avatar, Button, Card, List, ListItem } from 'react-native-elements';
+import { Avatar, Button, Card } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import firebase from 'firebase';
 import _ from 'lodash';
 
 import * as actions from '../actions';
-import registerForNotifications from '../../services/push_notifications'
+import registerForNotifications from '../../services/push_notifications';
+import ChatModal from './ChatModal';
 
 class Dashboard extends Component {
-
 	state = {
-		refreshing: false
+		refreshing: false,
+		auxKey: null
 	}
 
+	
 	componentWillMount() {
 		this.props.fetchPlayers()
 		this.props.usernameFetch()
@@ -30,6 +32,8 @@ class Dashboard extends Component {
 		this.props.resetGameKey()
 		registerForNotifications();
 	}
+	
+	// SPINNER
 
 	_onRefresh = () => {
 		this.setState({ refreshing: true });
@@ -39,10 +43,29 @@ class Dashboard extends Component {
 		}, 500);
 	}
 
-	componentDidMount() {
+	_getChatInfo = (game) => {
+		this.setState({ auxKey: game })
+		this.props.visibleChat(true)
+	}
+
+	_renderChat = () => {
+		if (this.props.chat.chatVisible === 'on'){
+			return (
+				<View style={styles.containerStyle}>
+					<ChatModal auxKey={this.state.auxKey}/>
+				</View>
+			)
+		} else { null }
+	}
+
+	// PROFILE
+
+	_getProfile = (game) => {
+		this.props.getUser(game)
 	}
 	
-	
+	// GAME
+
 	_renderGame = (game, status, opponent) => {
 		this.props.fetchScore(game)
 		this.props.renderCard(game, status, opponent)
@@ -83,11 +106,12 @@ class Dashboard extends Component {
 
 	render() {
 		const { currentUser } = firebase.auth();
-		const { headerStyle, bodyStyle, titleStyle, listStyle } = styles;
+		const { containerStyle, headerStyle, bodyStyle, titleStyle, listStyle, elementStyle } = styles;
 		const list1 = []
 		const list2 = []
 		const list3 = []
 		var list = _.forIn(this.props.login.games, (value, key) => {
+			value['opponent'] = currentUser.uid === value.player1 ? value.player2 : value.player1;
 			value['gameKey'] = key;
 			if (value.status === 'pending') {
 				list3.push(value)
@@ -109,7 +133,8 @@ class Dashboard extends Component {
 						rounded
 						medium
 						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
-						// source={{ uri: !currentUser.photoURL ? null :currentUser.photoURL }}
+						source={{ uri: 'https://randomuser.me/api/portraits/lego/1.jpg' }}
+						onPress={() => this._getProfile(currentUser.uid)}
 					/>
 				</View>
 				<ScrollView
@@ -121,31 +146,42 @@ class Dashboard extends Component {
 							tintColor={'#FFC300'}
 						/>
 					}>
-					{/* YOUR TURN */}
-					<Text style={[titleStyle, { backgroundColor: '#FFC300' }]}>Your Turn</Text>
-					<List containerStyle={listStyle}>
-						{list1.map((l, i) => (
-							<ListItem
-								roundAvatar
-								hideChevron
-								avatar={{ uri: l.avatar_url }}
-								key={i}
-								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
-								titleStyle={{ marginLeft: 20, color: '#FFC300'}}
-								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
-								badge={{ element: 
-									<Button 
-										rounded
-										backgroundColor={'#FFC300'}
-										title={'PLAY'}
-										buttonStyle={{ padding: 5 }}
-										onPress={() => this._renderGame(l.gameKey, l.status, l.player1 !== currentUser.uid ? l.player1 : l.player2)}
-									/>
-								}}
-								/>
-							))}
-					</List>
 					{/* MY TURN */}
+					<Text style={[titleStyle, { backgroundColor: '#FFC300' }]}>Your Turn</Text>
+					<FlatList
+						data={list1}
+						containerStyle={listStyle}
+						keyExtractor={(item, index) => index}
+						renderItem={({ item }) =>
+							<View
+								style={elementStyle}
+							>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.avatar_url }}
+									containerStyle={{ marginRight: 20 }}
+									onPress={() => this._getProfile(item.opponent)}
+								/>
+								<Text
+									style={{ flex: 1, fontSize: 20, color: '#FFC300' }}
+									onPress={() => this._getChatInfo(item.gameKey)}
+								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								<Button
+									rounded
+									backgroundColor={'#FFC300'}
+									title={'PLAY'}
+									buttonStyle={{ padding: 5 }}
+									onPress={() => this._renderGame(
+										item.gameKey,
+										item.status,
+										item.player1 !== currentUser.uid ? item.player1 : item.player2
+									)}
+								/>
+							</View>
+						}
+					/>
+					{/* THEIR TURN */}
 					<Text style={[titleStyle, { backgroundColor: '#FA3C4C' }]}>Their Turn</Text>
 					<List containerStyle={listStyle}>
 						{list2.map((l, i) => (
@@ -172,28 +208,47 @@ class Dashboard extends Component {
 					</List>
 					{/* PENDING */}
 					<Text style={[titleStyle, { backgroundColor: '#44BEC7' }]}>Pending</Text>
-					<List containerStyle={listStyle}>
-						{list3.map((l, i) => (
-							<ListItem
-								roundAvatar
-								hideChevron
-								avatar={{ uri: l.avatar_url }}
-								key={i}
-								title={l.player1 !== currentUser.uid ? l.player1 : l.player2}
-								titleStyle={{ marginLeft: 20, color: '#44BEC7'}}
-								containerStyle={{ paddingLeft: 0, paddingRight: 0, borderBottomWidth: 0 }}
-							/>
-						))}
-					</List>
-					
-
+					<FlatList
+						data={list3}
+						containerStyle={listStyle}
+						keyExtractor={(item, index) => index}
+						renderItem={({ item }) => 
+							<View
+							style={elementStyle}
+							>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.avatar_url }}
+									containerStyle={{ marginRight: 20 }}
+								/>
+								<Text
+									style={{ flex: 1, fontSize: 20, color: '#44BEC7' }}
+									onPress={() => this._getProfile(item.opponent)}
+								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+							</View>
+						}
+					/>
 				</ScrollView>
+				{this._renderChat()}
 			</View>
 		);
 	}
 }
 
+const { height, width } = Dimensions.get('window');
 const styles = {
+	containerStyle: {
+		position: 'absolute',
+		top: width * 0.05,
+		width: width * .9,
+		margin: width * .05,
+		marginTop: 0,
+		paddingTop: 10,
+		justifyContent: 'flex-end',
+		backgroundColor: '#83D0CD',
+		borderRadius: 20
+	},
 	//header
 	headerStyle: {
 		flexDirection: 'row',
@@ -205,22 +260,37 @@ const styles = {
 	//body
 	titleStyle: {
 		fontWeight: 'bold',
+		fontSize: 18,
 		textAlign: 'center',
 		color: '#FFF',
-		padding: 2.5
+		padding: 5
 	},
 	listStyle: {
 		marginTop: 0,
 		marginLeft: 0,
 		marginRight: 0,
 		borderTopWidth: 0
-
+	},
+	elementStyle: {
+		width: width,
+		flexDirection: 'row',
+		alignItems: 'center',
+		padding: 10,
+		paddingLeft: 20,
+		paddingRight: 20,
+		borderBottomWidth: 1,
+		borderBottomColor: 'orange'
 	}
 }
 
 const mapStateToProps = state => {
 	const arr = _.map(state.player.players)
-	return { login: state.login, username: state.username, players: arr }
+	return {
+		login: state.login,
+		profile: state.profile,
+		chat: state.chat,
+		players: arr
+	}
 }
 
 export default connect(mapStateToProps, actions)(Dashboard);

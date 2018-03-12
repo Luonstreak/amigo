@@ -17,8 +17,7 @@ export const renderCard = (game, status, opponent) => {
 	const ref = firebase.database().ref(`games/${game}`);
 	return (dispatch) => {
 		ref.limitToLast(5).once('value', async snap => {
-			const obj = { five: snap.val(), gameKey: game, opponent: opponent }
-	
+			const obj = { five: snap.val(), gameKey: game, opponent }
 			await dispatch({ type: FETCH_FIVE, payload: obj })
 			if (status == 'result') {
 				firebase.database().ref(`result/${game}`).once('value', async snap => {

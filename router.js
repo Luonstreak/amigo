@@ -14,8 +14,12 @@ import Guess from './src/components/Guess';
 import GuessResult from './src/components/GuessResult';
 import Category from './src/components/Category';
 import Question from './src/components/Question';
+<<<<<<< HEAD
 import AskBack from './src/components/AskBack';
 import FacebookLogin from './src/components/FacebookLogin';
+=======
+import Profile from './src/components/Profile';
+>>>>>>> lucio
 
 const RouterComponent = () => {
 	return (
@@ -36,7 +40,11 @@ const RouterComponent = () => {
 					<Scene key='result' component={Result} hideNavBar />
 					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.main()}} />
 					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => { Actions.main() }} />
+<<<<<<< HEAD
 					<Scene key='askBack' component={AskBack} />
+=======
+					<Scene key='profile' component={Profile} hideNavBar />
+>>>>>>> lucio
 				</Scene>
 			</Scene>
 		</Router>

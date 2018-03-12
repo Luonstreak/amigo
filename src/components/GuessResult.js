@@ -20,7 +20,11 @@ import * as actions from '../actions';
 class GuessResult extends Component {
 
 	renderAskBackButton = (prevQ, oxtQ) => {
+<<<<<<< HEAD
 		if (!oxtQ || prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
+=======
+		if (!prevQ || !oxtQ) {
+>>>>>>> lucio
 			return (
 				<Button
 					title={'ASK BACK'}
@@ -29,6 +33,26 @@ class GuessResult extends Component {
 				/>
 			)
 		}
+<<<<<<< HEAD
+=======
+		else if (prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
+			return (
+				<Button
+				title={'ASK BACK'}
+				buttonStyle={styles.choose_button}
+				onPress={() => { this.helperFunction(prevQ) }}
+				/>
+			)
+		}
+	}
+
+	helperFunction = (data) => {
+		const { gameKey } = this.props.game
+		var key = data.value.questionNumber
+		var id = key.charAt(0)
+		var num = key.charAt(1)
+		this.props.fetchQuestion(id, num, gameKey);
+>>>>>>> lucio
 	}
 
 	renderColor = (userAnswer, opponentAnswer, option) => {
@@ -129,7 +153,7 @@ class GuessResult extends Component {
 						onPress={() => { Actions.categories() }}
 					/>
 				</View>
-				{/* <Chat style={styles.chat} /> */}
+				<Chat />
 			</View>
 		)
 	}
@@ -189,7 +213,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		margin: 30,
 		marginTop: 0,
-		marginBottom: 0,
+		marginBottom: width * .05,
 		borderRadius: 10,
 		justifyContent: 'space-around',
 		alignItems: 'center'
