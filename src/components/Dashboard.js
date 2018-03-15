@@ -30,6 +30,7 @@ class Dashboard extends Component {
 		this.props.usernameFetch()
 		this.props.gameFetch()
 		this.props.resetGameKey()
+		this.props.getCategories()
 		registerForNotifications();
 		Notifications.getBadgeNumberAsync().then(badgeNumber => {
 			if (badgeNumber !== 0) {

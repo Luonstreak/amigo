@@ -61,6 +61,14 @@ const loginSuccess = (dispatch, user) => {
 		username: user.displayName, 
 		photo: user.photoURL
 	})
+	firebase.database().ref(`categories/${user.uid}`).update({
+		points: 0,
+		a: 0,
+		b: 0,
+		c: 0,
+		d: 5,
+		e: 3
+	})
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user

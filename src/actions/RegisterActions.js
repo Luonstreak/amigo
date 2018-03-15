@@ -48,6 +48,14 @@ export const usernameFetch = () => {
 
 const registerSuccess = (dispatch, user, username) => {
 	console.log('hit register Success', user, username)
+	firebase.database().ref(`categories/${user.uid}`).update({
+		points: 0,
+		a: 0,
+		b: 0,
+		c: 0,
+		d: 5,
+		e: 3
+	})
 	firebase.database().ref(`users/${user.uid}`).update({ username })
 	dispatch({ type: REGISTER_SUCCESS, payload: user });
 	Actions.phoneAuth();

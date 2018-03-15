@@ -10,8 +10,8 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-	email: '',
-	password: '',
+	email: 'lucio@top.com',
+	password: 'hahaha',
 	user: null,
 	games: null,
 	error: null

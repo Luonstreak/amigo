@@ -30,7 +30,7 @@ export const passwordInput = (text) => {
 export const userLogin = ({ email, password }) => {
 	return (dispatch) => {
 		firebase.auth().signInWithEmailAndPassword(email, password)
-			.then(user => loginSuccess1(dispatch, user))
+			.then(user => loginSuccess(dispatch, user))
 			.catch((err) => {
 				if (err.code === 'auth/wrong-password') {
 					dispatch({
@@ -71,20 +71,13 @@ export const gameFetch = () => {
 	}
 }
 
-const loginSuccess1 = (dispatch, user) => {
+const loginSuccess = (dispatch, user) => {
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user
 	});
+	
 	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
 		snap.val() ? Actions.main() : Actions.phoneAuth()
 	})
-}
-
-const loginSuccess2 = (dispatch, user) => {
-	dispatch({
-		type: LOGIN_SUCCESS,
-		payload: user
-	});
-	Actions.username();
 }

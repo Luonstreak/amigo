@@ -10,31 +10,40 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Button, Badge } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
+import _ from 'lodash';
+import IconBadge from 'react-native-icon-badge';
 
 import * as actions from '../actions';
 
 class Category extends Component {
-	state = {
-		categories: [
-			{ id: 'r', category: 'random' },
-			{ id: 'a', category: 'me in 10 years' },
-			{ id: 'b', category: 'TV' },
-			{ id: 'c', category: 'Dirty' },
-			{ id: 'd', category: 'Dating' },
-			{ id: 'e', category: 'my personality' },
-		]
-	}
 
-	_keyExtractor = (item, index) => item.id;
+	state = {
+		names: {
+			r: 'random',
+			a: 'me in 10 years',
+			b: 'TV',
+			c: 'Dirty',
+			d: 'Dating',
+			e: 'my personality'
+		},
+		openCategories: []
+	}
 
 	_checkUsedQuestion = (identification, gameKey) => {
 		var id = identification;
+		var arr = this.props.categories
+		var newArr = []
+		arr.map(el => {
+			if (el.value <= this.props.points){
+				newArr.push(el.key)
+			}
+		})
 		if (id === 'r') {
-			var arr = ['a', 'b', 'c', 'd', 'e']
-			var randNum = Math.floor(Math.random() * arr.length);
-			id = arr[randNum]
+			var randNum = Math.floor(Math.random() * newArr.length);
+			id = newArr[randNum]
 		}
 		const { uid } = this.props.user;
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
@@ -82,18 +91,54 @@ class Category extends Component {
 		})
 	}
 
-	renderItem = ({ item }) => {
+	renderItem = (item) => {
 		const { gameKey } = this.props.game;
-		return (
-			<Button
-				title={item.category}
+		const { categories } = this.props
+		const diff = item.value - this.props.points
+		
+		if (item.value > this.props.points) {
+			return (
+				<IconBadge
+					MainElement={
+						<Button
+							title={this.state.names[item.key]}
+							buttonStyle={styles.option}
+							onPress={() => alert(`Invite ${diff} more friends to unlock this category`)}
+						/>
+					}
+					BadgeElement={
+						<Icon
+							name='lock'
+							size={20}
+							color='black'
+						/>
+					}
+					IconBadgeStyle={
+						{
+							right: 5,
+							top: -10,
+							width: 30,
+							height: 30,
+							borderRadius: 50,
+							backgroundColor: 'white'
+						}
+					}
+				/>
+			)
+		} else {
+			return (
+				<Button
+				title={this.state.names[item.key]}
 				buttonStyle={styles.option}
-				onPress={() => { this._checkUsedQuestion(item.id, gameKey)}}
-			/>
-		)
+				onPress={() => { this._checkUsedQuestion(item.key, gameKey)}}
+				/>
+			)
+		}	
 	}
 
 	render() {
+		const { gameKey } = this.props.game
+		const arr = this.props.categories
 		return (
 			<View style={styles.container}>
 				<ScrollView
@@ -103,11 +148,16 @@ class Category extends Component {
 					<View style={styles.header}>
 						<Text style={{ fontSize: 20 }}>Categories</Text>
 					</View>
+					<Button
+						title={'Random'}
+						buttonStyle={styles.option}
+						onPress={() => { this._checkUsedQuestion('r', gameKey) }}
+					/>
 					<FlatList
 						contentContainerStyle={styles.list}
-						keyExtractor={this._keyExtractor}
-						data={this.state.categories}
-						renderItem={this.renderItem}
+						keyExtractor={(item, index) => item.key}
+						data={arr}
+						renderItem={({ item }) => this.renderItem(item)}
 					/>
 				</ScrollView>
 			</View>
@@ -142,9 +192,9 @@ const styles = StyleSheet.create({
 		backgroundColor: '#0099FF',
 		width: 250,
 		borderRadius: 10,
-		margin: 10
+		marginBottom: 20
 	},
-	//footer - chat
+	// footer - chat
 	chat: {
 		height: 100,
 		backgroundColor: '#ADD8E6'
@@ -158,7 +208,22 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { game: state.game, player: state.player, user: state.login.user }
+	const arr = []
+	var points = null
+	_.forIn(state.categories.categories, (value, key) => {
+		if(key === 'points'){
+			points = value
+		} else {
+			arr.push({ key, value })
+		}
+	})
+	return {
+		game: state.game,
+		player: state.player,
+		user: state.login.user,
+		categories: arr,
+		points
+	}
 }
 
 export default connect(mapStateToProps, actions)(Category)

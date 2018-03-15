@@ -42,3 +42,5 @@ export const CHAT_VISIBLE = 'chat_visible';
 //PROFILE
 export const GET_USER = 'get_user';
 
+//CATEGORY
+export const GET_CATEGORIES = 'get_categories';

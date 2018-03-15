@@ -150,9 +150,12 @@ export const creatingGame = (num, questionId, opponent, phone) => {
 			initialGame(currentUser, choice, questionId, opponent, phone)
 			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })
 			firebase.database().ref(`opponents/${opponent}`).update({ [phone]: true })
+			const ref = firebase.database().ref(`categories/${currentUser.uid}/points`);
+			ref.once('value', snap => {
+				ref.parent.update({ points: snap.val() + 1 })
+			})
 		}
 	})
-		
 		return (dispatch) => {
 		dispatch({ type: GAME_CREATED })
 		Actions.dashboard()

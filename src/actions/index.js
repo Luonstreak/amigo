@@ -6,3 +6,4 @@ export * from './FacebookLoginActions';
 export * from './ChatActions';
 export * from './ProfileActions';
 export * from './PhoneAuthActions';
+export * from './CategoryActions';

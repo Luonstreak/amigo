@@ -9,6 +9,7 @@ import PlayerListReducer from './PlayerListReducer';
 import QuestionReducer from './QuestionReducer';
 import ChatReducer from './ChatReducer';
 import ProfileReducer from './ProfileReducer';
+import CategoryReducer from './CategoryReducer';
 
 export default combineReducers({
 	login: LoginReducer,
@@ -17,5 +18,6 @@ export default combineReducers({
 	player: PlayerListReducer,
 	game: QuestionReducer,
 	chat: ChatReducer,
-	profile: ProfileReducer
+	profile: ProfileReducer,
+	categories: CategoryReducer
 });
