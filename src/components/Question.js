@@ -24,11 +24,12 @@ class Question extends Component {
 		const { selectedPlayer } = this.props.player
 		const { gameKey, opponent } = this.props.game
 		const { username } = this.props.username
+		const { phoneNumber } = this.props.phone
 		if (gameKey) {
 			this.props.saveAnswer(num, questionNumber, opponent, gameKey, username)
 		}
 		else {
-			this.props.creatingGame(num, questionNumber, selectedPlayer)
+			this.props.creatingGame(num, questionNumber, selectedPlayer, phoneNumber)
 		}
 	}
 
@@ -251,6 +252,7 @@ const mapStateToProps = state => {
 	})
 	return { 
 		game: state.game, 
+		phone: state.phone, 
 		player: state.player, 
 		lastFive: arr, 
 		user: state.login.user,

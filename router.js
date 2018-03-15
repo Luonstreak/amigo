@@ -4,10 +4,11 @@ import { Scene, Router, Actions } from 'react-native-router-flux';
 
 // RELATIVE
 import Login from './src/components/Login';
+import Register from './src/components/Register';
 import Username from './src/components/Username';
+import PhoneAuth from './src/components/PhoneAuth';
 import Dashboard from './src/components/Dashboard';
-import Contacts from './src/components/Contacts';
-import PlayerList from './src/components/PlayerList';
+import ContactList from './src/components/ContactList';
 import Modal from './src/components/Modal';
 import Result from './src/components/Result';
 import Guess from './src/components/Guess';
@@ -15,7 +16,6 @@ import GuessResult from './src/components/GuessResult';
 import Category from './src/components/Category';
 import Question from './src/components/Question';
 import AskBack from './src/components/AskBack';
-import FacebookLogin from './src/components/FacebookLogin';
 import Profile from './src/components/Profile';
 
 const RouterComponent = () => {
@@ -23,14 +23,16 @@ const RouterComponent = () => {
 		<Router sceneStyle={{ backgroundColor: '#FFF' }}>
 			<Scene key='root' hideNavBar>
 				<Scene key='auth'>
-					<Scene key='login' component={FacebookLogin} title='True Friends' hideNavBar initial />
+					<Scene key='login' component={Login} title='True Friends Login' hideNavBar initial />
+					<Scene key='register' component={Register} title='True Friends Register' hideNavBar />
 				</Scene>
 				<Scene key='username'>
+					<Scene key='phoneAuth' component={PhoneAuth} hideNavBar initial />
 					<Scene key='login2' component={Username} title='Enter Your Username' />
 				</Scene>
 				<Scene key='main'>
 					<Scene key='dashboard' component={Dashboard} hideNavBar initial />
-					<Scene key='playerList' component={PlayerList} title='Pick a friend' />
+					<Scene key='contactList' component={ContactList} title='Pick a friend' />
 					<Scene key='categories' component={Category} />
 					<Scene key='question' component={Question} />
 					<Scene key='modal' component={Modal} hideNavBar />

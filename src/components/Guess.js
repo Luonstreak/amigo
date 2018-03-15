@@ -34,7 +34,7 @@ class Guess extends Component {
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
 		const { gameKey, opponent, score } = this.props.game
-		const newScore = score[uid] || 0
+		const newScore = score ? score[uid] : 0
 		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}
@@ -112,12 +112,12 @@ class Guess extends Component {
 			<View style={styles.container}>
 				<View style={styles.counter}>
 					<Badge
-						value={score[uid] || 0}
+						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
 					<Badge
-						value={score[opponent] || 0}
+						value={score ? score[opponent] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>

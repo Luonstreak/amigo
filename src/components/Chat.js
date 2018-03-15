@@ -58,10 +58,23 @@ class Chat extends Component {
 	}
 
 	_sendMessage = () => {
+		const { uid } = this.props.login.user
 		const { username } = this.props.username
-		const { gameKey } = this.props.game
+		const { gameKey, opponent } = this.props.game
 		const msg = this.state.input
 		if (msg.length > 1) {
+			const tokenRef = firebase.database().ref(`users/${opponent}/token`);
+			tokenRef.once('value', async snap => {
+				var token = snap.val();
+				if (token) {
+					var message = `${username} said: "${msg}"`
+					await firebase.database().ref('chatPush').push({
+						from: uid,
+						expoToken: token,
+						body: message
+					})
+				}
+			})
 			firebase.database().ref(`chat/${gameKey}`).push({ username, msg })
 			this.setState({ input: '' })
 		}
@@ -141,6 +154,6 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { username: state.username, game: state.game };
+	return { login: state.login, username: state.username, game: state.game };
 }
 export default connect(mapStateToProps, actions)(Chat);

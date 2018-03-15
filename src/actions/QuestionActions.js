@@ -48,11 +48,24 @@ export const fetchQuestion = (id, num, gameKey, opponent) => {
 				choices: snap.val().choices
 			}
 			if (!gameKey) {
-				firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
-					questionNumber: snap.key,
-					content: snap.val().content,
-					choices: snap.val().choices
-				});
+				firebase.database().ref(`allUsers/${opponent}`).once('value', snapshot => {
+					var existingOpponent = snapshot.val()
+					console.log(existingOpponent, 'fetchQuestion')
+					if (existingOpponent) {
+						firebase.database().ref(`questionChoices/${currentUser.uid}/${existingOpponent}/${id}${num}`).set({
+							questionNumber: snap.key,
+							content: snap.val().content,
+							choices: snap.val().choices
+						});
+					}
+					else {
+						firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
+							questionNumber: snap.key,
+							content: snap.val().content,
+							choices: snap.val().choices
+						});
+					}
+				})
 			} else {
 				firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set({
 					questionNumber: snap.key,
@@ -120,13 +133,33 @@ export const saveAnswer = (num, questionId, opponent, gameKey, displayName) => {
 	}
 }
 
-export const creatingGame = (num, questionId, opponent) => {
+export const creatingGame = (num, questionId, opponent, phone) => {
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
 	var pushId = null
 
-	firebase.database().ref(`opponents/${currentUser.uid}`).set({[opponent]: true})
-	firebase.database().ref(`opponents/${opponent}`).set({[currentUser.uid]: true})
+	firebase.database().ref(`allUsers/${opponent}`).once('value', snap => {
+		var existingOpponent = snap.val()
+		console.log(existingOpponent, '=-=-=-=-=-=-=-=-=-=-=-')
+		if (existingOpponent) {
+			initialGame(currentUser, choice, questionId, existingOpponent, phone, true)
+			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })
+			firebase.database().ref(`opponents/${opponent}`).update({ [phone]: true })
+		}
+		else {
+			initialGame(currentUser, choice, questionId, opponent, phone)
+			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })
+			firebase.database().ref(`opponents/${opponent}`).update({ [phone]: true })
+		}
+	})
+		
+		return (dispatch) => {
+		dispatch({ type: GAME_CREATED })
+		Actions.dashboard()
+	}
+}
+
+const initialGame = (currentUser, choice, questionId, opponent, phone, exists) => {
 
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
@@ -150,10 +183,6 @@ export const creatingGame = (num, questionId, opponent) => {
 			[opponent]: ""
 
 		})
-		firebase.database().ref(`scores/${key}`).set({
-			[currentUser.uid]: 0,
-			[opponent]: 0
-		})
 		firebase.database().ref(`nudges/${key}`).set({
 			[currentUser.uid]: 5,
 			[opponent]: 5
@@ -166,17 +195,23 @@ export const creatingGame = (num, questionId, opponent) => {
 			player2: opponent,
 			status: 'pending'
 		})
-		firebase.database().ref(`users/${opponent}/games/${key}`).set({
-			player1: currentUser.uid,
-			player2: opponent,
-			status: 'guess'
-		})
+		if (exists) {
+			firebase.database().ref(`users/${opponent}/games/${key}`).set({
+				player1: currentUser.uid,
+				player2: opponent,
+				status: 'guess',
+				setScore: true
+			})
+		}
+		else {
+			firebase.database().ref(`pendingGames/${opponent}/games/${key}`).update({
+				player1: currentUser.uid,
+				player2: opponent,
+				status: 'guess',
+				setScore: true
+			})
+		}
 	})
-
-	return (dispatch) => {
-		dispatch({ type: GAME_CREATED })
-		Actions.dashboard()
-	}
 }
 
 export const resetGameKey = () => {

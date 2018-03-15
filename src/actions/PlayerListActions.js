@@ -3,7 +3,7 @@ import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
 
 // RELATIVE
-import { PLAYERS_FETCH, PLAYER_SELECTED, FAIL_SELECT } from './types';
+import { SAVE_NUMBERS, PLAYERS_FETCH, PLAYER_SELECTED, FAIL_SELECT } from './types';
 
 export const fetchPlayers = () => {
 	const ref = firebase.database().ref('users')
@@ -27,5 +27,11 @@ export const playerSelect = (player, uid) => {
 			payload: player
 		})
 		Actions.categories()
+	}
+}
+
+export const savePhoneNmubers = (numbers) => {
+	return (dispatch) => {
+		dispatch({ type: SAVE_NUMBERS, payload: numbers })
 	}
 }

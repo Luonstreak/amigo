@@ -8,8 +8,12 @@ import { Actions } from 'react-native-router-flux';
 // RELATIVE
 import * as actions from '../actions';
 
-class Login extends Component {
-	state = { keyboard: false }
+class Register extends Component {
+		state = { 
+			keyboard: false,
+			usernameValid: true,
+			error: ''
+		}
 
 	componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));
@@ -30,23 +34,40 @@ class Login extends Component {
 	onPasswordInput = (text) => {
 		this.props.passwordInput(text);
 	}
+	
+	onUsernameInput = (text) => {
+		this.props.usernameInput(text);
+	}
 
 	onButtonPress = () => {
 		const { email, password } = this.props.login;
-		this.props.userLogin({ email, password });
+		const { username } = this.props.username;
+		const usernameValid = username.length > 1
+		this.setState({ usernameValid })
+		if (usernameValid) {
+			this.props.userRegister(email, password, username);
+		}
+		else {
+			this.setState({ error: 'All fields must be filled out.'})
+		}
 		Keyboard.dismiss;
 	}
 
-	loginwithFacebook = () => {
-		this.props.fbLogin();
-	}
-
 	renderError = () => {
-		if(this.props.login.error) {
-			return(
-				<Text 
+		if (this.props.login.error) {
+			return (
+				<Text
 					style={{ color: 'tomato', margin: 10 }}
 				>{this.props.login.error}</Text>
+			)
+		} else { return null }
+	}
+	renderStateError = () => {
+		if (this.state.error) {
+			return (
+				<Text
+					style={{ color: 'tomato', margin: 10 }}
+				>{this.state.error}</Text>
 			)
 		} else { return null }
 	}
@@ -81,11 +102,26 @@ class Login extends Component {
 							autoCorrect={false}
 							returnKeyType='done'
 							value={this.props.password}
+							onSubmitEditing={event => this.refs.ThirdInput.focus()}
 							onChangeText={this.onPasswordInput}
 						/>
 					</View>
+					<View>
+						<TextInput
+							style={styles.input}
+							ref='ThirdInput'
+							placeholderTextColor='rgba(0,91,234,0.5)'
+							placeholder='Username'
+							underlineColorAndroid='transparent'
+							autoCapitalize='none'
+							autoCorrect={false}
+							returnKeyType='done'
+							value={this.props.username.username}
+							onChangeText={this.onUsernameInput}
+						/>
+					</View>
+					{this.renderStateError()}
 				</View>
-				{this.renderError()}
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
 					end={{ x: 1.0, y: 0.5 }}
@@ -95,24 +131,19 @@ class Login extends Component {
 					<Button
 						buttonStyle={{ backgroundColor: 'transparent' }}
 						onPress={this.onButtonPress}
-						title='LOGIN'
+						title='REGISTER'
 					/>
 				</LinearGradient>
+				{this.renderError()}
 				<Button
-					title='Not a friendO yet?'
+					title='friendO already?'
 					backgroundColor='transparent'
 					textStyle={{ color: 'dodgerblue' }}
 					buttonStyle={{ marginBottom: 20 }}
 					onPress={() => {
 						this.props.resetError()
-						Actions.register()
+						Actions.pop()
 					}}
-				/>
-				<Button
-					rounded
-					title='Login with Facebook'
-					backgroundColor='#3b5998'
-					onPress={this.loginwithFacebook}
 				/>
 			</View>
 		);
@@ -142,7 +173,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { login: state.login };
+	return { login: state.login, username: state.username };
 };
 
-export default connect(mapStateToProps, actions)(Login);
+export default connect(mapStateToProps, actions)(Register);

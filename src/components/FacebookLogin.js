@@ -9,13 +9,13 @@ import * as actions from '../actions';
 
 class FacebookLogin extends Component {
 	componentDidMount() {
-		// this.props.fbLogin();
-		// AsyncStorage.removeItem('fbToken');
-	}
-
-	loginwithFacebook = () => {
+		AsyncStorage.removeItem('fbToken');
 		this.props.fbLogin();
 	}
+
+	// loginwithFacebook = () => {
+	// 	this.props.fbLogin();
+	// }
 
 	render() {
 		return (

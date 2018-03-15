@@ -3,7 +3,14 @@ import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
 
 // RELATIVE
-import { EMAIL_INPUT, PASSWORD_INPUT, LOGIN_SUCCESS, LOGIN_FAIL, GAMES_FETCHED } from './types';
+import {
+	EMAIL_INPUT,
+	PASSWORD_INPUT,
+	LOGIN_SUCCESS,
+	LOGIN_FAIL,
+	GAMES_FETCHED,
+	RESET_ERROR
+} from './types';
 import _ from 'lodash'
 
 export const emailInput = (text) => {
@@ -24,13 +31,30 @@ export const userLogin = ({ email, password }) => {
 	return (dispatch) => {
 		firebase.auth().signInWithEmailAndPassword(email, password)
 			.then(user => loginSuccess1(dispatch, user))
-			.catch(() => {
-				firebase.auth().createUserWithEmailAndPassword(email, password)
-					.then(user => loginSuccess2(dispatch, user))
-					.catch(() => loginFail(dispatch));
+			.catch((err) => {
+				if (err.code === 'auth/wrong-password') {
+					dispatch({
+						type: LOGIN_FAIL, payload: 'Wrong Email/Password Combination'
+					})
+				} else if (err.code === 'auth/user-not-found') {
+					dispatch({
+						type: LOGIN_FAIL, payload: 'User Not Found'
+					})
+				} else if (err.code === 'auth/invalid-email') {
+					dispatch({
+						type: LOGIN_FAIL, payload: 'Invalid Email Format'
+					})
+				}
 			});
 	};
 };
+
+export const resetError = () => {
+	return {
+		type: RESET_ERROR
+	}
+}
+
 
 export const gameFetch = () => {
 	const { currentUser } = firebase.auth()
@@ -52,7 +76,9 @@ const loginSuccess1 = (dispatch, user) => {
 		type: LOGIN_SUCCESS,
 		payload: user
 	});
-	Actions.main();
+	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+		snap.val() ? Actions.main() : Actions.phoneAuth()
+	})
 }
 
 const loginSuccess2 = (dispatch, user) => {
@@ -61,10 +87,4 @@ const loginSuccess2 = (dispatch, user) => {
 		payload: user
 	});
 	Actions.username();
-}
-
-const loginFail = (dispatch) => {
-	dispatch({
-		type: LOGIN_FAIL,
-	})
 }

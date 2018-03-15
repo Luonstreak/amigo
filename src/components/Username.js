@@ -29,9 +29,7 @@ class Username extends Component {
 
 	onButtonPress() {
 		const { username } = this.props.username
-		
 		this.props.usernameSave({ username })
-	
 	}
 
 	render() {

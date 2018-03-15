@@ -3,16 +3,22 @@ export const EMAIL_INPUT = 'email_input';
 export const PASSWORD_INPUT = 'password_input';
 export const LOGIN_SUCCESS = 'login_success';
 export const LOGIN_FAIL = 'login_fail';
+export const REGISTER_SUCCESS = 'register_success';
+export const RESET_ERROR = 'reset_error';
 
-// USERNAME & REFERRAL CODE
+// REGISTER
 export const USERNAME_INPUT = 'username_input';
-export const USERNAME_SAVE = 'username_save';
 export const USERNAME_FETCH = 'username_fetch';
+
+// PHONE NUMBER AUTH
+export const PHONE_INPUT = 'phone_input';
+export const PHONE_SAVE = 'phone_save';
 
 // PLAYERS LIST 
 export const PLAYERS_FETCH = 'players_fetch';
 export const PLAYER_SELECTED = 'player_selected';
 export const FAIL_SELECT = 'fail_select';
+export const SAVE_NUMBERS = 'save_numbers';
 
 //DASHBOARD
 export const GAMES_FETCHED = "games_fetched";

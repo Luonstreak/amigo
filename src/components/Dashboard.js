@@ -31,6 +31,11 @@ class Dashboard extends Component {
 		this.props.gameFetch()
 		this.props.resetGameKey()
 		registerForNotifications();
+		Notifications.getBadgeNumberAsync().then(badgeNumber => {
+			if (badgeNumber !== 0) {
+				Notifications.setBadgeNumberAsync(0);
+			}
+		});
 	}
 	
 	// SPINNER
@@ -66,14 +71,27 @@ class Dashboard extends Component {
 	
 	// GAME
 
-	_renderGame = (game, status, opponent) => {
-		this.props.fetchScore(game)
+	_renderGame = async (game, status, setScore, opponent) => {
+		const { uid } = this.props.login.user
+		if (setScore) {
+			await firebase.database().ref(`scores/${game}`).set({
+			[uid]: 0,
+			[opponent]: 0
+			})
+			await firebase.database().ref(`nudges/${game}`).update({ [uid]: 5 })
+			await firebase.database().ref(`users/${uid}/games/${game}`).update({ setScore: false })
+			await firebase.database().ref(`users/${uid}/games/${game}`).update({ player2: uid })
+			await firebase.database().ref(`users/${opponent}/games/${game}`).update({ player2: uid })
+		}
+		else {
+			this.props.fetchScore(game)
+		}
 		this.props.renderCard(game, status, opponent)
 		this.props.fetchChosenQuestions(game)
 	}
 	_addNudge = (opponent, key) => {
-		console.log(opponent)
-		const { uid, displayName } = this.props.login.user
+		const { uid } = this.props.login.user
+		const { username } = this.props.username
 
 		const ref = firebase.database().ref(`nudges/${key}/${uid}`);
 		ref.once('value', snap => {
@@ -87,7 +105,7 @@ class Dashboard extends Component {
 					var token  = snap.val();
 					if (token) {
 						alert(`You have ${count - 1} nudge(s) left for this game.`)
-						var message = `${displayName} nudged you! Play them back!`
+						var message = `${username} nudged you! Play them back!`
 						await firebase.database().ref('nudge').push({
 							from: uid,
 							expoToken: token,
@@ -127,13 +145,13 @@ class Dashboard extends Component {
 						backgroundColor={'#FFC300'}
 						title={'INVITE FRIENDS'}
 						buttonStyle={{ padding: 5 }}
-						onPress={() => Actions.playerList()}
+						onPress={() => Actions.contactList()}
 					/>
 					<Avatar
 						rounded
 						medium
 						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
-						source={{ uri: currentUser.photoURL }}
+						// source={{ uri: currentUser.photoURL || null }}
 						onPress={() => this._getProfile(currentUser.uid)}
 					/>
 				</View>
@@ -159,7 +177,7 @@ class Dashboard extends Component {
 								<Avatar
 									rounded
 									medium
-									source={{ uri: item.avatar_url }}
+									// source={{ uri: item.avatar_url }}
 									containerStyle={{ marginRight: 20 }}
 									onPress={() => this._getProfile(item.opponent)}
 								/>
@@ -175,6 +193,7 @@ class Dashboard extends Component {
 									onPress={() => this._renderGame(
 										item.gameKey,
 										item.status,
+										item.setScore,
 										item.player1 !== currentUser.uid ? item.player1 : item.player2
 									)}
 								/>
@@ -293,6 +312,7 @@ const mapStateToProps = state => {
 	const arr = _.map(state.player.players)
 	return {
 		login: state.login,
+		username: state.username,
 		profile: state.profile,
 		chat: state.chat,
 		players: arr
