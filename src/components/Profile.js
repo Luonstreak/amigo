@@ -10,7 +10,6 @@ class Profile extends Component {
 	render() {
 		const { profileUser } = this.props.profile
 		const { headerStyle, titleStyle, listStyle, elementStyle} = styles;
-		console.log(profileUser)
 		return (
 			<View style={{ flex: 1 }}>
 				<View style={headerStyle}>

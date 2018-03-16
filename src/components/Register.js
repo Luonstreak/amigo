@@ -40,8 +40,7 @@ class Register extends Component {
 	}
 
 	onButtonPress = () => {
-		const { email, password } = this.props.login;
-		const { username } = this.props.username;
+		const { email, password, username } = this.props.login;
 		const usernameValid = username.length > 1
 		this.setState({ usernameValid })
 		if (usernameValid) {
@@ -116,7 +115,7 @@ class Register extends Component {
 							autoCapitalize='none'
 							autoCorrect={false}
 							returnKeyType='done'
-							value={this.props.username.username}
+							value={this.props.login.username}
 							onChangeText={this.onUsernameInput}
 						/>
 					</View>
@@ -173,7 +172,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { login: state.login, username: state.username };
+	return { login: state.login };
 };
 
 export default connect(mapStateToProps, actions)(Register);

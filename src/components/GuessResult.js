@@ -94,9 +94,8 @@ class GuessResult extends Component {
 
 	render() {
 		const data = this.props.lastFive;
-		const { score } = this.props.game
+		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
-		const { opponent } = this.props.game
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>

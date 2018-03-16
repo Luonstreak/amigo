@@ -5,8 +5,8 @@ import { Scene, Router, Actions } from 'react-native-router-flux';
 // RELATIVE
 import Login from './src/components/Login';
 import Register from './src/components/Register';
-import Username from './src/components/Username';
 import PhoneAuth from './src/components/PhoneAuth';
+import CodeInput from './src/components/CodeInput';
 import Dashboard from './src/components/Dashboard';
 import ContactList from './src/components/ContactList';
 import Modal from './src/components/Modal';
@@ -26,9 +26,9 @@ const RouterComponent = () => {
 					<Scene key='login' component={Login} title='True Friends Login' hideNavBar initial />
 					<Scene key='register' component={Register} title='True Friends Register' hideNavBar />
 				</Scene>
-				<Scene key='username'>
-					<Scene key='phoneAuth' component={PhoneAuth} hideNavBar initial />
-					<Scene key='login2' component={Username} title='Enter Your Username' />
+				<Scene key='phoneAuth'>
+					<Scene key='phoneInput' component={PhoneAuth} title='Enter Your Phone Number' hideNavBar initial />
+					{/* <Scene key='codeInput' component={CodeInput} title='Enter Your Code' /> */}
 				</Scene>
 				<Scene key='main'>
 					<Scene key='dashboard' component={Dashboard} hideNavBar initial />

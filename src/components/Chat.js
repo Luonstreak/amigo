@@ -57,9 +57,8 @@ class Chat extends Component {
 		this.setState({ input: msg })
 	}
 
-	_sendMessage = () => {
+	_sendMessage = (username) => {
 		const { uid } = this.props.login.user
-		const { username } = this.props.username
 		const { gameKey, opponent } = this.props.game
 		const msg = this.state.input
 		if (msg.length > 1) {
@@ -81,7 +80,7 @@ class Chat extends Component {
 	}
 	
 	render() {
-		const { username } = this.props.username
+		const { username } = this.props.dash.info
 		const { container, list, input, title, content } = styles;
 		return (
 			<View style={container}>
@@ -113,7 +112,7 @@ class Chat extends Component {
 					autoCapitalize='none'
 					autoCorrect={false}
 					onChangeText={this._updateInput}
-					onSubmitEditing={this._sendMessage}
+					onSubmitEditing={this._sendMessage(username)}
 					placeholder="say hi to your peeps..."
 				/>
 			</View>
@@ -154,6 +153,6 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { login: state.login, username: state.username, game: state.game };
+	return { login: state.login, dash: state.dash, game: state.game };
 }
 export default connect(mapStateToProps, actions)(Chat);

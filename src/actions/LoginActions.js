@@ -8,8 +8,8 @@ import {
 	PASSWORD_INPUT,
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
-	GAMES_FETCHED,
-	RESET_ERROR
+	RESET_ERROR,
+	USER_FETCH
 } from './types';
 import _ from 'lodash'
 
@@ -49,35 +49,29 @@ export const userLogin = ({ email, password }) => {
 	};
 };
 
-export const resetError = () => {
-	return {
-		type: RESET_ERROR
-	}
-}
-
-
-export const gameFetch = () => {
-	const { currentUser } = firebase.auth()
-	const ref  = firebase.database().ref(`users/${currentUser.uid}/games`);
-	return (dispatch) => {
-		ref.once('value', snap => {
-			var games = snap.val()
-			dispatch({
-				type: GAMES_FETCHED,
-				payload: games
-
-			})
-		}) 
-	}
-}
-
 const loginSuccess = (dispatch, user) => {
+	userFetch(dispatch,user)
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user
 	});
-	
 	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
 		snap.val() ? Actions.main() : Actions.phoneAuth()
 	})
 }
+
+const userFetch = (dispatch, user) => {
+	const ref = firebase.database().ref(`users/${user.uid}`);
+		ref.once('value', snap => {
+			dispatch({
+				type: USER_FETCH,
+				payload: snap.val()
+			})
+		})
+};
+
+export const resetError = () => {
+	return {
+		type: RESET_ERROR
+	}
+};

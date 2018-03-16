@@ -3,21 +3,15 @@ import { combineReducers } from 'redux';
 
 // RELATIVE
 import LoginReducer from './LoginReducer';
-import UsernameReducer from './UsernameReducer';
 import PhoneAuthReducer from './PhoneAuthReducer';
+import DashboardReducer from './DashboardReducer';
 import PlayerListReducer from './PlayerListReducer';
 import QuestionReducer from './QuestionReducer';
-import ChatReducer from './ChatReducer';
-import ProfileReducer from './ProfileReducer';
-import CategoryReducer from './CategoryReducer';
 
 export default combineReducers({
 	login: LoginReducer,
-	username: UsernameReducer,
 	phone: PhoneAuthReducer,
+	dash: DashboardReducer,
 	player: PlayerListReducer,
-	game: QuestionReducer,
-	chat: ChatReducer,
-	profile: ProfileReducer,
-	categories: CategoryReducer
+	game: QuestionReducer
 });

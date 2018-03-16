@@ -1,6 +1,6 @@
 // ABSOLUTE
 import React, { Component } from 'react';
-import { Text, View, TextInput, Dimensions, Keyboard } from 'react-native';
+import { Text, View, TextInput, Dimensions, Keyboard, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { LinearGradient } from 'expo';
@@ -14,7 +14,7 @@ class Login extends Component {
 	componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this.setState({ keyboard: false }));
-		// AsyncStorage.removeItem('fbToken');
+		AsyncStorage.removeItem('fbToken');
 		// this.props.fbLogin();
 	}
 

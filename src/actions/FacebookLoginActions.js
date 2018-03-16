@@ -1,10 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import { Facebook } from 'expo';
 import firebase from 'firebase';
-import {
-	LOGIN_SUCCESS,
-	LOGIN_FAIL
-} from './types';
+import { LOGIN_SUCCESS, LOGIN_FAIL, USER_FETCH } from './types';
 import { Actions } from 'react-native-router-flux';
 
 export const fbLogin = () => {
@@ -77,6 +74,7 @@ const loginSuccess = (dispatch, user) => {
 }
 
 const loginSuccess2 = (dispatch, user, userInfo) => {
+	userFetch(dispatch, user)
 	firebase.database().ref(`users/${user.uid}`).update({
 		username: userInfo.name,
 		photo: userInfo.picture.data.url
@@ -94,3 +92,13 @@ const loginSuccess2 = (dispatch, user, userInfo) => {
 		console.log(error)
 	});
 }
+
+const userFetch = (dispatch, user) => {
+	const ref = firebase.database().ref(`users/${user.uid}`);
+	ref.once('value', snap => {
+		dispatch({
+			type: USER_FETCH,
+			payload: snap.val()
+		})
+	})
+};

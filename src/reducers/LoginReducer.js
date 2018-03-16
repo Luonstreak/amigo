@@ -3,17 +3,17 @@ import {
 	EMAIL_INPUT, 
 	PASSWORD_INPUT, 
 	LOGIN_SUCCESS, 
-	LOGIN_FAIL, 
-	GAMES_FETCHED, 
+	LOGIN_FAIL,  
 	RESET_ERROR,
+	USERNAME_INPUT,
 	REGISTER_SUCCESS 
 } from '../actions/types';
 
 const INITIAL_STATE = {
-	email: 'lucio@top.com',
-	password: 'hahaha',
+	email: 'michael@top.com',
+	password: 'password',
 	user: null,
-	games: null,
+	username: '',
 	error: null
 }
 
@@ -25,12 +25,12 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, password: action.payload, error: null };
 		case LOGIN_SUCCESS:
 			return { ...state, user: action.payload };
+		case USERNAME_INPUT:
+			return { ...state, username: action.payload };
 		case REGISTER_SUCCESS:
 			return { ...state, user: action.payload };
 		case LOGIN_FAIL:
 			return { ...state, error: action.payload };
-		case GAMES_FETCHED:
-			return { ...state, games: action.payload };
 		case RESET_ERROR:
 			return { ...state, error: null };
 		default:

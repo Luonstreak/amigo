@@ -18,6 +18,7 @@ export const phoneInput = (text) => {
 export const phoneSave = (phoneNumber) => {
 	const { currentUser } = firebase.auth();
 	return (dispatch) => {
+		firebase.database().ref(`users/${currentUser.uid}`).update({ phone: phoneNumber })
 		firebase.database().ref(`allUsers/${phoneNumber}`).set(currentUser.uid)
 			.then(() => {
 				updateDatabase(phoneNumber, currentUser.uid)
@@ -29,15 +30,13 @@ export const phoneSave = (phoneNumber) => {
 
 
 const updateDatabase = (phone, uid) => {
-	console.log(phone, uid)
 	firebase.database().ref(`userNumbers/${uid}`).set(phone);
 	const ref = firebase.database().ref(`pendingGames/${phone}`)
 	ref.once('value', snap => {
 		const game = snap.val();
-		console.log(game)
 		if (game) {
-			// firebase.database().ref(`score/${}`)
 			firebase.database().ref(`users/${uid}`).update(game)
+			ref.remove();
 			Actions.main();
 		}
 		else{
