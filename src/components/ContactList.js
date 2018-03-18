@@ -41,23 +41,25 @@ class ContactList extends Component {
 			}
 		}
 
-	selectPlayer = (player) => {
+	selectPlayer = (player, name) => {
 		const newPlayer = String(player).replace(/[^\d]/g, '')
+		const { phone } = this.props.dash.info
 		const { uid } = this.props.user
-		const ref = firebase.database().ref(`opponents/${uid}`).orderByKey().equalTo(newPlayer)
-		ref.once('value').then(async snap => {
-			var opponent = await snap.exists()
+		const ref = firebase.database().ref(`opponents/${phone}`).orderByKey().equalTo(newPlayer)
+		ref.once('value', snap => {
+			var opponent = snap.exists()
+			console.log(opponent)
 			if (opponent) {
 				alert('You are currently playing a game with this person.')
 			}
 			else {
-				this.props.playerSelect(newPlayer, uid)
+				this.props.playerSelect(newPlayer, uid, name)
 			}
 		})
 	}
 
 	saveNumbers = (numbers, visible) => {
-		this.props.savePhoneNmubers(numbers)
+		this.props.savePhoneNumbers(numbers)
 		console.log('visible', visible)
 		this.setState({ modalVisible: visible })
 	}
@@ -75,7 +77,7 @@ class ContactList extends Component {
 						<Text
 							style={{ flex: 1, fontSize: 20, color: 'mediumseagreen' }}
 							// onPress={() => item.phoneNumbers.length > 1 ? this.saveNumbers(item.phoneNumbers, !this.state.modalVisible) : this.selectPlayer(item.phoneNumbers[0].number)}
-							onPress={() => Platform.OS === 'ios' ? this.selectPlayer(item.phoneNumbers[0].digits) : this.selectPlayer(item.phoneNumbers[0].number)}
+							onPress={() => Platform.OS === 'ios' ? this.selectPlayer(item.phoneNumbers[0].digits, item.name) : this.selectPlayer(item.phoneNumbers[0].number, item.name)}
 						>{`${item.name}`}</Text>
 					</View>
 				}
@@ -126,7 +128,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { user: state.login.user, player: state.player }
+	return { user: state.login.user, dash: state.dash }
 }
 
 export default connect(mapStateToProps, actions)(ContactList);

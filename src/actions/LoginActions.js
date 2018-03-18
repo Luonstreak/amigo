@@ -4,28 +4,12 @@ import { Actions } from 'react-native-router-flux';
 
 // RELATIVE
 import {
-	EMAIL_INPUT,
-	PASSWORD_INPUT,
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
-	GAMES_FETCHED,
-	RESET_ERROR
+	RESET_ERROR,
+	USER_FETCH
 } from './types';
 import _ from 'lodash'
-
-export const emailInput = (text) => {
-	return {
-		type: EMAIL_INPUT,
-		payload: text
-	};
-};
-
-export const passwordInput = (text) => {
-	return {
-		type: PASSWORD_INPUT,
-		payload: text
-	}
-};
 
 export const userLogin = ({ email, password }) => {
 	return (dispatch) => {
@@ -48,36 +32,42 @@ export const userLogin = ({ email, password }) => {
 			});
 	};
 };
+export const persistentEmailLogin = (user) => {
+	return (dispatch) => {
+		dispatch({
+			type: LOGIN_SUCCESS,
+			payload: user
+		});
+		userFetch(dispatch, user)
+		firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+			snap.val() ? Actions.main() : Actions.phoneAuth()
+		})
+	}
+}
+
+const loginSuccess = (dispatch, user) => {
+	userFetch(dispatch,user)
+	dispatch({
+		type: LOGIN_SUCCESS,
+		payload: user
+	});
+	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+		snap.val() ? Actions.main() : Actions.phoneAuth()
+	})
+}
+
+const userFetch = (dispatch, user) => {
+	const ref = firebase.database().ref(`users/${user.uid}`);
+		ref.once('value', snap => {
+			dispatch({
+				type: USER_FETCH,
+				payload: snap.val()
+			})
+		})
+};
 
 export const resetError = () => {
 	return {
 		type: RESET_ERROR
 	}
-}
-
-
-export const gameFetch = () => {
-	const { currentUser } = firebase.auth()
-	const ref  = firebase.database().ref(`users/${currentUser.uid}/games`);
-	return (dispatch) => {
-		ref.once('value', snap => {
-			var games = snap.val()
-			dispatch({
-				type: GAMES_FETCHED,
-				payload: games
-
-			})
-		}) 
-	}
-}
-
-const loginSuccess = (dispatch, user) => {
-	dispatch({
-		type: LOGIN_SUCCESS,
-		payload: user
-	});
-	
-	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
-		snap.val() ? Actions.main() : Actions.phoneAuth()
-	})
-}
+};

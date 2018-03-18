@@ -16,6 +16,7 @@ class PhoneAuth extends Component {
 	onButtonPress() {
 		const { phoneNumber } = this.props.phone
 		const phone = String(phoneNumber).replace(/[^\d]/g, '');
+		this.props.userFetch()
 		this.props.phoneSave(phone)
 	}
 

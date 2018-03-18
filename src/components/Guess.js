@@ -34,8 +34,10 @@ class Guess extends Component {
 
 	select = (num, questionKey, opponentAnswer, item, uid) => {
 		const { gameKey, opponent, score } = this.props.game
+		const { selectedPlayer } = this.props.player
+		const { phone } = this.props.dash.info
 		const newScore = score ? score[uid] : 0
-		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore)
+		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore, selectedPlayer, phone)
 		this.props.changeStatus('guessResult', uid, gameKey)
 	}
 
@@ -213,7 +215,13 @@ const mapStateToProps = state => {
 	_.forIn(state.game.lastFive, (value, key) => {
 		arr.push({ key, value })
 	})
-	return { lastFive: arr, game: state.game, user: state.login.user };
+	return { 
+		lastFive: arr, 
+		game: state.game, 
+		user: state.login.user, 
+		player: state.player, 
+		dash: state.dash 
+	};
 };
 
 export default connect(mapStateToProps, actions)(Guess);

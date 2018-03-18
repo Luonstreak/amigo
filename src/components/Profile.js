@@ -6,37 +6,80 @@ import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
 
 class Profile extends Component {
-		
+	
+	getProfile = (item) => {
+		this.props.friendsFetch(item.phone)
+		Actions.profile({item})
+	}
+
+	_renderPhoto = (info) => {
+		if (this.props.item) {
+			if (this.props.item.photo) {
+				return this.props.item.photo
+			}
+			else {
+				return this.props.item.opponentPhoto
+			}
+		}
+		else {
+			return info.photo
+		}
+	}
+
+	renderSettings = () => {
+		if (this.props.current){
+			return (
+				<Icon
+					name='settings'
+					type='material-community'
+					color='dodgerblue'
+					underlayColor='transparent'
+					onPress={() => Actions.settings()}
+					size={40}
+				/>
+			)
+		} else { return null }
+	}
+
 	render() {
-		const { profileUser } = this.props.profile
-		const { headerStyle, titleStyle, listStyle, elementStyle} = styles;
-		console.log(profileUser)
+		const { info, friends } = this.props.dash;
+		const { headerStyle, titleStyle, listStyle, elementStyle, navBar } = styles;
 		return (
 			<View style={{ flex: 1 }}>
 				<View style={headerStyle}>
-					<Icon
-						name='arrow-left'
-						type='material-community'
-						color='dodgerblue'
-						underlayColor='transparent'
-						size={40}
-						containerStyle={{ position: 'absolute', top: 20, left: 10 }}
-						onPress={() => Actions.pop()}
-					/>
+					<View style={navBar}>
+						<Icon
+							name='arrow-left'
+							type='material-community'
+							color='dodgerblue'
+							underlayColor='transparent'
+							size={40}
+							onPress={() => Actions.pop()}
+						/>
+						<Icon
+							name='home'
+							type='material-community'
+							color='dodgerblue'
+							underlayColor='transparent'
+							size={40}
+							onPress={() => Actions.main()}
+						/>
+						{this.renderSettings()}
+					</View>
 					<Avatar
 						rounded
 						xlarge
 						containerStyle={{ margin: width * 0.025 }}
-						source={{uri: profileUser.photo}}
+						source={{ uri: this._renderPhoto(info) }}
 					/>
-					<Text style={{ fontSize: 22 }}>{profileUser.username}</Text>
-					<Text style={{ fontSize: 18 }}>{profileUser.friends} FRIENDS</Text>
+					<Text style={{ fontSize: 22 }}>{this.props.item ? this.props.item.username : info.username}</Text>
+					<Text style={{ fontSize: 18 }}>{friends.length} FRIENDS</Text>
 				</View>
 				{/* LIST */}
 				<ScrollView>
 					<Text style={titleStyle}>TOP 3 FRIENDOS</Text>
 					<FlatList
-						data={profileUser.games}
+						data={friends}
 						keyExtractor={(item, index) => index}
 						renderItem={({ item }) => {
 							return (
@@ -44,10 +87,11 @@ class Profile extends Component {
 									<Avatar
 										rounded
 										medium
-										source={{ uri: item.avatar_url }}
+										source={{ uri: item.photo }}
 										containerStyle={{ marginRight: 20 }}
+										onPress={() => this.getProfile(item)}
 									/>
-									<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>{item.opponent}</Text>
+									<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>{item.username}</Text>
 									<Icon
 										name='information-outline'
 										type='material-community'
@@ -93,9 +137,15 @@ class Profile extends Component {
 const { height, width } = Dimensions.get('window');
 
 const styles = {
+	//nav
+	navBar: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		width,
+		paddingTop: 20
+	},
 	//header
 	headerStyle: {
-		paddingTop: 20,
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 10,
@@ -129,7 +179,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { profile: state.profile }
+	return { profile: state.profile, dash: state.dash }
 }
 
 export default connect(mapStateToProps, actions)(Profile);

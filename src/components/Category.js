@@ -76,7 +76,7 @@ class Category extends Component {
 					}
 					else {
 						const { selectedPlayer } = this.props.player
-						firebase.database().ref(`questionChoices/${uid}/${selectedPlayer}`).once('value', snap => {
+						firebase.database().ref(`questionChoices/${uid}/${selectedPlayer.phone}`).once('value', snap => {
 							if (snap.numChildren() >= 3) {
 								console.log('more than 3 in undefined')
 								Actions.question({ category: id })
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
 	const arr = []
 	var points = null
-	_.forIn(state.categories.categories, (value, key) => {
+	_.forIn(state.dash.categories, (value, key) => {
 		if(key === 'points'){
 			points = value
 		} else {

@@ -3,19 +3,10 @@ import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
 
 // RELATIVE
-import { SAVE_NUMBERS, PLAYERS_FETCH, PLAYER_SELECTED, FAIL_SELECT } from './types';
+import { SAVE_NUMBERS, PLAYERS_FETCH, PLAYER_SELECTED } from './types';
 
-export const fetchPlayers = () => {
-	const ref = firebase.database().ref('users')
-	return (dispatch) => {
-		ref.once('value', snap => {
-			dispatch({ type: PLAYERS_FETCH, payload: snap.val() })
-		})
-	}
-}
-
-export const playerSelect = (player, uid) => {
-	const ref = firebase.database().ref(`questionChoices/${uid}/${player}`);
+export const playerSelect = (phone, uid, name) => {
+	const ref = firebase.database().ref(`questionChoices/${uid}`);
 	ref.once('value', snap => {
 		if (snap.val() !== null) {
 			ref.remove();
@@ -24,13 +15,13 @@ export const playerSelect = (player, uid) => {
 	return (dispatch) => {
 		dispatch({
 			type: PLAYER_SELECTED,
-			payload: player
+			payload: { phone, name }
 		})
 		Actions.categories()
 	}
 }
 
-export const savePhoneNmubers = (numbers) => {
+export const savePhoneNumbers = (numbers) => {
 	return (dispatch) => {
 		dispatch({ type: SAVE_NUMBERS, payload: numbers })
 	}

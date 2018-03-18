@@ -33,7 +33,7 @@ class Result extends Component {
 	}
 
 	render() {
-		const { opponent, result, gameKey, score } = this.props.game
+		const { gameKey, score, opponent, result } = this.props.game
 		const { uid } = this.props.user
 		return (
 			<View style={styles.container}>

@@ -8,36 +8,12 @@ import {
 	GOT_RESULT,
 	STATUS_UPDATE,
 	FETCH_CHOSEN_QUESTIONS,
-	DECREASE_NUDGE_COUNT 
+	PLAYER_SELECTED
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
 
-export const renderCard = (game, status, opponent) => {
-	const ref = firebase.database().ref(`games/${game}`);
-	return (dispatch) => {
-		ref.limitToLast(5).once('value', async snap => {
-			const obj = { five: snap.val(), gameKey: game, opponent }
-			await dispatch({ type: FETCH_FIVE, payload: obj })
-			if (status == 'result') {
-				firebase.database().ref(`result/${game}`).once('value', async snap => {
-					await dispatch({ type: GOT_RESULT, payload: snap.val() })
-					Actions.modal()
-				})
-			}
-			else if (status == 'guess') {
-				Actions.guess()
-
-			} 
-			else if (status == 'guessResult') {
-				Actions.guessResult()
-			} 
-			// Actions.question();
-		})
-	}
-};
-
-export const fetchQuestion = (id, num, gameKey, opponent) => {
+export const fetchQuestion = (id, num, gameKey, selectedPlayer) => {
 	const { currentUser } = firebase.auth()
 	return (dispatch) => {
 		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
@@ -48,7 +24,8 @@ export const fetchQuestion = (id, num, gameKey, opponent) => {
 				choices: snap.val().choices
 			}
 			if (!gameKey) {
-				firebase.database().ref(`allUsers/${opponent}`).once('value', snapshot => {
+				const opponent = selectedPlayer.phone
+				firebase.database().ref(`allUids/${opponent}`).once('value', snapshot => {
 					var existingOpponent = snapshot.val()
 					console.log(existingOpponent, 'fetchQuestion')
 					if (existingOpponent) {
@@ -79,6 +56,80 @@ export const fetchQuestion = (id, num, gameKey, opponent) => {
 	}
 }
 
+export const fetchScore = (gameKey, uid) => {
+	const ref = firebase.database().ref(`scores/${gameKey}`)
+	return (dispatch) => {
+		ref.once('value', snap => {
+			dispatch({
+				type: FETCH_SCORE,
+				payload: snap.val()
+			})
+		})
+	}
+};
+
+export const startGame = (game, status, opponent, phone, photo, username) => {
+	const ref = firebase.database().ref(`games/${game}`);
+	firebase.database().ref(`users/${opponent}/${game}`).update({
+		opponentName: username,
+		opponentPhoto: photo
+	})
+	firebase.database().ref(`users/${opponent}/phone`).once('value', snap => {
+		var opponentPhone = snap.val()
+		firebase.database().ref(`users/${opponent}/username`).once('value', snap => {
+			firebase.database().ref(`friends/${phone}/${opponentPhone}`).update({ username: snap.val() })
+		})
+	})
+	return (dispatch) => {
+		dispatchSelectedPlayer(dispatch, opponent)
+		ref.limitToLast(5).once('value', async snap => {
+			const obj = { five: snap.val(), gameKey: game, opponent }
+			await dispatch({ type: FETCH_FIVE, payload: obj })
+			if (status == 'result') {
+				firebase.database().ref(`result/${game}`).once('value', async snap => {
+					await dispatch({ type: GOT_RESULT, payload: snap.val() })
+					Actions.modal()
+				})
+			}
+			else if (status == 'guess') {
+				Actions.guess()
+
+			}
+			else if (status == 'guessResult') {
+				Actions.guessResult()
+			}
+			// Actions.question();
+		})
+	}
+};
+
+const dispatchSelectedPlayer = (dispatch, opponent) => {
+	console.log('inside dsp')
+	firebase.database().ref(`allPhoneNumbers/${opponent}`).once('value', snap => {
+		console.log('snap', snap.val())
+		dispatch({
+			type: PLAYER_SELECTED,
+			payload: snap.val()
+		})
+	})
+}
+
+export const fetchChosenQuestions = (gameKey) => {
+	const ref = firebase.database().ref(`questionChoices/${gameKey}`)
+	return (dispatch) => {
+		ref.once('value', async snap => {
+			// var snap = snap.exists()
+			if (snap.val() !== null) {
+				var snapVal = snap.val()
+				var arr = Object.values(snapVal)
+				await dispatch({
+					type: FETCH_CHOSEN_QUESTIONS,
+					payload: arr
+				})
+			}
+		})
+	}
+};
 
 export const saveAnswer = (num, questionId, opponent, gameKey, displayName) => {
 	const { currentUser } = firebase.auth()
@@ -133,23 +184,56 @@ export const saveAnswer = (num, questionId, opponent, gameKey, displayName) => {
 	}
 }
 
-export const creatingGame = (num, questionId, opponent, phone) => {
+export const creatingGame = (num, questionId, selectedPlayer, phone, username, photo) => {
+	const opponent = selectedPlayer.phone
+	const opponentName = selectedPlayer.name
 	const { currentUser } = firebase.auth()
 	const choice = `option${num}`
 	var pushId = null
 
-	firebase.database().ref(`allUsers/${opponent}`).once('value', snap => {
+	firebase.database().ref(`allUids/${opponent}`).once('value', snap => {
 		var existingOpponent = snap.val()
 		console.log(existingOpponent, '=-=-=-=-=-=-=-=-=-=-=-')
 		if (existingOpponent) {
-			initialGame(currentUser, choice, questionId, existingOpponent, phone, true)
+			initialGame(currentUser, choice, questionId, existingOpponent, username, phone, null, null, true)
 			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })
 			firebase.database().ref(`opponents/${opponent}`).update({ [phone]: true })
+			firebase.database().ref(`users/${existingOpponent}`).once('value', snap => {
+				const opponentInfo = snap.val();
+				firebase.database().ref(`friends/${phone}`).update({ 
+					[opponent]: {
+						username: opponentInfo.username,
+						photo: opponentInfo.photo,
+						count: 0
+					}
+				})
+				firebase.database().ref(`friends/${opponent}`).update({ 
+					[phone]: {
+						username: username,
+						photo: photo,
+						count: 0
+					}
+				})
+			})
 		}
 		else {
-			initialGame(currentUser, choice, questionId, opponent, phone)
+			initialGame(currentUser, choice, questionId, opponent, username, phone, opponentName, photo)
 			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })
 			firebase.database().ref(`opponents/${opponent}`).update({ [phone]: true })
+			firebase.database().ref(`friends/${phone}`).update({
+				[opponent]: {
+					username: selectedPlayer.name,
+					photo: 'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/moustache.png?alt=media&token=e2d14111-962b-4527-9a2a-47430b5bc2e5',
+					count: 0
+				}
+			})
+			firebase.database().ref(`friends/${opponent}`).update({
+				[phone]: {
+					username: username,
+					photo: photo,
+					count: 0
+				}
+			})
 			const ref = firebase.database().ref(`categories/${currentUser.uid}/points`);
 			ref.once('value', snap => {
 				ref.parent.update({ points: snap.val() + 1 })
@@ -162,7 +246,7 @@ export const creatingGame = (num, questionId, opponent, phone) => {
 	}
 }
 
-const initialGame = (currentUser, choice, questionId, opponent, phone, exists) => {
+const initialGame = (currentUser, choice, questionId, opponent, username, phone, opponentName, photo, exists) => {
 
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
@@ -196,7 +280,10 @@ const initialGame = (currentUser, choice, questionId, opponent, phone, exists) =
 		firebase.database().ref(`users/${currentUser.uid}/games/${key}`).set({
 			player1: currentUser.uid,
 			player2: opponent,
-			status: 'pending'
+			status: 'pending',
+			opponentPhone: opponent,
+			opponentName: opponentName,
+			opponentPhoto: 'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/moustache.png?alt=media&token=e2d14111-962b-4527-9a2a-47430b5bc2e5',
 		})
 		if (exists) {
 			firebase.database().ref(`users/${opponent}/games/${key}`).set({
@@ -211,19 +298,16 @@ const initialGame = (currentUser, choice, questionId, opponent, phone, exists) =
 				player1: currentUser.uid,
 				player2: opponent,
 				status: 'guess',
-				setScore: true
+				setScore: true,
+				opponentPhone: phone,
+				opponentName: username,
+				opponentPhoto: photo 
 			})
 		}
 	})
 }
 
-export const resetGameKey = () => {
-	return {
-		type: RESET_GAME_KEY
-	}
-}
-
-export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer, item, score) => {
+export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer, item, score, opponentPhone, phone) => {
 	const { currentUser } = firebase.auth();
 	const choice = `option${num}`
 	firebase.database().ref(`games/${gameKey}/${questionKey}/${currentUser.uid}`).set(choice);
@@ -250,6 +334,7 @@ export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer
 	return async (dispatch) => {
 		if (choice === opponentAnswer) {
 			const updatedScore = score + 1
+			firebase.database().ref(`friends/${phone}/${opponentPhone}`).update({ count: updatedScore })
 			firebase.database().ref(`scores/${gameKey}`).update({
 				[currentUser.uid]: updatedScore
 			})
@@ -284,43 +369,3 @@ export const changeStatus = (status, currentUserId, gameKey) => {
 		}
 	}
 }
-
-export const fetchScore = (gameKey, uid) => {
-	const ref = firebase.database().ref(`scores/${gameKey}`)
-	return (dispatch) => {
-		ref.once('value', snap => {
-			dispatch({
-				type: FETCH_SCORE,
-				payload: snap.val()
-			})
-		})
-	}
-}
-export const fetchChosenQuestions = (gameKey) => {
-	const ref = firebase.database().ref(`questionChoices/${gameKey}`)
-	return (dispatch) => {
-	ref.once('value', async snap => {
-		// var snap = snap.exists()
-		if (snap.val() !== null) {
-			var snapVal = snap.val()
-			var arr = Object.values(snapVal)
-				await dispatch({
-					type: FETCH_CHOSEN_QUESTIONS,
-					payload: arr
-				})
-			}
-		})
-	}
-}
-
-export const decreaseNudgeCount = (key, uid, count) => {
-	var newNudgeCount = count - 1
-	firebase.database().ref(`nudges/${key}`).update({
-		[uid]: newNudgeCount
-	});
-	return async (dispatch) => {
-		await dispatch({
-			type: DECREASE_NUDGE_COUNT
-		})
-	}
-} 

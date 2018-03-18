@@ -9,22 +9,12 @@ import firebase from 'firebase';
 // RELATIVE
 import * as actions from '../actions';
 
-class Login extends Component {
-	state = { keyboard: false, email: '', password: '' }
+class ForgotPassword extends Component {
+	state = { keyboard: false }
 
-	async componentWillMount() {
+	componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this.setState({ keyboard: false }));
-		let fbToken = await AsyncStorage.getItem('fbToken');
-		if (fbToken) {
-			this.props.fbLogin();
-		}
-		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-				console.log(user)
-				this.props.persistentEmailLogin(user)
-			}
-		})
 	}
 
 	componentWillUnmount() {
@@ -33,27 +23,22 @@ class Login extends Component {
 	}
 
 	onEmailInput = (text) => {
-		this.setState({email: text})
-	}
-
-	onPasswordInput = (text) => {
-		this.setState({password: text})
+		this.props.emailInput(text);
 	}
 
 	onButtonPress = () => {
-		const { email, password } = this.state;
-		this.props.userLogin({ email, password });
+		const { email } = this.props.login;
+		firebase.auth().sendPasswordResetEmail(email).then((user) => {
+			alert('Check your email for instructions to reset your password.')
+			Actions.login()
+		})
 		Keyboard.dismiss;
 	}
 
-	loginwithFacebook = () => {
-		this.props.fbLogin();
-	}
-
 	renderError = () => {
-		if(this.props.login.error) {
-			return(
-				<Text 
+		if (this.props.login.error) {
+			return (
+				<Text
 					style={{ color: 'tomato', margin: 10 }}
 				>{this.props.login.error}</Text>
 			)
@@ -64,6 +49,7 @@ class Login extends Component {
 		return (
 			<View style={[styles.card, this.state.keyboard ? { marginTop: height * 0.1 } : { marginTop: height * 0.4 }]}>
 				<View>
+					<Text style={{ alignSelf: 'center', color: 'dodgerblue', fontSize: 20 }}>Forgot Password </Text>
 					<View>
 						<TextInput
 							style={styles.input}
@@ -73,24 +59,9 @@ class Login extends Component {
 							autoCapitalize='none'
 							autoCorrect={false}
 							returnKeyType='next'
-							value={this.state.email}
+							value={this.props.email}
 							onSubmitEditing={event => this.refs.SecondInput.focus()}
 							onChangeText={this.onEmailInput}
-						/>
-					</View>
-					<View>
-						<TextInput
-							style={styles.input}
-							ref='SecondInput'
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Password'
-							underlineColorAndroid='transparent'
-							secureTextEntry={true}
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='done'
-							value={this.state.password}
-							onChangeText={this.onPasswordInput}
 						/>
 					</View>
 				</View>
@@ -104,41 +75,21 @@ class Login extends Component {
 					<Button
 						buttonStyle={{ backgroundColor: 'transparent' }}
 						onPress={this.onButtonPress}
-						title='LOGIN'
+						title='Continue'
 					/>
 				</LinearGradient>
 				<View style={styles.container}>
-					{/* <View style={styles.button}> */}
-						<Button
-							title='Not a friendO yet?'
-							backgroundColor='transparent'
-							textStyle={{ color: 'dodgerblue' }}
-							// buttonStyle={{  }}
-							onPress={() => {
-								this.props.resetError()
-								Actions.register()
-							}}
-						/>
-					{/* </View> */}
-					{/* <View style={styles.button}> */}
-						<Button
-							title='Forgot Password?'
-							backgroundColor='transparent'
-							textStyle={{ color: 'dodgerblue' }}
-							// buttonStyle={{ }}
-							onPress={() => {
-								this.props.resetError()
-								Actions.forgotPassword()
-							}}
-						/>
-					{/* </View> */}
+					<Button
+						title='Go Back'
+						backgroundColor='transparent'
+						textStyle={{ color: 'dodgerblue' }}
+						// buttonStyle={{  }}
+						onPress={() => {
+							this.props.resetError()
+							Actions.login()
+						}}
+					/>
 				</View>
-				<Button
-					rounded
-					title='Login with Facebook'
-					backgroundColor='#3b5998'
-					onPress={this.loginwithFacebook}
-				/>
 			</View>
 		);
 	}
@@ -152,11 +103,11 @@ const styles = {
 		marginBottom: 20,
 		justifyContent: 'center'
 	},
-	button: {
-		marginTop: 20,
-		backgroundColor: 'green',
-		height: 20
-	},
+	// button: {
+	// 	marginTop: 20,
+	// 	backgroundColor: 'green',
+	// 	height: 20
+	// },
 	card: {
 		width: (width * .8),
 		marginLeft: (width * .1),
@@ -181,4 +132,4 @@ const mapStateToProps = state => {
 	return { login: state.login };
 };
 
-export default connect(mapStateToProps, actions)(Login);
+export default connect(mapStateToProps, actions)(ForgotPassword);

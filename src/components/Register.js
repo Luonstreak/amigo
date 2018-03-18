@@ -12,7 +12,10 @@ class Register extends Component {
 		state = { 
 			keyboard: false,
 			usernameValid: true,
-			error: ''
+			error: '',
+			email: '', 
+			password: '',
+			username: ''
 		}
 
 	componentWillMount() {
@@ -28,20 +31,22 @@ class Register extends Component {
 	}
 
 	onEmailInput = (text) => {
-		this.props.emailInput(text);
+		this.setState({ error: '' })
+		this.setState({ email: text })
 	}
-
+	
 	onPasswordInput = (text) => {
-		this.props.passwordInput(text);
+		this.setState({ error: '' })
+		this.setState({ password: text })
 	}
 	
 	onUsernameInput = (text) => {
-		this.props.usernameInput(text);
+		this.setState({ error: '' })
+		this.setState({ username: text })
 	}
 
 	onButtonPress = () => {
-		const { email, password } = this.props.login;
-		const { username } = this.props.username;
+		const { email, password, username } = this.state;
 		const usernameValid = username.length > 1
 		this.setState({ usernameValid })
 		if (usernameValid) {
@@ -85,7 +90,7 @@ class Register extends Component {
 							autoCapitalize='none'
 							autoCorrect={false}
 							returnKeyType='next'
-							value={this.props.email}
+							value={this.state.email}
 							onSubmitEditing={event => this.refs.SecondInput.focus()}
 							onChangeText={this.onEmailInput}
 						/>
@@ -101,7 +106,7 @@ class Register extends Component {
 							autoCapitalize='none'
 							autoCorrect={false}
 							returnKeyType='done'
-							value={this.props.password}
+							value={this.state.password}
 							onSubmitEditing={event => this.refs.ThirdInput.focus()}
 							onChangeText={this.onPasswordInput}
 						/>
@@ -116,11 +121,12 @@ class Register extends Component {
 							autoCapitalize='none'
 							autoCorrect={false}
 							returnKeyType='done'
-							value={this.props.username.username}
+							value={this.state.username}
 							onChangeText={this.onUsernameInput}
 						/>
 					</View>
 					{this.renderStateError()}
+					{this.renderError()}
 				</View>
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
@@ -134,7 +140,6 @@ class Register extends Component {
 						title='REGISTER'
 					/>
 				</LinearGradient>
-				{this.renderError()}
 				<Button
 					title='friendO already?'
 					backgroundColor='transparent'
@@ -173,7 +178,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { login: state.login, username: state.username };
+	return { login: state.login };
 };
 
 export default connect(mapStateToProps, actions)(Register);

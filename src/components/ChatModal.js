@@ -37,8 +37,7 @@ class ChatModal extends Component {
 		this.setState({ input: msg })
 	}
 
-	_sendMessage = () => {
-		const { username } = this.props.username
+	_sendMessage = (username) => {
 		const { auxKey } = this.props
 		const msg = this.state.input
 		if (msg.length > 1) {
@@ -52,7 +51,7 @@ class ChatModal extends Component {
 	}
 
 	render() {
-		const { username } = this.props.username
+		const { username } = this.props.dash.info
 		const { container, list, input, title, content } = styles;
 		return (
 			<View>
@@ -96,7 +95,7 @@ class ChatModal extends Component {
 					autoCapitalize='none'
 					autoCorrect={false}
 					onChangeText={this._updateInput}
-					onSubmitEditing={this._sendMessage}
+					onSubmitEditing={this._sendMessage(username)}
 					placeholder="say hi to your peeps..."
 				/>
 			</View>
@@ -126,6 +125,6 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { username: state.username, chat: state.chat };
+	return { dash: state.dash, chat: state.chat };
 }
 export default connect(mapStateToProps, actions)(ChatModal);

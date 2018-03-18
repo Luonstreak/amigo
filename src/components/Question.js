@@ -7,7 +7,8 @@ import {
 	FlatList,
 	ScrollView,
 	TextInput,
-	Dimensions
+	Dimensions, 
+	Share
 } from 'react-native';
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -23,48 +24,31 @@ class Question extends Component {
 	select = (num, questionNumber) => {
 		const { selectedPlayer } = this.props.player
 		const { gameKey, opponent } = this.props.game
-		const { username } = this.props.username
-		const { phoneNumber } = this.props.phone
+		const { username, photo, phone } = this.props.dash.info
 		if (gameKey) {
 			this.props.saveAnswer(num, questionNumber, opponent, gameKey, username)
 		}
 		else {
-			this.props.creatingGame(num, questionNumber, selectedPlayer, phoneNumber)
+			var url = 'http://amigoo.com'
+			var body = `I asked you a question on AmigoO. Download the app and answer it!${url}`
+			Share.share({
+				message: body,
+				title: 'AmigoO'
+			}, {
+				dialogTitle: 'Tell your friend you started a game.',
+				tintColor: 'mediumseagreen'
+			})
+			.then(({ action, activityType }) => {
+				if (Platform.OS === 'ios') {
+					action === Share.dismissedAction ? alert('Come on, send a message to invite your friend.') : this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
+				}
+				else {
+					this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
+				}
+			})
+			.catch((error) => console.log('failed', error));
 		}
 	}
-
-	// _checkUsedQuestion = async (id, gameKey) => {
-	// 	firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
-	// 		if (snap.numChildren() >= 3) {
-	// 			console.log('more than 3')
-	// 			// Actions.question({ category: id })
-	// 		}
-	// 		else {
-	// 			firebase.database().ref(`questions/${id}`).once('value', snap => {
-	// 				const children = snap.numChildren();
-	// 				const num = Math.floor(Math.random() * children) + 1;
-	// 				firebase.database().ref(`usedQuestions/${gameKey}`).once('value', snap => {
-	// 					var question = snap.child(`${id}${num}`).exists();
-	// 					if (question) {
-	// 						return this._checkUsedQuestion(id, gameKey);
-	// 					}
-	// 					else {
-	// 						firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
-	// 							var choice = snap.child(`${id}${num}`).exists();
-	// 							if (choice) {
-	// 								return this._checkUsedQuestion(id, gameKey);
-	// 							}
-	// 							else {
-	// 								// firebase.database().ref(`questionChoices/${gameKey}/${id}${num}`).set(true);
-	// 								this.props.fetchQuestion(id, num, gameKey);
-	// 							}
-	// 						})
-	// 					}
-	// 				})
-	// 			})
-	// 		}
-	// 	})
-	// }
 
 	renderQuestionButton = () => {
 		const { gameKey, chosenQuestionArr } = this.props.game;
@@ -74,10 +58,7 @@ class Question extends Component {
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
-					onPress={() => { 
-						// this._checkUsedQuestion(this.props.category, gameKey)
-						Actions.categories()
-					}}
+					onPress={() => {Actions.categories()}}
 				/>
 			)
 		} else {
@@ -94,7 +75,6 @@ class Question extends Component {
 	renderCard = (item) => {
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
-		console.log(item)
 		return (
 			<ScrollView
 				style={styles.card}
@@ -256,7 +236,7 @@ const mapStateToProps = state => {
 		player: state.player, 
 		lastFive: arr, 
 		user: state.login.user,
-		username: state.username
+		dash: state.dash
 	}
 }
 

@@ -154,7 +154,6 @@ const mapStateToProps = state => {
 	})
 	return {
 		game: state.game,
-		player: state.player,
 		lastFive: arr,
 		user: state.login.user
 	}
