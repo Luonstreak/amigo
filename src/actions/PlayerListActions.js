@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 // RELATIVE
 import { SAVE_NUMBERS, PLAYERS_FETCH, PLAYER_SELECTED } from './types';
 
-export const playerSelect = (player, uid, name) => {
+export const playerSelect = (phone, uid, name) => {
 	const ref = firebase.database().ref(`questionChoices/${uid}`);
 	ref.once('value', snap => {
 		if (snap.val() !== null) {
@@ -15,7 +15,7 @@ export const playerSelect = (player, uid, name) => {
 	return (dispatch) => {
 		dispatch({
 			type: PLAYER_SELECTED,
-			payload: { player, name }
+			payload: { phone, name }
 		})
 		Actions.categories()
 	}

@@ -8,7 +8,6 @@ import {
 	ScrollView,
 	TextInput,
 	Dimensions, 
-	Linking,
 	Share
 } from 'react-native';
 import { Button, Badge } from 'react-native-elements';
@@ -32,21 +31,22 @@ class Question extends Component {
 		else {
 			var url = 'http://amigoo.com'
 			var body = `I asked you a question on AmigoO. Download the app and answer it!${url}`
-			if (Platform.OS === 'ios') {
-				Share.share({
-					message: body,
-					title: 'AmigoO'
-				}, {
-					dialogTitle: 'Share AmigoO',
-					tintColor: 'mediumseagreen'
-				}).then(({ action, activityType }) => {
-					action === Share.dismissedAction ? alert('Come on, you can share us at least.') : this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
-				}).catch((error) => this.setState({ result: 'error: ' + error.message }));
-			}
-			else {
-				Linking.openURL(`sms:+${selectedPlayer}?body=${body}`)
-				this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
-			}
+			Share.share({
+				message: body,
+				title: 'AmigoO'
+			}, {
+				dialogTitle: 'Tell your friend you started a game.',
+				tintColor: 'mediumseagreen'
+			})
+			.then(({ action, activityType }) => {
+				if (Platform.OS === 'ios') {
+					action === Share.dismissedAction ? alert('Come on, send a message to invite your friend.') : this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
+				}
+				else {
+					this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
+				}
+			})
+			.catch((error) => console.log('failed', error));
 		}
 	}
 
@@ -58,10 +58,7 @@ class Question extends Component {
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
-					onPress={() => { 
-						// this._checkUsedQuestion(this.props.category, gameKey)
-						Actions.categories()
-					}}
+					onPress={() => {Actions.categories()}}
 				/>
 			)
 		} else {

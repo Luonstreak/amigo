@@ -1,7 +1,5 @@
 // RELATIVE
-import { 
-	EMAIL_INPUT, 
-	PASSWORD_INPUT, 
+import {
 	LOGIN_SUCCESS, 
 	LOGIN_FAIL,  
 	RESET_ERROR,
@@ -10,8 +8,6 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-	email: 'michael@top.com',
-	password: 'password',
 	user: null,
 	username: '',
 	error: null
@@ -19,10 +15,6 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
-		case EMAIL_INPUT:
-			return { ...state, email: action.payload, error: null };
-		case PASSWORD_INPUT:
-			return { ...state, password: action.payload, error: null };
 		case LOGIN_SUCCESS:
 			return { ...state, user: action.payload };
 		case USERNAME_INPUT:

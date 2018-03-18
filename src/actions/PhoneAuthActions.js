@@ -19,7 +19,8 @@ export const phoneSave = (phoneNumber) => {
 	const { currentUser } = firebase.auth();
 	return (dispatch) => {
 		firebase.database().ref(`users/${currentUser.uid}`).update({ phone: phoneNumber })
-		firebase.database().ref(`allUsers/${phoneNumber}`).set(currentUser.uid)
+		firebase.database().ref(`allPhoneNumbers/${currentUser.uid}`).set(phoneNumber)
+		firebase.database().ref(`allUids/${phoneNumber}`).set(currentUser.uid)
 			.then(() => {
 				updateDatabase(phoneNumber, currentUser.uid)
 				dispatch({ type: PHONE_SAVE });

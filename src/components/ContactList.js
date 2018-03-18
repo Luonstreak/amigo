@@ -43,9 +43,9 @@ class ContactList extends Component {
 
 	selectPlayer = (player, name) => {
 		const newPlayer = String(player).replace(/[^\d]/g, '')
-		const { phoneNumber } = this.props.phone
+		const { phone } = this.props.dash.info
 		const { uid } = this.props.user
-		const ref = firebase.database().ref(`opponents/${phoneNumber}`).orderByKey().equalTo(newPlayer)
+		const ref = firebase.database().ref(`opponents/${phone}`).orderByKey().equalTo(newPlayer)
 		ref.once('value', snap => {
 			var opponent = snap.exists()
 			console.log(opponent)
@@ -128,7 +128,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { user: state.login.user, phone: state.phone }
+	return { user: state.login.user, dash: state.dash }
 }
 
 export default connect(mapStateToProps, actions)(ContactList);

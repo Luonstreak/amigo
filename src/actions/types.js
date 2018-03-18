@@ -1,6 +1,4 @@
 // LOGIN
-export const EMAIL_INPUT = 'email_input';
-export const PASSWORD_INPUT = 'password_input';
 export const LOGIN_SUCCESS = 'login_success';
 export const LOGIN_FAIL = 'login_fail';
 export const REGISTER_SUCCESS = 'register_success';

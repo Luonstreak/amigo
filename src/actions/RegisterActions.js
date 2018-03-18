@@ -22,11 +22,17 @@ export const userRegister = (email, password, username) => {
 		firebase.auth().createUserWithEmailAndPassword(email, password)
 		.then(user => registerSuccess(dispatch, user, username))
 		.catch((err) => {
+			console.log(err)
 			if (err.code === 'auth/weak-password') {
 				dispatch({
 					type: LOGIN_FAIL, payload: 'The password must be 6 characters long or more.'
 				})
 			} 
+			else if (err.code === 'auth/email-already-in-use') {
+				dispatch({
+					type: LOGIN_FAIL, payload: 'The email address is already in use by another account.'
+				})
+			}
 			else if (err.code === 'auth/invalid-email') {
 				dispatch({
 					type: LOGIN_FAIL, payload: 'Invalid Email Format'

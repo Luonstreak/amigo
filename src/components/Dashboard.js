@@ -6,13 +6,16 @@ import {
 	ScrollView,
 	FlatList,
 	RefreshControl,
-	ActivityIndicator
+	ActivityIndicator,
+	Share,
+	TouchableOpacity
  } from 'react-native';
 import { Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { Avatar, Button, Card } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import firebase from 'firebase';
+import MaterialInitials from 'react-native-material-initials/native';
 import _ from 'lodash';
 
 import * as actions from '../actions';
@@ -43,6 +46,7 @@ class Dashboard extends Component {
 		setTimeout(() => {
 			this.props.userFetch()
 			this.setState({ refreshing: false })
+			clearTimeout()
 		}, 500);
 	}
 
@@ -63,14 +67,16 @@ class Dashboard extends Component {
 
 	// PROFILE
 
-	_getProfile = (userName) => {
-		// this.props.getUser(userName)
+	_getProfile = (item) => {
+		this.props.friendsFetch(item.opponentPhone)
+		Actions.profile({ item })
 	}
 	
 	// GAME
 
 	_renderGame = async (game, status, setScore, opponent) => {
 		const { uid } = this.props.login.user
+		const { phone, photo, username } = this.props.dash.info
 		if (setScore) {
 			await firebase.database().ref(`scores/${game}`).set({
 			[uid]: 0,
@@ -84,9 +90,10 @@ class Dashboard extends Component {
 		else {
 			this.props.fetchScore(game)
 		}
-		this.props.renderCard(game, status, opponent)
+		this.props.startGame(game, status, opponent, phone, photo, username)
 		this.props.fetchChosenQuestions(game)
 	}
+
 	_addNudge = (opponent, key) => {
 		const { uid } = this.props.login.user
 		const { username } = this.props.dash.info
@@ -119,16 +126,33 @@ class Dashboard extends Component {
 		})
 	}
 
+	_sendReminder = () => {
+		var url = 'http://amigoo.com'
+		var body = `Remember, I asked you a question on AmigoO? So, come on download the app and let's play!${url}`
+			Share.share({
+				message: body,
+				title: 'AmigoO'
+			}, {
+				dialogTitle: 'Remind Your Friend About AmigoO',
+				tintColor: 'mediumseagreen'
+			})
+			.then(({ action, activityType }) => {
+				console.log('success', activityType)
+			})
+			.catch((error) => console.log('failed', error));
+
+	}
+
 	render() {
-		// if (!this.props.dash.info) {
-		// 	return (
-		// 		<ActivityIndicator
-		// 			animating={true}
-		// 			style={[styles.container, styles.horizontal]}
-		// 			size="large"
-		// 		/>
-		// 	);
-		// }
+		if (!this.props.dash.info) {
+			return (
+				<ActivityIndicator
+					animating={true}
+					style={[styles.container, styles.horizontal]}
+					size="large"
+				/>
+			);
+		}
 		const { currentUser } = firebase.auth();
 		const { info } = this.props.dash
 		const { containerStyle, headerStyle, bodyStyle, titleStyle, listStyle, elementStyle } = styles;
@@ -153,14 +177,25 @@ class Dashboard extends Component {
 						title={'INVITE FRIENDS'}
 						buttonStyle={{ padding: 5 }}
 						onPress={() => Actions.contactList()}
-					/>
-					<Avatar
+						/>
+					<TouchableOpacity
+						onPress={() => Actions.profile({current:true})}
+					>
+						<MaterialInitials
+							style={{ alignSelf: 'center' }}
+							backgroundColor={'dodgerblue'}
+							color={'white'}
+							size={50}
+							text={info.username}
+							single={false}
+							/>
+					</TouchableOpacity>
+					{/* <Avatar
 						rounded
 						medium
 						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
 						source={{ uri: info.photo }}
-						onPress={() => this._getProfile(currentUser.uid)}
-					/>
+					/> */}
 				</View>
 				<ScrollView
 					style={bodyStyle}
@@ -181,17 +216,29 @@ class Dashboard extends Component {
 							<View
 								style={elementStyle}
 							>
-								<Avatar
+								<TouchableOpacity
+									onPress={() => Actions.profile()}
+								>
+									<MaterialInitials
+										style={{ alignSelf: 'center', marginRight: 20 }}
+										backgroundColor={'#C71585'}
+										color={'white'}
+										size={40}
+										text={item.opponentName}
+										single={false}
+									/>
+								</TouchableOpacity>
+								{/* <Avatar
 									rounded
 									medium
-									// source={{ uri: item.avatar_url }}
+									source={{ uri: item.opponentPhoto }}
 									containerStyle={{ marginRight: 20 }}
-									onPress={() => this._getProfile(item.opponent)}
-								/>
+									onPress={() => this._getProfile(item)}
+								/> */}
 								<Text
 									style={{ flex: 1, fontSize: 20, color: '#FFC300' }}
 									onPress={() => this._getChatInfo(item.gameKey)}
-								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								>{item.opponentName}</Text>
 								<Button
 									rounded
 									backgroundColor={'#FFC300'}
@@ -220,14 +267,14 @@ class Dashboard extends Component {
 								<Avatar
 									rounded
 									medium
-									source={{ uri: item.photo }}
+									source={{ uri: item.opponentPhoto }}
 									containerStyle={{ marginRight: 20 }}
-									onPress={() => this._getProfile(item.opponent)}
+									onPress={() => this._getProfile(item)}
 								/>
 								<Text
 									style={{ flex: 1, fontSize: 20, color: '#FA3C4C' }}
 									onPress={() => this._getChatInfo(item.gameKey)}
-								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								>{item.opponentName}</Text>
 								<Button
 									rounded
 									backgroundColor={'#FA3C4C'}
@@ -251,13 +298,20 @@ class Dashboard extends Component {
 								<Avatar
 									rounded
 									medium
-									source={{ uri: item.photo }}
+									source={{ uri: item.opponentPhoto }}
 									containerStyle={{ marginRight: 20 }}
-									onPress={() => this._getProfile(item.opponent)}
+									onPress={() => this._getProfile(item)}
 								/>
 								<Text
 									style={{ flex: 1, fontSize: 20, color: '#44BEC7' }}
-								>{`${item.opponent[0]}${item.opponent[1]}`}</Text>
+								>{item.opponentName}</Text>
+								<Button
+									rounded
+									backgroundColor={'mediumseagreen'}
+									title={'REMIND'}
+									buttonStyle={{ padding: 5 }}
+									onPress={() => this._sendReminder(item.opponent, item.gameKey)}
+								/>
 							</View>
 						}
 					/>

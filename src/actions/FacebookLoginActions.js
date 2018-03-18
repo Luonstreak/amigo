@@ -74,6 +74,7 @@ const loginSuccess = (dispatch, user) => {
 }
 
 const loginSuccess2 = (dispatch, user, userInfo) => {
+	console.log('loginSuccess2', user)
 	userFetch(dispatch, user)
 	firebase.database().ref(`users/${user.uid}`).update({
 		username: userInfo.name,
@@ -87,18 +88,21 @@ const loginSuccess2 = (dispatch, user, userInfo) => {
 		 type: LOGIN_SUCCESS,
 		 payload: user
 	 });
-	 Actions.main();
 	}).catch((error) => {
 		console.log(error)
 	});
 }
 
 const userFetch = (dispatch, user) => {
+	console.log('userFetch loginSuccess 2')
+	console.log(user.uid)
 	const ref = firebase.database().ref(`users/${user.uid}`);
 	ref.once('value', snap => {
+		console.log(snap.val())
 		dispatch({
 			type: USER_FETCH,
 			payload: snap.val()
 		})
+		Actions.main();
 	})
 };
