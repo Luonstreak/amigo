@@ -8,13 +8,15 @@ import {
 	RefreshControl,
 	ActivityIndicator,
 	Share,
-	TouchableOpacity
+	TouchableOpacity,
+	TouchableHighLight
  } from 'react-native';
 import { Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { Avatar, Button, Card } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import firebase from 'firebase';
+import moment from 'moment';
 import MaterialInitials from 'react-native-material-initials/native';
 import _ from 'lodash';
 
@@ -25,7 +27,8 @@ import ChatModal from './ChatModal';
 class Dashboard extends Component {
 	state = {
 		refreshing: false,
-		auxKey: null
+		auxKey: null,
+		opponent: null
 	}
 
 	componentDidMount() {
@@ -50,8 +53,8 @@ class Dashboard extends Component {
 		}, 500);
 	}
 
-	_getChatInfo = (game) => {
-		this.setState({ auxKey: game })
+	_getChatInfo = (game, name) => {
+		this.setState({ auxKey: game, opponent: name })
 		this.props.visibleChat(true)
 	}
 
@@ -59,7 +62,7 @@ class Dashboard extends Component {
 		if (this.props.dash.chatVisible === 'on'){
 			return (
 				<View style={styles.containerStyle}>
-					<ChatModal auxKey={this.state.auxKey}/>
+					<ChatModal auxKey={this.state.auxKey} opponent={this.state.opponent}/>
 				</View>
 			)
 		} else { null }
@@ -140,7 +143,11 @@ class Dashboard extends Component {
 				console.log('success', activityType)
 			})
 			.catch((error) => console.log('failed', error));
+	}
 
+	_lastPlayed = (data) => {
+		var date = moment('201803191102', 'YYYYMMDDHHmm')
+		return date.fromNow()
 	}
 
 	render() {
@@ -178,24 +185,13 @@ class Dashboard extends Component {
 						buttonStyle={{ padding: 5 }}
 						onPress={() => Actions.contactList()}
 						/>
-					<TouchableOpacity
-						onPress={() => Actions.profile({current:true})}
-					>
-						<MaterialInitials
-							style={{ alignSelf: 'center' }}
-							backgroundColor={'dodgerblue'}
-							color={'white'}
-							size={50}
-							text={info.username}
-							single={false}
-							/>
-					</TouchableOpacity>
-					{/* <Avatar
+					<Avatar
 						rounded
 						medium
 						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
 						source={{ uri: info.photo }}
-					/> */}
+						onPress={() => Actions.profile({ current: true })}
+					/>
 				</View>
 				<ScrollView
 					style={bodyStyle}
@@ -212,46 +208,44 @@ class Dashboard extends Component {
 						data={list1}
 						containerStyle={listStyle}
 						keyExtractor={(item, index) => index}
-						renderItem={({ item }) =>
-							<View
-								style={elementStyle}
-							>
-								<TouchableOpacity
-									onPress={() => Actions.profile()}
+						renderItem={({ item }) => {
+							console.log('item',item)
+							return (
+								<View
+									style={elementStyle}
 								>
-									<MaterialInitials
-										style={{ alignSelf: 'center', marginRight: 20 }}
-										backgroundColor={'#C71585'}
-										color={'white'}
-										size={40}
-										text={item.opponentName}
-										single={false}
+									<Avatar
+										rounded
+										medium
+										source={{ uri: item.opponentPhoto }}
+										containerStyle={{ marginRight: 20 }}
+										onPress={() => this._getProfile(item)}
 									/>
-								</TouchableOpacity>
-								{/* <Avatar
-									rounded
-									medium
-									source={{ uri: item.opponentPhoto }}
-									containerStyle={{ marginRight: 20 }}
-									onPress={() => this._getProfile(item)}
-								/> */}
-								<Text
-									style={{ flex: 1, fontSize: 20, color: '#FFC300' }}
-									onPress={() => this._getChatInfo(item.gameKey)}
-								>{item.opponentName}</Text>
-								<Button
-									rounded
-									backgroundColor={'#FFC300'}
-									title={'PLAY'}
-									buttonStyle={{ padding: 5 }}
-									onPress={() => this._renderGame(
-										item.gameKey,
-										item.status,
-										item.setScore,
-										item.player1 !== currentUser.uid ? item.player1 : item.player2
-									)}
-								/>
-							</View>
+									<TouchableOpacity
+										style={{ flex: 1 }}
+										onPress={() => this._getChatInfo(item.gameKey, item.opponentName)}
+									>
+										<Text
+											style={{ marginTop: 5, fontSize: 20, color: '#FFC300' }}
+										>{item.opponentName}</Text>
+										<Text
+											style={{ flex: 1, fontSize: 10, color: 'gray' }}
+										>{this._lastPlayed(item.opponentLastPlayed)}</Text>
+									</TouchableOpacity>
+									<Button
+										rounded
+										backgroundColor={'#FFC300'}
+										title={'PLAY'}
+										buttonStyle={{ padding: 5 }}
+										onPress={() => this._renderGame(
+											item.gameKey,
+											item.status,
+											item.setScore,
+											item.player1 !== currentUser.uid ? item.player1 : item.player2
+										)}
+									/>
+								</View>
+							)}
 						}
 					/>
 					{/* THEIR TURN */}
@@ -260,29 +254,39 @@ class Dashboard extends Component {
 						data={list2}
 						containerStyle={listStyle}
 						keyExtractor={(item, index) => index}
-						renderItem={({ item }) =>
-							<View
-								style={elementStyle}
-							>
-								<Avatar
-									rounded
-									medium
-									source={{ uri: item.opponentPhoto }}
-									containerStyle={{ marginRight: 20 }}
-									onPress={() => this._getProfile(item)}
-								/>
-								<Text
-									style={{ flex: 1, fontSize: 20, color: '#FA3C4C' }}
-									onPress={() => this._getChatInfo(item.gameKey)}
-								>{item.opponentName}</Text>
-								<Button
-									rounded
-									backgroundColor={'#FA3C4C'}
-									title={'NUDGE'}
-									buttonStyle={{ padding: 5 }}
-									onPress={() => this._addNudge(item.player1 !== currentUser.uid ? item.player1 : item.player2, item.gameKey)}
-								/>
-							</View>
+						renderItem={({ item }) => {
+							console.log(item)
+							return (
+								<View
+									style={elementStyle}
+								>
+									<Avatar
+										rounded
+										medium
+										source={{ uri: item.opponentPhoto }}
+										containerStyle={{ marginRight: 20 }}
+										onPress={() => this._getProfile(item)}
+									/>
+									<TouchableOpacity
+										style={{ flex: 1 }}
+										onPress={() => this._getChatInfo(item.gameKey, item.opponentName)}
+									>
+										<Text
+											style={{ marginTop: 5, fontSize: 20, color: '#FFC300' }}
+										>{item.opponentName}</Text>
+										<Text
+											style={{ flex: 1, fontSize: 10, color: 'gray' }}
+										>{this._lastPlayed(item.opponentLastPlayed)}</Text>
+									</TouchableOpacity>
+									<Button
+										rounded
+										backgroundColor={'#FA3C4C'}
+										title={'NUDGE'}
+										buttonStyle={{ padding: 5 }}
+										onPress={() => this._addNudge(item.player1 !== currentUser.uid ? item.player1 : item.player2, item.gameKey)}
+									/>
+								</View>
+							)}
 						}
 					/>
 					{/* PENDING */}

@@ -10,34 +10,16 @@ import firebase from 'firebase';
 import * as actions from '../actions';
 
 class Login extends Component {
-	state = { keyboard: false, email: '', password: '' }
+	state = { keyboard: false, email: 'dastore@gmail.com', password: 'peroque' }
 
-	async componentWillMount() {
+	componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));
 		this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this.setState({ keyboard: false }));
-		let fbToken = await AsyncStorage.getItem('fbToken');
-		if (fbToken) {
-			this.props.fbLogin();
-		}
-		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-				console.log(user)
-				this.props.persistentEmailLogin(user)
-			}
-		})
 	}
 
 	componentWillUnmount() {
 		this.keyboardDidShowListener.remove();
 		this.keyboardDidHideListener.remove();
-	}
-
-	onEmailInput = (text) => {
-		this.setState({email: text})
-	}
-
-	onPasswordInput = (text) => {
-		this.setState({password: text})
 	}
 
 	onButtonPress = () => {
@@ -59,6 +41,7 @@ class Login extends Component {
 			)
 		} else { return null }
 	}
+	
 
 	render() {
 		return (
@@ -75,7 +58,7 @@ class Login extends Component {
 							returnKeyType='next'
 							value={this.state.email}
 							onSubmitEditing={event => this.refs.SecondInput.focus()}
-							onChangeText={this.onEmailInput}
+							onChangeText={text => this.setState({ email: text })}
 						/>
 					</View>
 					<View>
@@ -90,7 +73,7 @@ class Login extends Component {
 							autoCorrect={false}
 							returnKeyType='done'
 							value={this.state.password}
-							onChangeText={this.onPasswordInput}
+							onChangeText={text => this.setState({ password: text })}
 						/>
 					</View>
 				</View>

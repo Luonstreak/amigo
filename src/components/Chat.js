@@ -16,8 +16,9 @@ import * as actions from '../actions';
 
 class Chat extends Component {
 	state = {
+		tall: height * .2,
+		space: width * .025,
 		input: '',
-		bottomSpace: width * 0.025,
 		messages: []
 	};
 	
@@ -43,13 +44,15 @@ class Chat extends Component {
 
 	_keyboardDidShow = (e) => {
 		this.setState({
-			bottomSpace: e.endCoordinates.height + 10
+			tall: height * .4,
+			space: e.endCoordinates.height + 10
 		})
 	}
 
 	_keyboardDidHide = (e) => {
 		this.setState({
-			bottomSpace: width * 0.025
+			tall: height * .2,
+			space: width * .025
 		})
 	}
 	
@@ -78,12 +81,26 @@ class Chat extends Component {
 			this.setState({ input: '' })
 		}
 	}
+
+	_messageStyle = (opp, usr) => {
+		if (opp === usr) {
+			return ({
+				backgroundColor: 'bisque',
+				borderBottomRightRadius: 0
+			})
+		} else {
+			return ({
+				backgroundColor: 'aquamarine',
+				borderBottomLeftRadius: 0,
+			})
+		}
+	}
 	
 	render() {
 		const { username } = this.props.dash.info
 		const { container, list, input, title, content } = styles;
 		return (
-			<View style={container}>
+			<View style={[container, { bottom: this.state.space, height: this.state.tall }]}>
 				<FlatList
 					contentContainerStyle={list}
 					inverted
@@ -92,21 +109,33 @@ class Chat extends Component {
 					showsVerticalScrollIndicator={false}
 					renderItem={({ item }) => {
 						return (
-							<Text>
-								<Text 
-									style={{
-										fontWeight: 'bold',
-										color: item.username === username ? '#0099FF' : 'dodgerblue'
-									}}
-								>{item.username === username ? 'you' : item.username }: </Text>
-								<Text style={content}>{item.msg}</Text>
-							</Text>
+							<View
+								style={{
+									alignItems: item.username === username ? 'flex-end' : 'flex-start'
+								}}
+							>
+								<View
+									style={[{
+										backgroundColor: item.username === username ? 'bisque' : 'aquamarine',
+										padding: 2.5,
+										paddingLeft: 10,
+										paddingRight: 10,
+										margin: 2.5,
+										borderRadius: 10,
+									}, this._messageStyle(item.username, username)]}
+								>
+									<Text style={{ color: 'gray' }}>{item.msg}</Text>
+								</View>
+							</View>
 						)
 					}}
 				/>
-				<Text style={{ backgroundColor: 'transparent', height: 60 }}></Text>
+				<View style={[list, { marginTop: 5, flexDirection: 'row', justifyContent: 'space-between' }]}>
+					<Text>{this.props.opponent}</Text>
+					<Text>You</Text>
+				</View>
 				<TextInput
-					style={[input, { bottom: this.state.bottomSpace}]}
+					style={input}
 					value={this.state.input}
 					underlineColorAndroid='transparent'
 					autoCapitalize='none'
@@ -122,29 +151,29 @@ class Chat extends Component {
 const { height, width } = Dimensions.get('window');
 const styles = {
 	container: {
+		position: 'absolute',
+		left: width * .05,
 		paddingTop: 10,
 		backgroundColor: '#83D0CD',
 		borderRadius: 20,
 		justifyContent: 'flex-end',
-		margin: width * 0.05,
-		marginTop: 0,
-		maxHeight: height * 0.3,
 		width: width * .9
 	},
 	list: {
+		marginTop: 5,
 		marginLeft: width * 0.05,
-		alignItems: 'flex-start',
+		marginRight: width * 0.05
 	},
 	input: {
-		position: 'absolute',
-		left: width * 0.05,
-		width: width * 0.8,
-		color: '#1D8FE1',
-		backgroundColor: '#FFF',
-		fontSize: 15,
 		height: 40,
 		padding: 5,
 		paddingLeft: 20,
+		width: width * 0.85,
+		margin: width * 0.025,
+		marginTop: 5,
+		color: '#1D8FE1',
+		backgroundColor: '#FFF',
+		fontSize: 15,
 		borderRadius: 20
 	},
 	content: {

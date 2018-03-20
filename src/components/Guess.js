@@ -38,7 +38,7 @@ class Guess extends Component {
 		const { phone } = this.props.dash.info
 		const newScore = score ? score[uid] : 0
 		this.props.checkAnswers(num, questionKey, gameKey, opponent, opponentAnswer, item, newScore, selectedPlayer, phone)
-		this.props.changeStatus('guessResult', uid, gameKey)
+		this.props.changeStatus('guessResult', uid, gameKey, opponent)
 	}
 
 	renderCard = (item, index, length) => {
@@ -125,6 +125,7 @@ class Guess extends Component {
 					/>
 				</View>
 				<FlatList
+					contentContainerStyle={{ marginBottom: height * .25 }}
 					horizontal
 					pagingEnabled={true}
 					getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}

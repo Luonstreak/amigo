@@ -84,7 +84,7 @@ class Result extends Component {
 					title="Continue"
 					titleTextColor={'#F7F7F7'}
 					backgroundColor={'#6DC066'}
-					buttonStyle={{ justifyContent: 'center', width: width * 0.8, margin: width * 0.1 }}
+					buttonStyle={{ justifyContent: 'center', width: width * 0.8, margin: width * 0.1, marginBottom: height * .25 }}
 					onPress={() => this.props.changeStatus('guess', uid, gameKey)}
 				/>
 				<Chat />

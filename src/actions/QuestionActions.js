@@ -11,6 +11,7 @@ import {
 	PLAYER_SELECTED
 } from './types';
 import firebase from 'firebase';
+import moment from 'moment';
 import { Actions } from 'react-native-router-flux';
 
 export const fetchQuestion = (id, num, gameKey, selectedPlayer) => {
@@ -70,7 +71,7 @@ export const fetchScore = (gameKey, uid) => {
 
 export const startGame = (game, status, opponent, phone, photo, username) => {
 	const ref = firebase.database().ref(`games/${game}`);
-	firebase.database().ref(`users/${opponent}/${game}`).update({
+	firebase.database().ref(`users/${opponent}/games/${game}`).update({
 		opponentName: username,
 		opponentPhoto: photo
 	})
@@ -355,7 +356,7 @@ export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer
 	}
 }
 
-export const changeStatus = (status, currentUserId, gameKey) => {
+export const changeStatus = (status, currentUserId, gameKey, opponent) => {
 	return (dispatch) => {
 		if (status === 'guess') {
 			firebase.database().ref(`users/${currentUserId}/games/${gameKey}/status`).set(status)
@@ -363,6 +364,8 @@ export const changeStatus = (status, currentUserId, gameKey) => {
 			Actions.guess()
 		}
 		if (status === 'guessResult') {
+			const opp = firebase.database().ref(`users/${opponent}/games/${gameKey}`)
+			opp.update({ opponentLastPlayed: moment().format('YYYYMMDDHHmm')})
 			firebase.database().ref(`users/${currentUserId}/games/${gameKey}/status`).set(status)
 			dispatch({ type: STATUS_UPDATE })
 			Actions.guessResult()

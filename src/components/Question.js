@@ -58,6 +58,7 @@ class Question extends Component {
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
+					containerStyle={{ marginBottom: height * .25 }}
 					onPress={() => {Actions.categories()}}
 				/>
 			)
@@ -66,6 +67,7 @@ class Question extends Component {
 				<Button
 					title={'ONLY 3 QUESTIONS PER ROUND'}
 					rounded
+					containerStyle={{ marginBottom: height * .25 }}
 					backgroundColor={'lightgray'}
 				/>
 			)

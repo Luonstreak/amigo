@@ -11,7 +11,6 @@ import * as actions from '../actions';
 class Register extends Component {
 		state = { 
 			keyboard: false,
-			usernameValid: true,
 			error: '',
 			email: '', 
 			password: '',
@@ -30,51 +29,26 @@ class Register extends Component {
 		this.keyboardDidHideListener.remove();
 	}
 
-	onEmailInput = (text) => {
-		this.setState({ error: '' })
-		this.setState({ email: text })
-	}
-	
-	onPasswordInput = (text) => {
-		this.setState({ error: '' })
-		this.setState({ password: text })
-	}
-	
-	onUsernameInput = (text) => {
-		this.setState({ error: '' })
-		this.setState({ username: text })
-	}
-
 	onButtonPress = () => {
 		const { email, password, username } = this.state;
-		const usernameValid = username.length > 1
-		this.setState({ usernameValid })
-		if (usernameValid) {
-			this.props.userRegister(email, password, username);
-		}
-		else {
-			this.setState({ error: 'All fields must be filled out.'})
-		}
+		username.length > 1 ? this.props.userRegister(email, password, username)
+		: this.setState({ error: 'All fields must be filled out.' });
 		Keyboard.dismiss;
 	}
 
 	renderError = () => {
-		if (this.props.login.error) {
-			return (
-				<Text
-					style={{ color: 'tomato', margin: 10 }}
-				>{this.props.login.error}</Text>
-			)
-		} else { return null }
+		this.props.login.error ? 
+			<Text
+				style={{ color: 'tomato', margin: 10 }}
+			>{this.props.login.error}</Text>
+		: null
 	}
 	renderStateError = () => {
-		if (this.state.error) {
-			return (
-				<Text
-					style={{ color: 'tomato', margin: 10 }}
-				>{this.state.error}</Text>
-			)
-		} else { return null }
+		this.state.error ?
+			<Text
+				style={{ color: 'tomato', margin: 10 }}
+			>{this.state.error}</Text>
+		: null
 	}
 
 	render() {
@@ -92,7 +66,7 @@ class Register extends Component {
 							returnKeyType='next'
 							value={this.state.email}
 							onSubmitEditing={event => this.refs.SecondInput.focus()}
-							onChangeText={this.onEmailInput}
+							onChangeText={text => this.setState({ email: text, error: '' })}
 						/>
 					</View>
 					<View>
@@ -108,7 +82,7 @@ class Register extends Component {
 							returnKeyType='done'
 							value={this.state.password}
 							onSubmitEditing={event => this.refs.ThirdInput.focus()}
-							onChangeText={this.onPasswordInput}
+							onChangeText={text => this.setState({ password: text, error: '' })}
 						/>
 					</View>
 					<View>
@@ -122,7 +96,7 @@ class Register extends Component {
 							autoCorrect={false}
 							returnKeyType='done'
 							value={this.state.username}
-							onChangeText={this.onUsernameInput}
+							onChangeText={text => this.setState({ username: text, error: '' })}
 						/>
 					</View>
 					{this.renderStateError()}

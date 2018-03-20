@@ -4,9 +4,6 @@ export const LOGIN_FAIL = 'login_fail';
 export const REGISTER_SUCCESS = 'register_success';
 export const RESET_ERROR = 'reset_error';
 
-// REGISTER
-export const USERNAME_INPUT = 'username_input';
-
 // PHONE NUMBER AUTH
 export const PHONE_INPUT = 'phone_input';
 export const PHONE_SAVE = 'phone_save';

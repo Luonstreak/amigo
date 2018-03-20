@@ -19,13 +19,15 @@ import Question from './src/components/Question';
 import AskBack from './src/components/AskBack';
 import Profile from './src/components/Profile';
 import Settings from './src/components/Settings';
+import Splash from './src/components/Splash';
 
 const RouterComponent = () => {
 	return (
 		<Router sceneStyle={{ backgroundColor: '#FFF' }}>
 			<Scene key='root' hideNavBar>
 				<Scene key='auth'>
-					<Scene key='login' component={Login} title='True Friends Login' hideNavBar initial />
+					<Scene key='splash' component={Splash} title='True Friends' hideNavBar initial />
+					<Scene key='login' component={Login} title='True Friends Login' hideNavBar />
 					<Scene key='register' component={Register} title='True Friends Register' hideNavBar />
 					<Scene key='forgotPassword' component={ForgotPassword} hideNavBar />
 				</Scene>

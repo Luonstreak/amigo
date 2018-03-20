@@ -50,11 +50,25 @@ class ChatModal extends Component {
 		this.props.visibleChat(false)
 	}
 
+	_messageStyle = (opp, usr) => {
+		if (opp === usr) {
+			return ({
+				backgroundColor: 'bisque',
+				borderBottomRightRadius: 0
+			})
+		} else {
+			return ({
+				backgroundColor: 'aquamarine',
+				borderBottomLeftRadius: 0,
+			})
+		}
+	}
+
 	render() {
 		const { username } = this.props.dash.info
 		const { container, list, input, title, content } = styles;
 		return (
-			<View>
+			<View style={{ height: height * .4 }}>
 				<View style={{
 					alignItems: 'flex-end',
 					marginRight: width * .02,
@@ -76,26 +90,39 @@ class ChatModal extends Component {
 					showsVerticalScrollIndicator={false}
 					renderItem={({ item }) => {
 						return (
-							<Text>
-								<Text 
-									style={{
-										fontWeight: 'bold',
-										color: item.username === username ? '#0099FF' : 'dodgerblue'
-									}}
-								>{item.username === username ? 'you' : item.username }: </Text>
-								<Text style={content}>{item.msg}</Text>
-							</Text>
+							<View
+								style={{
+									alignItems: item.username === username ? 'flex-end' : 'flex-start'
+								}}
+							>
+								<View
+									style={[{
+										backgroundColor: item.username === username ? 'bisque' : 'aquamarine' ,
+										padding: 2.5,
+										paddingLeft: 10,
+										paddingRight: 10,
+										margin: 2.5,
+										borderRadius: 10,
+									}, this._messageStyle(item.username, username)]}
+								>
+									<Text style={{ color: 'gray' }}>{item.msg}</Text>
+								</View>
+							</View>
 						)
 					}}
 				/>
+				<View style={[list, { marginTop: 5, flexDirection: 'row', justifyContent: 'space-between' }]}>
+					<Text>{this.props.opponent}</Text>
+					<Text>You</Text>
+				</View>
 				<TextInput
-					style={[input, { bottom: this.state.bottomSpace}]}
+					style={input}
 					value={this.state.input}
 					underlineColorAndroid='transparent'
 					autoCapitalize='none'
 					autoCorrect={false}
 					onChangeText={this._updateInput}
-					onSubmitEditing={this._sendMessage(username)}
+					onSubmitEditing={() => this._sendMessage(username)}
 					placeholder="say hi to your peeps..."
 				/>
 			</View>
@@ -106,14 +133,14 @@ const { height, width } = Dimensions.get('window');
 const styles = {
 	list: {
 		marginLeft: width * 0.05,
-		alignItems: 'flex-start',
+		marginRight: width * 0.05
 	},
 	input: {
 		height: 40,
 		padding: 5,
 		paddingLeft: 20,
-		width: width * 0.8,
-		margin: width * 0.05,
+		width: width * 0.85,
+		margin: width * 0.025,
 		color: '#1D8FE1',
 		backgroundColor: '#FFF',
 		fontSize: 15,

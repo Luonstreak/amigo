@@ -113,10 +113,12 @@ const styles = StyleSheet.create({
 		padding: 10
 	},
 	//card
+
 	card: {
 		flex: 1,
 		width: (width * .90),
 		margin: (width * .05),
+		marginBottom: height * .25,
 		backgroundColor: '#0D658D',
 		padding: 20,
 		borderRadius: 20
