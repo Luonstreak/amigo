@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import { ScrollView, AsyncStorage, Text, Button } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import firebase from 'firebase';
+import { connect } from 'react-redux';
+
+import * as actions from '../actions';
 
 class Settings extends Component {
 	render() {
+		const { uid } = this.props.login
 		return (
 			<ScrollView>
 				<Button
@@ -16,8 +20,8 @@ class Settings extends Component {
 					onPress={() => {alert('dsfsd')}}
 				/>
 				<Button
-					title="REPORT ABUSE"
-					onPress={() => {alert('dsfsd')}}
+					title="BLOCKED USERS"
+					onPress={() => {this.props.fetchBlockedUsers(uid)}}
 				/>
 				<Button
 					title="LOG OUT"
@@ -41,4 +45,10 @@ class Settings extends Component {
 	}
 }
 
-export default Settings;
+const mapStateToProps = state => {
+	return {
+		login: state.login.user
+	}
+}
+
+export default connect(mapStateToProps, actions)(Settings);

@@ -19,7 +19,7 @@ import MaterialInitials from 'react-native-material-initials/native';
 import _ from 'lodash';
 
 import * as actions from '../actions';
-import registerForNotifications from '../../services/push_notifications';
+import registerForNotifications from '../../services/pushNotifications';
 import ChatModal from './ChatModal';
 
 class Dashboard extends Component {
@@ -29,6 +29,7 @@ class Dashboard extends Component {
 	}
 
 	componentDidMount() {
+		this._onRefresh()
 		this.props.friendsFetch(this.props.dash.info.phone)
 		this.props.getCategories()
 		this.props.resetGameKey()
@@ -159,13 +160,16 @@ class Dashboard extends Component {
 		const list1 = []
 		const list2 = []
 		const list3 = []
+		const blockList = []
 		var list = _.forIn(info.games, (value, key) => {
 			value['opponent'] = currentUser.uid === value.player1 ? value.player2 : value.player1;
 			value['gameKey'] = key;
-			if (value.status === 'pending') {
+			if (value.status === 'pending' && !value.blocked) {
 				list3.push(value)
-			} else if (value.status === 'waiting') {
+			} else if (value.status === 'waiting' && !value.blocked) {
 				list2.push(value)
+			} else if (value.blocked) {
+				blockList.push(value)
 			} else { list1.push(value) }
 		})
 		return (
@@ -219,22 +223,22 @@ class Dashboard extends Component {
 								<TouchableOpacity
 									onPress={() => Actions.profile()}
 								>
-									<MaterialInitials
+									{/* <MaterialInitials
 										style={{ alignSelf: 'center', marginRight: 20 }}
 										backgroundColor={'#C71585'}
 										color={'white'}
 										size={40}
 										text={item.opponentName}
 										single={false}
-									/>
+									/> */}
 								</TouchableOpacity>
-								{/* <Avatar
+								<Avatar
 									rounded
 									medium
 									source={{ uri: item.opponentPhoto }}
 									containerStyle={{ marginRight: 20 }}
 									onPress={() => this._getProfile(item)}
-								/> */}
+								/>
 								<Text
 									style={{ flex: 1, fontSize: 20, color: '#FFC300' }}
 									onPress={() => this._getChatInfo(item.gameKey)}

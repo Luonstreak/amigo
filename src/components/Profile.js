@@ -4,6 +4,7 @@ import { Avatar, Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
+import firebase from 'firebase';
 
 class Profile extends Component {
 	
@@ -39,6 +40,21 @@ class Profile extends Component {
 				/>
 			)
 		} else { return null }
+	}
+
+	selectPlayer = (item) => {
+		const { phone } = this.props.dash.info
+		const { uid } = this.props.user
+		const ref = firebase.database().ref(`opponents/${phone}`).orderByKey().equalTo(item.phone)
+		ref.once('value', snap => {
+			var opponent = snap.exists()
+			if (opponent) {
+				alert('You are currently playing a game with this person.')
+			}
+			else {
+				this.props.playerSelect(item.phone, uid, item.username)
+			}
+		})
 	}
 
 	render() {
@@ -92,12 +108,12 @@ class Profile extends Component {
 										onPress={() => this.getProfile(item)}
 									/>
 									<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>{item.username}</Text>
-									<Icon
-										name='information-outline'
-										type='material-community'
-										color='#CCC'
-										backgroundColor={'transparent'}
-										onPress={() => alert('see more about your friend..')}
+									<Button
+										rounded
+										backgroundColor={'mediumseagreen'}
+										title={'PLAY'}
+										buttonStyle={{ padding: 5 }}
+										onPress={() => this.selectPlayer(item)}
 									/>
 								</View>
 							)
@@ -179,7 +195,7 @@ const styles = {
 }
 
 const mapStateToProps = state => {
-	return { profile: state.profile, dash: state.dash }
+	return { user: state.login.user, dash: state.dash }
 }
 
 export default connect(mapStateToProps, actions)(Profile);

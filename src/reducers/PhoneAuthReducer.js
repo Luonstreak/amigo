@@ -10,7 +10,7 @@ export default (state = INITIAL_STATE, action) => {
 		case PHONE_INPUT:
 			return { ...state, phoneNumber: action.payload };
 		case PHONE_SAVE:
-			return state
+			return { ...state, phoneNumber: action.payload };
 		default:
 			return state;
 	}

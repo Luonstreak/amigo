@@ -23,7 +23,7 @@ export const phoneSave = (phoneNumber) => {
 		firebase.database().ref(`allUids/${phoneNumber}`).set(currentUser.uid)
 			.then(() => {
 				updateDatabase(phoneNumber, currentUser.uid)
-				dispatch({ type: PHONE_SAVE });
+				dispatch({ type: PHONE_SAVE, payload: phoneNumber });
 			});
 		};
 	};
@@ -31,7 +31,6 @@ export const phoneSave = (phoneNumber) => {
 
 
 const updateDatabase = (phone, uid) => {
-	firebase.database().ref(`userNumbers/${uid}`).set(phone);
 	const ref = firebase.database().ref(`pendingGames/${phone}`)
 	ref.once('value', snap => {
 		const game = snap.val();

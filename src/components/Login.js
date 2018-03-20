@@ -10,7 +10,7 @@ import firebase from 'firebase';
 import * as actions from '../actions';
 
 class Login extends Component {
-	state = { keyboard: false, email: '', password: '' }
+	state = { keyboard: false, email: '', password: '', error: '' }
 
 	async componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));
@@ -21,7 +21,6 @@ class Login extends Component {
 		}
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
-				console.log(user)
 				this.props.persistentEmailLogin(user)
 			}
 		})
@@ -33,16 +32,19 @@ class Login extends Component {
 	}
 
 	onEmailInput = (text) => {
+		this.setState({error: ''})
 		this.setState({email: text})
 	}
 
 	onPasswordInput = (text) => {
 		this.setState({password: text})
 	}
-
+	
 	onButtonPress = () => {
 		const { email, password } = this.state;
-		this.props.userLogin({ email, password });
+		this.props.userLogin(email, password);
+		this.setState({email: ''})
+		this.setState({password: ''})
 		Keyboard.dismiss;
 	}
 
@@ -115,7 +117,7 @@ class Login extends Component {
 							textStyle={{ color: 'dodgerblue' }}
 							// buttonStyle={{  }}
 							onPress={() => {
-								this.props.resetError()
+								// this.props.resetError()
 								Actions.register()
 							}}
 						/>

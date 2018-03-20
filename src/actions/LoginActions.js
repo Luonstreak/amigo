@@ -11,7 +11,8 @@ import {
 } from './types';
 import _ from 'lodash'
 
-export const userLogin = ({ email, password }) => {
+export const userLogin = (email, password) => {
+	console.log('hit userLogin', email, password)
 	return (dispatch) => {
 		firebase.auth().signInWithEmailAndPassword(email, password)
 			.then(user => loginSuccess(dispatch, user))
@@ -32,6 +33,7 @@ export const userLogin = ({ email, password }) => {
 			});
 	};
 };
+
 export const persistentEmailLogin = (user) => {
 	return (dispatch) => {
 		dispatch({
@@ -39,19 +41,20 @@ export const persistentEmailLogin = (user) => {
 			payload: user
 		});
 		userFetch(dispatch, user)
-		firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+		firebase.database().ref(`allPhoneNumbers/${user.uid}`).once('value', snap => {
 			snap.val() ? Actions.main() : Actions.phoneAuth()
 		})
 	}
 }
 
 const loginSuccess = (dispatch, user) => {
+	console.log('login success')
 	userFetch(dispatch,user)
 	dispatch({
 		type: LOGIN_SUCCESS,
 		payload: user
 	});
-	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+	firebase.database().ref(`allPhoneNumbers/${user.uid}`).once('value', snap => {
 		snap.val() ? Actions.main() : Actions.phoneAuth()
 	})
 }

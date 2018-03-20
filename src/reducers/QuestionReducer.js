@@ -6,7 +6,8 @@ import {
 	ADDED_ANSWER,
 	GOT_RESULT,
 	STATUS_UPDATE,
-	FETCH_CHOSEN_QUESTIONS 
+	FETCH_CHOSEN_QUESTIONS,
+	LOADING 
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -15,7 +16,8 @@ const INITIAL_STATE = {
 	result: null,
 	opponent: null,
 	score: null,
-	chosenQuestionArr: []
+	chosenQuestionArr: [],
+	loading: false
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -24,6 +26,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, chosenQuestionArr: [...state.chosenQuestionArr, action.payload] }
 		case GOT_RESULT:
 			return { ...state, result: action.payload }
+		case LOADING:
+			return { ...state, loading: true }
 		case FETCH_SCORE:
 			return { ...state, score: action.payload }
 		case FETCH_FIVE:
@@ -33,7 +37,7 @@ export default (state = INITIAL_STATE, action) => {
 		case GAME_CREATED:
 			return state
 		case ADDED_ANSWER:
-			return { ...state, lastFive: action.payload }
+			return { ...state, lastFive: action.payload, loading: false }
 		case STATUS_UPDATE:
 			return state		
 		default:
