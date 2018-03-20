@@ -41,7 +41,7 @@ export const persistentEmailLogin = (user) => {
 			payload: user
 		});
 		userFetch(dispatch, user)
-		firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+		firebase.database().ref(`allPhoneNumbers/${user.uid}`).once('value', snap => {
 			snap.val() ? Actions.main() : Actions.phoneAuth()
 		})
 	}
@@ -54,7 +54,7 @@ const loginSuccess = (dispatch, user) => {
 		type: LOGIN_SUCCESS,
 		payload: user
 	});
-	firebase.database().ref(`userNumbers/${user.uid}`).once('value', snap => {
+	firebase.database().ref(`allPhoneNumbers/${user.uid}`).once('value', snap => {
 		snap.val() ? Actions.main() : Actions.phoneAuth()
 	})
 }

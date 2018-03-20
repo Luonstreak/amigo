@@ -41,21 +41,18 @@ class Result extends Component {
 	_renderMenu = () => {
 		const { uid } = this.props.login;
 		const { opponent, gameKey } = this.props.game
+		const { info } = this.props.player
 		if (this.state.show) {
-			firebase.database().ref(`users/${opponent}`).once('value', snap => {
-				opponentName = snap.val().username
-				opponentPhoto = snap.val().photo
-			})
 			return (
 				<View style={{ position: 'absolute', top: 40, right: 5, borderRadius: 10, backgroundColor: '#e6e6fa' }}>
 					<Button
 						title={'Block User'}
-						onPress={() => { this.props.reportUser(gameKey, opponent, uid, null, opponentName, opponentPhoto), this.setState({ show: false }) }}
+						onPress={() => { this.props.reportUser(gameKey, opponent, uid, null, info.opponentName, info.opponentPhoto), this.setState({ show: false }) }}
 						buttonStyle={styles.chooseButton}
 					/>
 					<Button
 						title={'Report Abuse'}
-						onPress={() => { Actions.reportAbuse({ opponentName, opponentPhoto }), this.setState({ show: false }) }}
+						onPress={() => { Actions.reportAbuse( info.opponentName, info.opponentPhoto ), this.setState({ show: false }) }}
 						buttonStyle={styles.chooseButton}
 					/>
 				</View>
@@ -65,8 +62,18 @@ class Result extends Component {
 	}
 
 	render() {
+		if (!this.props.player) {
+			return (
+				<ActivityIndicator
+					animating={true}
+					style={[styles.container, styles.horizontal]}
+					size="large"
+				/>
+			);
+		}
 		const { gameKey, score, opponent, result } = this.props.game
 		const { uid } = this.props.login
+		const { info } = this.props.player
 		return (
 			<View style={styles.container}>
 				<TouchableOpacity
@@ -101,7 +108,7 @@ class Result extends Component {
 						</View>
 						<View style={styles.user}>
 							<Badge
-								value={`${opponent}'s answer was...`}
+								value={`${info.opponentName}'s answer was...`}
 								textStyle={{ color: '#FFF', fontSize: 20 }}
 								containerStyle={{ backgroundColor: '#F5D86B' }}
 							/>
@@ -156,6 +163,11 @@ const styles = StyleSheet.create({
 		paddingRight: 30,
 		backgroundColor: '#0D658D',
 		flexDirection: 'row'
+	},
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10
 	},
 	badge: {
 		padding: 10,
@@ -217,7 +229,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { game: state.game, login: state.login.user };
+	console.log(state.player)
+	return { game: state.game, login: state.login.user, player: state.player };
 };
 
 export default connect(mapStateToProps, actions)(Result);

@@ -7,7 +7,6 @@ import PhoneAuthReducer from './PhoneAuthReducer';
 import DashboardReducer from './DashboardReducer';
 import PlayerListReducer from './PlayerListReducer';
 import QuestionReducer from './QuestionReducer';
-import ReportAbuseReducer from './ReportAbuseReducer';
 import SettingsReducer from './SettingsReducer';
 
 export default combineReducers({
@@ -16,6 +15,5 @@ export default combineReducers({
 	dash: DashboardReducer,
 	player: PlayerListReducer,
 	game: QuestionReducer,
-	abuse: ReportAbuseReducer,
 	settings: SettingsReducer
 });

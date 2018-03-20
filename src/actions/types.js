@@ -29,9 +29,11 @@ export const GAME_CREATED = 'game_created';
 export const FETCH_FIVE = "fetch_five";
 export const FETCH_CHOSEN_QUESTIONS = "fetch_chosen_questions";
 export const FETCH_SCORE = "fetch_score";
+export const FETCHED_OPPONENT_NAME_AND_PHOTO = 'fetched_opponent_name';
 export const ADDED_ANSWER = 'added_answer';
 export const GOT_RESULT = 'got_result';
 export const STATUS_UPDATE = 'status_update';
+export const LOADING = 'loading';
 
 //PROFILE
 export const GET_USER = 'get_user';

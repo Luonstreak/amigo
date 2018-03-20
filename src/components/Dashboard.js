@@ -19,7 +19,7 @@ import MaterialInitials from 'react-native-material-initials/native';
 import _ from 'lodash';
 
 import * as actions from '../actions';
-import registerForNotifications from '../../services/push_notifications';
+import registerForNotifications from '../../services/pushNotifications';
 import ChatModal from './ChatModal';
 
 class Dashboard extends Component {

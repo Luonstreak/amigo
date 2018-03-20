@@ -39,12 +39,12 @@ class Question extends Component {
 				tintColor: 'mediumseagreen'
 			})
 			.then(({ action, activityType }) => {
-				if (Platform.OS === 'ios') {
-					action === Share.dismissedAction ? alert('Come on, send a message to invite your friend.') : this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
-				}
-				else {
+				// if (Platform.OS === 'ios') {
+				// 	action === Share.dismissedAction ? alert('Come on, send a message to invite your friend.') : this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
+				// }
+				// else {
 					this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
-				}
+				// }
 			})
 			.catch((error) => console.log('failed', error));
 		}

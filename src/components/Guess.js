@@ -8,7 +8,8 @@ import {
 	FlatList,
 	TextInput,
 	Dimensions,
-	TouchableOpacity
+	TouchableOpacity,
+	ActivityIndicator
 } from 'react-native';
 import { Button, Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -49,12 +50,13 @@ class Guess extends Component {
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game
 		const { uid } = this.props.login
+		const { info } = this.props.player
 		const isLast = (index !== length - 1) ? true : false;
 		var who
 		if (length % 2 === 0) {
-			who = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+			who = index % 2 === 0 ? [`${info.opponentName}`, 'your'] : ['you', `${info.opponentName}'s`];
 		} else {
-			who = index % 2 === 1 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
+			who = index % 2 === 1 ? [`${info.opponentName}`, 'your'] : ['you', `${info.opponentName}'s`];
 		}
 
 		return (
@@ -65,7 +67,7 @@ class Guess extends Component {
 				{ index === length - 1 ? (
 				<View style={styles.user}>
 					<Badge
-						value={'your opponent\'s answer was..'}
+						value={`${info.opponentName}'s answer was..`}
 						textStyle={{ color: '#FFF', fontSize: 20 }}
 						containerStyle={{ backgroundColor: '#F5D86B' }}
 					/>
@@ -115,20 +117,16 @@ class Guess extends Component {
 		const { uid } = this.props.login;
 		const { opponent, gameKey } = this.props.game
 		if (this.state.show) {
-			firebase.database().ref(`users/${opponent}`).once('value', snap => {
-				opponentName = snap.val().username
-				opponentPhoto = snap.val().photo
-			})
 			return (
 				<View style={{ position: 'absolute', top: 40, right: 5, borderRadius: 10, backgroundColor: '#e6e6fa' }}>
 					<Button
 						title={'Block User'}
-						onPress={() => { this.props.reportUser(gameKey, opponent, uid, null, opponentName, opponentPhoto), this.setState({ show: false }) }}
+						onPress={() => { this.props.reportUser(gameKey, opponent, uid, null, info.opponentName, info.opponentPhoto), this.setState({ show: false }) }}
 						buttonStyle={styles.chooseButton}
 					/>
 					<Button
 						title={'Report Abuse'}
-						onPress={() => { Actions.reportAbuse({ opponentName, opponentPhoto }), this.setState({ show: false }) }}
+						onPress={() => { Actions.reportAbuse(info.opponentName, info.opponentPhoto), this.setState({ show: false }) }}
 						buttonStyle={styles.chooseButton}
 					/>
 				</View>
@@ -138,9 +136,19 @@ class Guess extends Component {
 	}
 
 	render() {
+		if (!this.props.player.info) {
+			return (
+				<ActivityIndicator
+					animating={true}
+					style={[styles.container, styles.horizontal]}
+					size="large"
+				/>
+			);
+		}
 		const data = this.props.lastFive;
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.login
+		const { info } = this.props.player
 		return (
 			<View style={styles.container}>
 				<TouchableOpacity
@@ -192,6 +200,11 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: '#DFE2E7'
+	},
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10
 	},
 	//header
 	counter: {

@@ -48,7 +48,6 @@ class ContactList extends Component {
 		const ref = firebase.database().ref(`opponents/${phone}`).orderByKey().equalTo(newPlayer)
 		ref.once('value', snap => {
 			var opponent = snap.exists()
-			console.log(opponent)
 			if (opponent) {
 				alert('You are currently playing a game with this person.')
 			}

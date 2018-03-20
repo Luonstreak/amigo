@@ -31,7 +31,6 @@ export const phoneSave = (phoneNumber) => {
 
 
 const updateDatabase = (phone, uid) => {
-	firebase.database().ref(`userNumbers/${uid}`).set(phone);
 	const ref = firebase.database().ref(`pendingGames/${phone}`)
 	ref.once('value', snap => {
 		const game = snap.val();

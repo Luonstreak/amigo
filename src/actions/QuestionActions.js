@@ -8,7 +8,9 @@ import {
 	GOT_RESULT,
 	STATUS_UPDATE,
 	FETCH_CHOSEN_QUESTIONS,
-	PLAYER_SELECTED
+	PLAYER_SELECTED,
+	FETCHED_OPPONENT_NAME_AND_PHOTO,
+	LOADING
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
@@ -29,7 +31,7 @@ export const fetchQuestion = (id, num, gameKey, selectedPlayer) => {
 					var existingOpponent = snapshot.val()
 					console.log(existingOpponent, 'fetchQuestion')
 					if (existingOpponent) {
-						firebase.database().ref(`questionChoices/${currentUser.uid}/${existingOpponent}/${id}${num}`).set({
+						firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
 							questionNumber: snap.key,
 							content: snap.val().content,
 							choices: snap.val().choices
@@ -104,12 +106,20 @@ export const startGame = (game, status, opponent, phone, photo, username) => {
 };
 
 const dispatchSelectedPlayer = (dispatch, opponent) => {
-	console.log('inside dsp')
 	firebase.database().ref(`allPhoneNumbers/${opponent}`).once('value', snap => {
-		console.log('snap', snap.val())
 		dispatch({
 			type: PLAYER_SELECTED,
 			payload: snap.val()
+		})
+		firebase.database().ref(`users/${opponent}`).once('value', snap => {
+			let obj = {
+				opponentName: snap.val().username,
+				opponentPhoto: snap.val().photo
+			}
+			dispatch({
+				type: FETCHED_OPPONENT_NAME_AND_PHOTO,
+				payload: obj
+			})
 		})
 	})
 }
@@ -194,7 +204,7 @@ export const creatingGame = (num, questionId, selectedPlayer, phone, username, p
 	firebase.database().ref(`allUids/${opponent}`).once('value', snap => {
 		var existingOpponent = snap.val()
 		if (existingOpponent) {
-			initialGame(currentUser, choice, questionId, existingOpponent, username, phone, null, null, true)
+			initialGame(currentUser, choice, questionId, existingOpponent, username, phone, opponentName, null, true)
 			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })
 			firebase.database().ref(`opponents/${opponent}`).update({ [phone]: true })
 			firebase.database().ref(`users/${existingOpponent}`).once('value', snap => {
@@ -331,6 +341,9 @@ export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer
 	})
 	
 	return async (dispatch) => {
+		dispatch({
+			type: LOADING
+		})
 		if (choice === opponentAnswer) {
 			const updatedScore = score + 1
 			firebase.database().ref(`friends/${phone}/${opponentPhone}`).update({ count: updatedScore })
@@ -349,8 +362,8 @@ export const checkAnswers = (num, questionKey, gameKey, opponent, opponentAnswer
 		const ref = firebase.database().ref(`games/${gameKey}`);
 		ref.limitToLast(5).once('value', async snap => {
 			await dispatch({ type: ADDED_ANSWER, payload: snap.val() })
-			Actions.guessResult()
 		})
+		Actions.guessResult()
 	}
 }
 
