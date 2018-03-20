@@ -7,24 +7,30 @@ import {
 	ScrollView,
 	FlatList,
 	TextInput,
-	Dimensions
+	Dimensions,
+	TouchableOpacity
 } from 'react-native';
-import { Button, Badge } from 'react-native-elements';
+import { Button, Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import firebase from 'firebase';
 
 import * as actions from '../actions';
+import { transparent } from 'material-ui/styles/colors';
 
 class GuessResult extends Component {
+	state = {
+		show: false
+	}
 
 	renderAskBackButton = (prevQ, oxtQ) => {
 		if (!oxtQ || prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
 			return (
 				<Button
 					title={'ASK BACK'}
-					buttonStyle={styles.choose_button}
+					buttonStyle={styles.chooseButton}
 					onPress={() => { Actions.askBack({ prevQ }) }}
 				/>
 			)
@@ -45,7 +51,7 @@ class GuessResult extends Component {
 	
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game;
-		const { uid } = this.props.user;
+		const { uid } = this.props.login;
 		var whos;
 		if (length % 2 === 0) {
 			whos = index % 2 === 0 ? ['your opponent', 'your'] : ['you', 'your opponent\'s'];
@@ -91,44 +97,86 @@ class GuessResult extends Component {
 			)
 		}
 
+	_renderMenu = () => {
+		const { uid } = this.props.login;
+		const { opponent, gameKey } = this.props.game
+		if (this.state.show) {
+			firebase.database().ref(`users/${opponent}`).once('value', snap => {
+				opponentName = snap.val().username
+				opponentPhoto = snap.val().photo
+			})
+			return (
+				<View style={{ position: 'absolute', top: 40, right: 5, borderRadius: 10, backgroundColor: '#e6e6fa' }}>
+					<Button
+						title={'Block User'}
+						onPress={() => { this.props.reportUser(gameKey, opponent, uid, null, opponentName, opponentPhoto), this.setState({ show: false }) }}
+						buttonStyle={styles.chooseButton}
+					/>
+					<Button
+						title={'Report Abuse'}
+						onPress={() => { Actions.reportAbuse({ opponentName, opponentPhoto }), this.setState({ show: false }) }}
+						buttonStyle={styles.chooseButton}
+					/>
+				</View>
+			)
+		}
+		else { return null }
+	}
+
 
 	render() {
 		const data = this.props.lastFive;
 		const { score, opponent } = this.props.game
-		const { uid } = this.props.user
+		const { uid } = this.props.login
 		return (
 			<View style={styles.container}>
-				<View style={styles.counter}>
-					<Badge
-						value={score ? score[uid] : 0}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
+				<TouchableOpacity
+					activeOpacity={1}
+					onPressOut={() => this.setState({ show: false })}
+				>
+					<View style={styles.counter}>
+						<View style={styles.badges}>
+							<Badge
+								value={score ? score[uid] : 0}
+								textStyle={{ color: '#F7E7B4' }}
+								containerStyle={styles.badge}
+							/>
+							<Badge
+								value={score ? score[opponent] : 0}
+								textStyle={{ color: '#F7E7B4' }}
+								containerStyle={styles.badge}
+							/>
+						</View>
+						<Icon
+							onPress={() => !this.state.show ? this.setState({ show: true }) : this.setState({ show: false })}
+							name='ellipsis-v'
+							type='font-awesome'
+							underlayColor={transparent}
+							color='black'
+							containerStyle={{ marginLeft: 50, width: 20 }}
+						/>
+					</View>
+					<FlatList
+						horizontal
+						pagingEnabled={true}
+						getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
+						keyExtractor={(item, index) => item.key}
+						initialScrollIndex={data.length - 1}
+						showsHorizontalScrollIndicator={false}
+						data={data}
+						renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 					/>
-					<Badge
-						value={score ? score[opponent] : 0}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-				</View>
-				<FlatList
-					horizontal
-					pagingEnabled={true}
-					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
-					keyExtractor={(item, index) => item.key}
-					initialScrollIndex={data.length - 1}
-					showsHorizontalScrollIndicator={false}
-					data={data}
-					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
-				/>
-				<View style={styles.chooseCard}>
-					{this.renderAskBackButton(data[data.length - 1], data[data.length - 2])}
-					<Button
-						title={'NEW QUESTION'}
-						buttonStyle={styles.choose_button}
-						onPress={() => { Actions.categories() }}
-					/>
-				</View>
-				<Chat />
+					<View style={styles.chooseCard}>
+						{this.renderAskBackButton(data[data.length - 1], data[data.length - 2])}
+						<Button
+							title={'NEW QUESTION'}
+							buttonStyle={styles.chooseButton}
+							onPress={() => { Actions.categories() }}
+						/>
+					</View>
+					<Chat />
+				</TouchableOpacity>
+				{this._renderMenu()}
 			</View>
 		)
 	}
@@ -142,16 +190,21 @@ const styles = StyleSheet.create({
 	},
 	//header
 	counter: {
-		height: 50,
-		justifyContent: 'space-between',
-		alignItems: 'center',
+		height: 40,
 		paddingLeft: 30,
 		paddingRight: 30,
-		backgroundColor: '#83D0CD',
-		flexDirection: 'row'
+		backgroundColor: '#0D658D',
+		flexDirection: 'row',
 	},
 	badge: {
-		padding: 10
+		padding: 10,
+		marginLeft: 25,
+	},
+	badges: {
+		justifyContent: 'space-between',
+		flexDirection: 'row',
+		alignItems: 'center',
+		flex: 1
 	},
 	//card
 	card: {
@@ -194,7 +247,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 
 	},
-	choose_button: {
+	chooseButton: {
 		margin: 10,
 		padding: 5,
 		paddingLeft: 10,
@@ -221,7 +274,12 @@ const mapStateToProps = state => {
 	_.forIn(state.game.lastFive, (value, key) => {
 		arr.push({ key, value })
 	})
-	return { lastFive: arr, game: state.game, user: state.login.user };
+	return { 
+		lastFive: arr, 
+		game: state.game, 
+		login: state.login.user, 
+		dash: state.dash
+	};
 };
 
 export default connect(mapStateToProps, actions)(GuessResult);

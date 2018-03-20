@@ -58,15 +58,15 @@ class Register extends Component {
 		Keyboard.dismiss;
 	}
 
-	renderError = () => {
-		if (this.props.login.error) {
-			return (
-				<Text
-					style={{ color: 'tomato', margin: 10 }}
-				>{this.props.login.error}</Text>
-			)
-		} else { return null }
-	}
+	// renderError = () => {
+	// 	if (this.props.login.error) {
+	// 		return (
+	// 			<Text
+	// 				style={{ color: 'tomato', margin: 10 }}
+	// 			>{this.props.login.error}</Text>
+	// 		)
+	// 	} else { return null }
+	// }
 	renderStateError = () => {
 		if (this.state.error) {
 			return (
@@ -126,7 +126,7 @@ class Register extends Component {
 						/>
 					</View>
 					{this.renderStateError()}
-					{this.renderError()}
+					{/* {this.renderError()} */}
 				</View>
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
@@ -146,7 +146,7 @@ class Register extends Component {
 					textStyle={{ color: 'dodgerblue' }}
 					buttonStyle={{ marginBottom: 20 }}
 					onPress={() => {
-						this.props.resetError()
+						// this.props.resetError()
 						Actions.pop()
 					}}
 				/>

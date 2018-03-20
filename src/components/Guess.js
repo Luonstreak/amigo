@@ -7,9 +7,10 @@ import {
 	ScrollView,
 	FlatList,
 	TextInput,
-	Dimensions
+	Dimensions,
+	TouchableOpacity
 } from 'react-native';
-import { Button, Badge } from 'react-native-elements';
+import { Button, Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import { connect } from 'react-redux';
@@ -17,8 +18,12 @@ import _ from 'lodash';
 import firebase from 'firebase';
 
 import * as actions from '../actions';
+import { transparent } from 'material-ui/styles/colors';
 
 class Guess extends Component {
+	state = {
+		show: false
+	}
 
 	renderColor = (userAnswer, opponentAnswer, option) => {
 		if (userAnswer === opponentAnswer) {
@@ -43,7 +48,7 @@ class Guess extends Component {
 
 	renderCard = (item, index, length) => {
 		const { opponent } = this.props.game
-		const { uid } = this.props.user
+		const { uid } = this.props.login
 		const isLast = (index !== length - 1) ? true : false;
 		var who
 		if (length % 2 === 0) {
@@ -106,35 +111,77 @@ class Guess extends Component {
 		)
 	}
 
+	_renderMenu = () => {
+		const { uid } = this.props.login;
+		const { opponent, gameKey } = this.props.game
+		if (this.state.show) {
+			firebase.database().ref(`users/${opponent}`).once('value', snap => {
+				opponentName = snap.val().username
+				opponentPhoto = snap.val().photo
+			})
+			return (
+				<View style={{ position: 'absolute', top: 40, right: 5, borderRadius: 10, backgroundColor: '#e6e6fa' }}>
+					<Button
+						title={'Block User'}
+						onPress={() => { this.props.reportUser(gameKey, opponent, uid, null, opponentName, opponentPhoto), this.setState({ show: false }) }}
+						buttonStyle={styles.chooseButton}
+					/>
+					<Button
+						title={'Report Abuse'}
+						onPress={() => { Actions.reportAbuse({ opponentName, opponentPhoto }), this.setState({ show: false }) }}
+						buttonStyle={styles.chooseButton}
+					/>
+				</View>
+			)
+		}
+		else { return null }
+	}
+
 	render() {
 		const data = this.props.lastFive;
 		const { score, opponent } = this.props.game
-		const { uid } = this.props.user
+		const { uid } = this.props.login
 		return (
 			<View style={styles.container}>
-				<View style={styles.counter}>
-					<Badge
-						value={score ? score[uid] : 0}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-					<Badge
-						value={score ? score[opponent] : 0}
-						textStyle={{ color: '#F7E7B4' }}
-						containerStyle={styles.badge}
-					/>
-				</View>
-				<FlatList
-					horizontal
-					pagingEnabled={true}
-					getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}
-					keyExtractor={(item, index) => item.key}
-					initialScrollIndex={data.length - 1}
-					showsHorizontalScrollIndicator={false}
-					data={data}
-					renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
-				/>
-				<Chat />
+				<TouchableOpacity
+					activeOpacity={1}
+					onPressOut={() => this.setState({ show: false })}
+				>
+					<View style={styles.counter}>
+						<View style={styles.badges}>
+							<Badge
+								value={score ? score[uid] : 0}
+								textStyle={{ color: '#F7E7B4' }}
+								containerStyle={styles.badge}
+							/>
+							<Badge
+								value={score ? score[opponent] : 0}
+								textStyle={{ color: '#F7E7B4' }}
+								containerStyle={styles.badge}
+							/>
+						</View>
+						<Icon
+							onPress={() => !this.state.show ? this.setState({ show: true }) : this.setState({ show: false })}
+							name='ellipsis-v'
+							type='font-awesome'
+							underlayColor={transparent}
+							color='black'
+							containerStyle={{ marginLeft: 50, width: 20 }}
+						/>
+					</View>
+					<FlatList
+						horizontal
+						pagingEnabled={true}
+						getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}
+						keyExtractor={(item, index) => item.key}
+						initialScrollIndex={data.length - 1}
+						showsHorizontalScrollIndicator={false}
+						data={data}
+						renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
+						/>
+					<Chat />
+				</TouchableOpacity>
+				{this._renderMenu()}
 			</View>
 		)
 	}
@@ -149,15 +196,20 @@ const styles = StyleSheet.create({
 	//header
 	counter: {
 		height: 50,
-		justifyContent: 'space-between',
-		alignItems: 'center',
 		paddingLeft: 30,
 		paddingRight: 30,
-		backgroundColor: '#83D0CD',
+		backgroundColor: '#0D658D',
 		flexDirection: 'row'
 	},
 	badge: {
-		padding: 10
+		padding: 10,
+		marginLeft: 25,
+	},
+	badges: {
+		justifyContent: 'space-between',
+		flexDirection: 'row',
+		alignItems: 'center',
+		flex: 1
 	},
 	//card
 	card: {
@@ -200,14 +252,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 
 	},
-	choose_button: {
+	chooseButton: {
 		margin: 10,
 		padding: 5,
 		paddingLeft: 10,
 		paddingRight: 10,
 		borderRadius: 10,
 		backgroundColor: '#0099FF'
-	}
+	},
 });
 
 const mapStateToProps = state => {
@@ -218,7 +270,7 @@ const mapStateToProps = state => {
 	return { 
 		lastFive: arr, 
 		game: state.game, 
-		user: state.login.user, 
+		login: state.login.user, 
 		player: state.player, 
 		dash: state.dash 
 	};

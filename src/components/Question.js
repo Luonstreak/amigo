@@ -122,7 +122,7 @@ class Question extends Component {
 		const data = this.props.game.chosenQuestionArr;
 		return (
 			<View style={styles.container}>
-				<View style={styles.counter}>
+				{/* <View style={styles.counter}>
 					<Badge
 						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
@@ -133,7 +133,7 @@ class Question extends Component {
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
-				</View>
+				</View> */}
 				<FlatList
 					horizontal
 					pagingEnabled={true}

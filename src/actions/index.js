@@ -6,3 +6,5 @@ export * from './DashboardActions';
 export * from './ProfileActions';
 export * from './PlayerListActions';
 export * from './QuestionActions';
+export * from './ReportAbuseActions';
+export * from './SettingsActions';

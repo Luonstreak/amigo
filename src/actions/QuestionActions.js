@@ -69,8 +69,7 @@ export const fetchScore = (gameKey, uid) => {
 };
 
 export const startGame = (game, status, opponent, phone, photo, username) => {
-	const ref = firebase.database().ref(`games/${game}`);
-	firebase.database().ref(`users/${opponent}/${game}`).update({
+	firebase.database().ref(`users/${opponent}/games/${game}`).update({
 		opponentName: username,
 		opponentPhoto: photo
 	})
@@ -81,6 +80,7 @@ export const startGame = (game, status, opponent, phone, photo, username) => {
 		})
 	})
 	return (dispatch) => {
+		const ref = firebase.database().ref(`games/${game}`);
 		dispatchSelectedPlayer(dispatch, opponent)
 		ref.limitToLast(5).once('value', async snap => {
 			const obj = { five: snap.val(), gameKey: game, opponent }
@@ -193,7 +193,6 @@ export const creatingGame = (num, questionId, selectedPlayer, phone, username, p
 
 	firebase.database().ref(`allUids/${opponent}`).once('value', snap => {
 		var existingOpponent = snap.val()
-		console.log(existingOpponent, '=-=-=-=-=-=-=-=-=-=-=-')
 		if (existingOpponent) {
 			initialGame(currentUser, choice, questionId, existingOpponent, username, phone, null, null, true)
 			firebase.database().ref(`opponents/${phone}`).update({ [opponent]: true })

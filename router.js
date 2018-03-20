@@ -19,6 +19,8 @@ import Question from './src/components/Question';
 import AskBack from './src/components/AskBack';
 import Profile from './src/components/Profile';
 import Settings from './src/components/Settings';
+import ReportAbuse from './src/components/ReportAbuse';
+import BlockedUsers from './src/components/BlockedUsers';
 
 const RouterComponent = () => {
 	return (
@@ -42,9 +44,11 @@ const RouterComponent = () => {
 					<Scene key='result' component={Result} hideNavBar />
 					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.main()}} />
 					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => { Actions.main() }} />
+					<Scene key='reportAbuse' component={ReportAbuse} onLeft={() => { Actions.pop() }} title='Choose a Reason'/>
 					<Scene key='askBack' component={AskBack} />
 					<Scene key='profile' component={Profile} hideNavBar />
 					<Scene key='settings' component={Settings} title='SETTINGS' />
+					<Scene key='blockedUsers' component={BlockedUsers} onLeft={() => { Actions.pop() }} title='Blocked Users' />
 				</Scene>
 			</Scene>
 		</Router>

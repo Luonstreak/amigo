@@ -35,3 +35,10 @@ export const STATUS_UPDATE = 'status_update';
 
 //PROFILE
 export const GET_USER = 'get_user';
+
+//REPORT ABUSE
+export const ABUSE_REPORTED = 'abuse_reported';
+
+//SETTINGS
+export const FETCH_BLOCKED_USERS = 'fetch_blocked_users'
+export const UNBLOCKED_USER = 'unblocked_user'

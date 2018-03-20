@@ -23,7 +23,7 @@ export const phoneSave = (phoneNumber) => {
 		firebase.database().ref(`allUids/${phoneNumber}`).set(currentUser.uid)
 			.then(() => {
 				updateDatabase(phoneNumber, currentUser.uid)
-				dispatch({ type: PHONE_SAVE });
+				dispatch({ type: PHONE_SAVE, payload: phoneNumber });
 			});
 		};
 	};
