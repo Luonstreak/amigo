@@ -8,7 +8,6 @@ export default async () => {
 		if (status !== 'granted') {
 			return;
 		}
-
 		let token = await Notifications.getExpoPushTokenAsync();
 		userID = firebase.auth().currentUser.uid;
 

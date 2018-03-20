@@ -3,6 +3,7 @@ import {
 	StyleSheet,
 	Text,
 	View,
+	ActivityIndicator,
 	ScrollView,
 	TextInput,
 	Dimensions
@@ -16,10 +17,9 @@ import * as actions from '../actions';
 
 class Modal extends Component {
 
-	// componentWillMount() {
-	// 	const { gameKey } = this.props.game
-	// 	this.props.getResult(gameKey)
-	// }
+	componentWillMount() {
+		console.log(this.props.player.info)
+	}
 
 	whereToRouteTo = () => {
 		const { text, opponentAnswer, choice } = this.props;
@@ -35,18 +35,28 @@ class Modal extends Component {
 	}
 
 	render() {
+		if (!this.props.player.info.opponentName) {
+			return (
+				<ActivityIndicator
+					animating={true}
+					style={[styles.container, styles.horizontal]}
+					size="large"
+				/>
+			);
+		}
 		const { opponent, result, gameKey } = this.props.game
 		const { uid } = this.props.user
+		const { info } = this.props.player
 		return (
 			<View style={styles.container}>
 				<Avatar
 					rounded
 					xlarge
 					avatarStyle={{ marginTop: 300, borderWidth: 10, borderColor: result.result ? '#6DC066' : '#FF4444' }}
-					source={{ uri: 'https://pbs.twimg.com/profile_images/764466597788614656/bw2IMmNk_400x400.jpg' }}
+					source={{ uri: info.opponentPhoto }}
 				/>
 				<View style={styles.message}>
-					<Text style={{ fontSize: 30, color: result.result ? '#6DC066' : '#FF4444' }}>{opponent} GOT IT</Text>
+					<Text style={{ fontSize: 30, color: result.result ? '#6DC066' : '#FF4444' }}>{info.opponentName} GOT IT</Text>
 					<Text style={{ fontSize: 26, fontWeight: 'bold', color: result.result ? '#6DC066' : '#FF4444' }}>{result.result ? 'RIGHT' : 'WRONG'}</Text>
 					<Button
 						rounded
@@ -72,6 +82,11 @@ const styles = StyleSheet.create({
 		backgroundColor: '#000',
 		padding: 20
 	},
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10
+	},
 	message: {
 		flex: 1,
 		justifyContent: 'center',
@@ -93,7 +108,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	return { game: state.game, user: state.login.user };
+	console.log(state.player)
+	return { game: state.game, user: state.login.user, player: state.player };
 };
 
 export default connect(mapStateToProps, actions)(Modal);

@@ -24,7 +24,9 @@ class Login extends Component {
 
 	onButtonPress = () => {
 		const { email, password } = this.state;
-		this.props.userLogin({ email, password });
+		this.props.userLogin(email, password);
+		this.setState({email: ''})
+		this.setState({password: ''})
 		Keyboard.dismiss;
 	}
 
@@ -98,7 +100,7 @@ class Login extends Component {
 							textStyle={{ color: 'dodgerblue' }}
 							// buttonStyle={{  }}
 							onPress={() => {
-								this.props.resetError()
+								// this.props.resetError()
 								Actions.register()
 							}}
 						/>

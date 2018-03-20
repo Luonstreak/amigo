@@ -156,6 +156,7 @@ class Settings extends Component {
 				/>
 				{this._renderError(section)}
 				<Button
+<<<<<<< HEAD
 					title="UPDATE"
 					buttonStyle={[styles.button, { marginBottom: 20 }]}
 					textStyle={{ fontSize: 20 }}
@@ -176,6 +177,10 @@ class Settings extends Component {
 					renderHeader={this._renderHeader}
 					renderContent={this._renderContent}
 					underlayColor={'transparent'}
+=======
+					title="BLOCKED USERS"
+					onPress={() => {this.props.fetchBlockedUsers(uid)}}
+>>>>>>> c74c1e19de3fac199e5eea88a4e6db8d70e8e942
 				/>
 				<Button
 					title="LOG OUT"
@@ -208,6 +213,7 @@ class Settings extends Component {
 	}
 }
 
+<<<<<<< HEAD
 const { height, width } = Dimensions.get('window');
 const styles = {
 	header: {
@@ -239,6 +245,12 @@ const styles = {
 
 const mapStateToProps = state => {
 	return { dash: state.dash, login: state.login };
+=======
+const mapStateToProps = state => {
+	return {
+		login: state.login.user
+	}
+>>>>>>> c74c1e19de3fac199e5eea88a4e6db8d70e8e942
 }
 
 export default connect(mapStateToProps, actions)(Settings);

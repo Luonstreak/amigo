@@ -100,7 +100,7 @@ class Register extends Component {
 						/>
 					</View>
 					{this.renderStateError()}
-					{this.renderError()}
+					{/* {this.renderError()} */}
 				</View>
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
@@ -120,7 +120,7 @@ class Register extends Component {
 					textStyle={{ color: 'dodgerblue' }}
 					buttonStyle={{ marginBottom: 20 }}
 					onPress={() => {
-						this.props.resetError()
+						// this.props.resetError()
 						Actions.pop()
 					}}
 				/>
