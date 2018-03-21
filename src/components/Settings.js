@@ -156,7 +156,6 @@ class Settings extends Component {
 				/>
 				{this._renderError(section)}
 				<Button
-<<<<<<< HEAD
 					title="UPDATE"
 					buttonStyle={[styles.button, { marginBottom: 20 }]}
 					textStyle={{ fontSize: 20 }}
@@ -169,6 +168,23 @@ class Settings extends Component {
 		);
 	}
 
+	_logout = async () => {
+		let fbToken = await AsyncStorage.getItem('fbToken');
+		if (fbToken) {
+			AsyncStorage.removeItem('fbToken');
+		} else {
+			firebase.auth().signOut()
+				.then(() => {
+					alert('Sign out complete');
+					Actions.login()
+				})
+				.catch((error) => {
+					console.log('logout error', error)
+					alert('There has been an error, please try again!')
+				});
+		}
+	}
+
 	render() {
 		return (
 			<View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
@@ -177,11 +193,22 @@ class Settings extends Component {
 					renderHeader={this._renderHeader}
 					renderContent={this._renderContent}
 					underlayColor={'transparent'}
-=======
-					title="BLOCKED USERS"
-					onPress={() => {this.props.fetchBlockedUsers(uid)}}
->>>>>>> c74c1e19de3fac199e5eea88a4e6db8d70e8e942
+					
 				/>
+					
+				<Button
+					title="BLOCKED USERS"
+					buttonStyle={[styles.button, {
+						marginBottom: 20,
+						backgroundColor: 'white',
+						borderColor: 'tomato',
+						borderWidth: 1 }]}
+					textStyle={{ fontSize: 20, color: 'tomato' }}
+					containerStyle={{ border: 1, borderColor: 'dodgerblue' }}
+					onPress={() => this._logout()}
+					onPress={() => { this.props.fetchBlockedUsers(uid) }}
+				/>
+
 				<Button
 					title="LOG OUT"
 					buttonStyle={[styles.button, {
@@ -191,29 +218,13 @@ class Settings extends Component {
 						borderWidth: 1 }]}
 					textStyle={{ fontSize: 20, color: 'tomato' }}
 					containerStyle={{ border: 1, borderColor: 'dodgerblue' }}
-					onPress={async () => {
-						let fbToken = await AsyncStorage.getItem('fbToken');
-						if (fbToken) {
-							AsyncStorage.removeItem('fbToken');
-						} else {
-						firebase.auth().signOut()
-							.then(() => {
-								alert('Sign out complete');
-								Actions.login()
-							})
-							.catch((error) => {
-								console.log('logout error', error)
-								alert('There has been an error, please try again!')
-							});
-						}
-					}}
+					onPress={() => this._logout()}
 				/>
 			</View>
 		);
 	}
 }
 
-<<<<<<< HEAD
 const { height, width } = Dimensions.get('window');
 const styles = {
 	header: {
@@ -245,12 +256,6 @@ const styles = {
 
 const mapStateToProps = state => {
 	return { dash: state.dash, login: state.login };
-=======
-const mapStateToProps = state => {
-	return {
-		login: state.login.user
-	}
->>>>>>> c74c1e19de3fac199e5eea88a4e6db8d70e8e942
 }
 
 export default connect(mapStateToProps, actions)(Settings);
