@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, View, AsyncStorage } from 'react-native';
+import { Text, ImageBackground, AsyncStorage } from 'react-native';
 import firebase from 'firebase';
 import { LinearGradient } from 'expo';
 import { Actions } from 'react-native-router-flux';
@@ -25,19 +25,24 @@ class Splash extends Component {
 	}
 	
 	render() {
+		const pics = ['DRAGON', 'GODZ', 'MONKEY', 'MONSTER', 'PUMP', 'ROBOT'];
+		var selected = pics[Math.floor(Math.random() * 6)]
+		console.log(selected)
 		return (
-			<View style={{ flex: 1 }}>
-				<LinearGradient
-					colors={/*['#b224ef', '#e14fad', '#f9d423']*/['#84fab0', '#8fd3f4']}
-					style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}
-					start={[0.1,0]}
-				>
-					<Text style={{ color: 'white', fontSize: 26 }}>
-						WELCOME TO AMIGOO
-					</Text>
-				</LinearGradient>
-			</View>
+			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
+				<Text style={{ color: 'white', fontSize: 26 }}>
+					WELCOME TO AMIGOO
+				</Text>
+			</ImageBackground>
 		);
+	}
+}
+
+const styles = {
+	backgroundImage: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 }
 

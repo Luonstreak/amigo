@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { 
+	ImageBackground,
 	Dimensions,
 	Text,
 	View,
@@ -164,10 +165,7 @@ class Dashboard extends Component {
 		const { currentUser } = firebase.auth();
 		const { info } = this.props.dash
 		const { containerStyle, headerStyle, bodyStyle, titleStyle, listStyle, elementStyle } = styles;
-		const list1 = []
-		const list2 = []
-		const list3 = []
-		const blockList = []
+		const list1 = [], list2 = [], list3 = [], blockList = [];
 		var list = _.forIn(info.games, (value, key) => {
 			value['opponent'] = currentUser.uid === value.player1 ? value.player2 : value.player1;
 			value['gameKey'] = key;
@@ -180,7 +178,7 @@ class Dashboard extends Component {
 			} else { list1.push(value) }
 		})
 		return (
-			<View style={{ flex: 1, marginTop: 20 }}>
+			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
 				<View style={headerStyle}>
 					<Button
 						rounded
@@ -207,7 +205,7 @@ class Dashboard extends Component {
 						/>
 					}>
 					{/* MY TURN */}
-					<Text style={[titleStyle, { backgroundColor: '#FFC300' }]}>Your Turn</Text>
+					<Text style={[titleStyle, {backgroundColor: '#EB3349' }]}>Your Turn</Text>
 					<FlatList
 						data={list1}
 						containerStyle={listStyle}
@@ -253,7 +251,7 @@ class Dashboard extends Component {
 						}
 					/>
 					{/* THEIR TURN */}
-					<Text style={[titleStyle, { backgroundColor: '#FA3C4C' }]}>Their Turn</Text>
+				<Text style={[titleStyle, {backgroundColor: '#ED3D48' }]}>Their Turn</Text>
 					<FlatList
 						data={list2}
 						containerStyle={listStyle}
@@ -294,7 +292,15 @@ class Dashboard extends Component {
 						}
 					/>
 					{/* PENDING */}
-					<Text style={[titleStyle, { backgroundColor: '#44BEC7' }]}>Pending</Text>
+					<Text style={[titleStyle, {
+						backgroundColor: '#EF4846',
+						shadowColor: '#000000',
+						shadowOffset: {
+							width: 0,
+							height: 5
+						},
+						shadowRadius: 10,
+						shadowOpacity: .5}]}>Pending</Text>
 					<FlatList
 						data={list3}
 						containerStyle={listStyle}
@@ -325,7 +331,7 @@ class Dashboard extends Component {
 					/>
 				</ScrollView>
 				{this._renderChat()}
-			</View>
+			</ImageBackground>
 		);
 	}
 }
@@ -362,6 +368,7 @@ const styles = {
 	},
 	//body
 	titleStyle: {
+		backgroundColor: '#EB3349',
 		fontWeight: 'bold',
 		fontSize: 18,
 		textAlign: 'center',
@@ -383,6 +390,10 @@ const styles = {
 		paddingRight: 20,
 		borderBottomWidth: 1,
 		borderBottomColor: 'orange'
+	},
+	backgroundImage: {
+		flex: 1,
+		paddingTop: 20
 	}
 }
 
