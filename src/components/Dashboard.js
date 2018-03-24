@@ -29,7 +29,8 @@ class Dashboard extends Component {
 	state = {
 		refreshing: false,
 		auxKey: null,
-		opponent: null
+		opponent: null,
+		contacts: null
 	}
 
 	componentDidMount() {
@@ -38,11 +39,36 @@ class Dashboard extends Component {
 		this.props.getCategories()
 		this.props.resetGameKey()
 		registerForNotifications();
+		//Contacts Conditional
+		if (this.props.dash.contacts) {
+			this.setState({ contacts: this.props.dash.contacts })
+		}
+		else {
+			this.showFirstContactAsync();
+		}
+		//Notifications Conditional
 		Notifications.getBadgeNumberAsync().then(badgeNumber => {
 			if (badgeNumber !== 0) {
 				Notifications.setBadgeNumberAsync(0);
 			}
+		})
+	}
+
+	async showFirstContactAsync() {
+		// Ask for permission to query contacts.
+		const permission = await Expo.Permissions.askAsync(Expo.Permissions.CONTACTS);
+		const contacts = await Expo.Contacts.getContactsAsync({
+			fields: [
+				Expo.Contacts.PHONE_NUMBERS
+			],
+			pageSize: 1000,
+			pageOffset: 0,
 		});
+		if (contacts.total > 0) {
+			const sorted = _.sortBy(contacts.data, ['name', 'phoneNumbers'], ['asc']);
+			this.setState({ contacts: sorted })
+			this.props.saveContacts(sorted)
+		}
 	}
 	
 	// SPINNER
@@ -153,13 +179,17 @@ class Dashboard extends Component {
 	}
 
 	render() {
-		if (!this.props.dash.info) {
+		if (!this.props.dash.info || !this.state.contacts) {
 			return (
-				<ActivityIndicator
-					animating={true}
-					style={[styles.container, styles.horizontal]}
-					size="large"
-				/>
+				<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
+					<View style= {[styles.container, styles.horizontal]} >
+						<ActivityIndicator
+							animating={true}
+							color= 'mediumseagreen'
+							size="large"
+						/>
+					</View>
+				</ImageBackground>
 			);
 		}
 		const { currentUser } = firebase.auth();
@@ -185,7 +215,7 @@ class Dashboard extends Component {
 						backgroundColor={'#FFC300'}
 						title={'INVITE FRIENDS'}
 						buttonStyle={{ padding: 5 }}
-						onPress={() => Actions.contactList()}
+						onPress={() => Actions.contactList({ contacts: this.state.contacts })}
 						/>
 					<Avatar
 						rounded

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, Dimensions, Text, View, FlatList } from 'react-native';
+import { ActivityIndicator, ImageBackground, Platform, Dimensions, Text, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Button, Divider } from 'react-native-elements';
 import firebase from 'firebase';
@@ -17,31 +17,25 @@ class ContactList extends Component {
 		name: null
 	}
 	
-	componentDidMount() {
-		setTimeout(() => this.showFirstContactAsync(), 1);
-	}
+	// componentDidMount() {
+	// 	this.showFirstContactAsync();
+	// }
 	
-	async showFirstContactAsync() {
-		// Ask for permission to query contacts.
-		const permission = await Expo.Permissions.askAsync(Expo.Permissions.CONTACTS);
-		const contacts = await Expo.Contacts.getContactsAsync({
-			fields: [
-				Expo.Contacts.PHONE_NUMBERS
-			],
-			pageSize: 1000,
-			pageOffset: 0,
-			});
-			if (contacts.total > 0) {
-				const sorted = _.sortBy(contacts.data, ['name', 'phoneNumbers'], ['asc']);
-				this.setState({ contacts: sorted })
-				// Alert.alert(
-				// 	'Your first contact is...',
-				// 	`Name: ${contacts.data[0].name}\n` +
-				// 	`Phone numbers: ${JSON.stringify(contacts.data[0].phoneNumbers)}\n` +
-				// 	`Emails: ${JSON.stringify(contacts.data[0].emails)}`
-				// );
-			}
-		}
+	// async showFirstContactAsync() {
+	// 	// Ask for permission to query contacts.
+	// 	const permission = await Expo.Permissions.askAsync(Expo.Permissions.CONTACTS);
+	// 	const contacts = await Expo.Contacts.getContactsAsync({
+	// 		fields: [
+	// 			Expo.Contacts.PHONE_NUMBERS
+	// 		],
+	// 		pageSize: 1000,
+	// 		pageOffset: 0,
+	// 		});
+	// 		if (contacts.total > 0) {
+	// 			const sorted = _.sortBy(contacts.data, ['name', 'phoneNumbers'], ['asc']);
+	// 			this.setState({ contacts: sorted })
+	// 		}
+	// 	}
 
 	selectPlayer = (player, name) => {
 		const newPlayer = String(player).replace(/[^\d]/g, '')
@@ -100,9 +94,9 @@ class ContactList extends Component {
 
 	render() {
 		return (
-			<View>
+			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
 				<FlatList
-					data={this.state.contacts}
+					data={this.props.contacts}
 					containerStyle={styles.listStyle}
 					keyExtractor={(item, index) => index}
 					renderItem={({ item }) => {
@@ -111,7 +105,7 @@ class ContactList extends Component {
 								style={styles.elementStyle}
 							>
 								<Text
-									style={{ flex: 1, fontSize: 20, color: 'mediumseagreen' }}
+									style={{ flex: 1, fontSize: 20 }}
 									onPress={() => {
 										if (item.phoneNumbers.length > 1) {
 											this.setState({ list: item.phoneNumbers, name: item.name })
@@ -128,13 +122,22 @@ class ContactList extends Component {
 					}}
 				/>
 				{this.renderModal()}
-			</View>
+			</ImageBackground>
 		);
 	}
 }
 
 const { height, width } = Dimensions.get('window');
 const styles = {
+	container: {
+		flex: 1,
+		backgroundColor: '#DFE2E7'
+	},
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10
+	},
 	modal: {
 		position: 'absolute',
 		width: width * .9,
@@ -168,7 +171,12 @@ const styles = {
 		paddingLeft: 20,
 		paddingRight: 20,
 		borderBottomWidth: 1,
-		borderBottomColor: 'orange'
+		borderBottomColor: 'tomato'
+	},
+	backgroundImage: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 }
 

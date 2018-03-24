@@ -4,7 +4,8 @@ import {
 	RESET_GAME_KEY,
 	GET_CATEGORIES, 
 	CHAT_VISIBLE,
-	DECREASE_NUDGE_COUNT
+	DECREASE_NUDGE_COUNT,
+	SAVE_CONTACTS
 } from './types';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
@@ -74,6 +75,15 @@ export const decreaseNudgeCount = (key, uid, count) => {
 	return async (dispatch) => {
 		await dispatch({
 			type: DECREASE_NUDGE_COUNT
+		})
+	}
+} 
+
+export const saveContacts = (contacts) => {
+	return (dispatch) => {
+		dispatch({
+			type: SAVE_CONTACTS,
+			payload: contacts
 		})
 	}
 } 

@@ -4,7 +4,8 @@ import {
 	RESET_GAME_KEY,
 	GET_CATEGORIES,
 	CHAT_VISIBLE,
-	DECREASE_NUDGE_COUNT
+	DECREASE_NUDGE_COUNT,
+	SAVE_CONTACTS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -13,6 +14,7 @@ const INITIAL_STATE = {
 	gameKey: null,
 	categories: null,
 	chatVisible: 'off',
+	contact: null,
 	chosenQuestionArr: []
 }
 
@@ -28,6 +30,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, categories: action.payload };
 		case RESET_GAME_KEY:
 			return { ...state, gameKey: null, chosenQuestionArr: [] }
+		case SAVE_CONTACTS:
+			return { ...state, contacts: action.payload }
 		case DECREASE_NUDGE_COUNT:
 			return state
 		default:

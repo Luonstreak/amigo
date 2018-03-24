@@ -1,5 +1,6 @@
 // ABSOLUTE
 import React from 'react';
+import { Platform } from 'react-native';
 import { Scene, Router, Actions } from 'react-native-router-flux';
 
 // RELATIVE
@@ -25,7 +26,7 @@ import BlockedUsers from './src/components/BlockedUsers';
 
 const RouterComponent = () => {
 	return (
-		<Router sceneStyle={{ backgroundColor: '#FFF' }}>
+		<Router navigationBarStyle={{ marginTop: (Platform.OS === 'ios') ? 0 : 25 }} sceneStyle={{ backgroundColor: '#FFF' }}>
 			<Scene key='root' hideNavBar>
 				<Scene key='auth'>
 					<Scene key='splash' component={Splash} title='True Friends' hideNavBar initial />
