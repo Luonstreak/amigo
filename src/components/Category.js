@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+	ImageBackground,
 	Platform,
 	StyleSheet,
 	Text,
@@ -78,7 +79,6 @@ class Category extends Component {
 						const { selectedPlayer } = this.props.player
 						firebase.database().ref(`questionChoices/${uid}/${selectedPlayer.phone}`).once('value', snap => {
 							if (snap.numChildren() >= 3) {
-								console.log('more than 3 in undefined')
 								Actions.question({ category: id })
 							}
 							else {
@@ -91,7 +91,8 @@ class Category extends Component {
 		})
 	}
 
-	renderItem = (item) => {
+	renderItem = (item, index) => {
+		const colors = ['#F15A24', '#FBB03B', '#FCEE21','#D9E021','#8CC63F']
 		const { gameKey } = this.props.game;
 		const { categories } = this.props
 		const diff = item.value - this.props.points
@@ -102,7 +103,7 @@ class Category extends Component {
 					MainElement={
 						<Button
 							title={this.state.names[item.key]}
-							buttonStyle={styles.option}
+							buttonStyle={[styles.option, {backgroundColor: colors[index]}]}
 							onPress={() => alert(`Invite ${diff} more friends to unlock this category`)}
 						/>
 					}
@@ -110,7 +111,7 @@ class Category extends Component {
 						<Icon
 							name='lock'
 							size={20}
-							color='black'
+							color='gray'
 						/>
 					}
 					IconBadgeStyle={
@@ -120,7 +121,9 @@ class Category extends Component {
 							width: 30,
 							height: 30,
 							borderRadius: 50,
-							backgroundColor: 'white'
+							backgroundColor: 'white',
+							borderWidth: 1,
+							borderColor: colors[index],
 						}
 					}
 				/>
@@ -129,7 +132,7 @@ class Category extends Component {
 			return (
 				<Button
 				title={this.state.names[item.key]}
-				buttonStyle={styles.option}
+				buttonStyle={[styles.option, {backgroundColor: colors[index]}]}
 				onPress={() => { this._checkUsedQuestion(item.key, gameKey)}}
 				/>
 			)
@@ -140,27 +143,28 @@ class Category extends Component {
 		const { gameKey } = this.props.game
 		const arr = this.props.categories
 		return (
-			<View style={styles.container}>
+			<ImageBackground source={require('../static/background.png')} style={styles.container}>
 				<ScrollView
 					style={styles.card}
 					showsVerticalScrollIndicator={false}
 				>
 					<View style={styles.header}>
-						<Text style={{ fontSize: 20 }}>Categories</Text>
+						<Text style={{
+							fontSize: 24, color: '#EF4846', fontWeight: 'bold' }}>CATEGORIES</Text>
 					</View>
 					<Button
 						title={'Random'}
-						buttonStyle={styles.option}
+						buttonStyle={[styles.option, { backgroundColor: '#ED1C24' }]}
 						onPress={() => { this._checkUsedQuestion('r', gameKey) }}
 					/>
 					<FlatList
-						contentContainerStyle={styles.list}
+						// contentContainerStyle={styles.list}
 						keyExtractor={(item, index) => item.key}
 						data={arr}
-						renderItem={({ item }) => this.renderItem(item)}
+						renderItem={({ item, index }) => this.renderItem(item, index)}
 					/>
 				</ScrollView>
-			</View>
+			</ImageBackground>
 		);
 	}
 }
@@ -169,12 +173,12 @@ const styles = StyleSheet.create({
 	//global
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		backgroundColor: '#DFE2E7'
+		paddingTop: 20
 	},
 	//card
 	card: {
-		backgroundColor: '#0D658D',
+		borderWidth: 1,
+		borderColor: '#EF4846',
 		margin: 30,
 		padding: 20,
 		borderRadius: 20
@@ -184,15 +188,13 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		marginBottom: 20
 	},
-	list: {
-		justifyContent: 'center',
-		alignItems: 'center'
-	},
 	option: {
-		backgroundColor: '#0099FF',
-		width: 250,
+		shadowColor: '#000000',
+		shadowOffset: { height: 2.5 },
+		shadowOpacity: .5,
 		borderRadius: 10,
 		marginBottom: 20
+
 	},
 	// footer - chat
 	chat: {

@@ -25,9 +25,6 @@ class Splash extends Component {
 	}
 	
 	render() {
-		const pics = ['DRAGON', 'GODZ', 'MONKEY', 'MONSTER', 'PUMP', 'ROBOT'];
-		var selected = pics[Math.floor(Math.random() * 6)]
-		console.log(selected)
 		return (
 			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
 				<Text style={{ color: 'white', fontSize: 26 }}>

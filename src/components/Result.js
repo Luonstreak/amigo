@@ -239,7 +239,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	console.log(state.player)
 	return { game: state.game, login: state.login.user, player: state.player };
 };
 

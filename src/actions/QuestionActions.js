@@ -30,7 +30,6 @@ export const fetchQuestion = (id, num, gameKey, selectedPlayer) => {
 				const opponent = selectedPlayer.phone
 				firebase.database().ref(`allUids/${opponent}`).once('value', snapshot => {
 					var existingOpponent = snapshot.val()
-					console.log(existingOpponent, 'fetchQuestion')
 					if (existingOpponent) {
 						firebase.database().ref(`questionChoices/${currentUser.uid}/${opponent}/${id}${num}`).set({
 							questionNumber: snap.key,

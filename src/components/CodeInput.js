@@ -21,11 +21,9 @@ class CodeInput extends Component {
 	onButtonPress = async () => {
 		const uid = firebase.auth().currentUser.uid;
 		const code = this.state.code;
-		console.log(uid, code, 'codeinput');
 
 		try {
 			await axios.post(`${ROOT_URL}/verifyCode`, { uid, code });
-			console.log('codeinput success')
 			// this.props.userFetch()
 			Actions.main();
 		} catch (error) {

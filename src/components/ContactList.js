@@ -22,6 +22,7 @@ class ContactList extends Component {
 	}
 	
 	async showFirstContactAsync() {
+		// const logos = ['basketball-ball', 'bicycle', 'bowling-ball', 'cog', 'hand-scissors', 'heart', 'leaf', 'lemon', 'recycle', 'sun']
 		// Ask for permission to query contacts.
 		const permission = await Expo.Permissions.askAsync(Expo.Permissions.CONTACTS);
 		const contacts = await Expo.Contacts.getContactsAsync({
@@ -62,7 +63,6 @@ class ContactList extends Component {
 
 	saveNumbers = (numbers, visible) => {
 		this.props.savePhoneNumbers(numbers)
-		console.log('visible', visible)
 		this.setState({ modalVisible: visible })
 	}
 

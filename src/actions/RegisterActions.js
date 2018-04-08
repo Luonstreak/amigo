@@ -36,6 +36,17 @@ export const userRegister = (email, password, username) => {
 };
 
 const registerSuccess = (dispatch, user, username, password) => {
+	
+	const pics = [
+		'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/DRAGON.png?alt=media&token=903c5ad7-3bf3-4476-bf88-629703662ba3',
+		'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/GODZ.png?alt=media&token=97543b34-bbb2-4662-9db2-90cd1badf35a',
+		'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/MONKEY.png?alt=media&token=40b032fa-0405-4f20-a689-bd9a9966acd1',
+		'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/MONSTER.png?alt=media&token=0ac84ade-e765-450b-b360-5673ea4fac70',
+		'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/PUMP.png?alt=media&token=6929f688-1838-4998-bb1d-cb0b736dc246',
+		'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/ROBOT.png?alt=media&token=90390298-3ac0-44bf-b1a9-3f08277e6547'
+	];
+	var selected = pics[Math.floor(Math.random() * 6)]
+	
 	firebase.database().ref(`categories/${user.uid}`).update({
 		points: 0,
 		a: 0,
@@ -47,7 +58,7 @@ const registerSuccess = (dispatch, user, username, password) => {
 	firebase.database().ref(`users/${user.uid}`).update({ 
 		username,
 		password,
-		photo: 'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/moustache.png?alt=media&token=e2d14111-962b-4527-9a2a-47430b5bc2e5' 
+		photo: selected 
 	})
 	dispatch({ type: REGISTER_SUCCESS, payload: user });
 	Actions.phoneAuth();

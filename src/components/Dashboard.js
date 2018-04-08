@@ -190,7 +190,6 @@ class Dashboard extends Component {
 					<Avatar
 						rounded
 						medium
-						avatarStyle={{ borderWidth: 1, borderColor: '#FFC300' }}
 						source={{ uri: info.photo }}
 						onPress={() => Actions.profile({ current: true })}
 					/>
@@ -201,11 +200,11 @@ class Dashboard extends Component {
 						<RefreshControl
 							refreshing={this.state.refreshing}
 							onRefresh={this._onRefresh}
-							tintColor={'#FFC300'}
+							tintColor={'#EF4846'}
 						/>
 					}>
 					{/* MY TURN */}
-					<Text style={[titleStyle, {backgroundColor: '#EB3349' }]}>Your Turn</Text>
+					<Text style={[titleStyle, { backgroundColor: '#F7931E' }]}>Your Turn</Text>
 					<FlatList
 						data={list1}
 						containerStyle={listStyle}
@@ -251,7 +250,7 @@ class Dashboard extends Component {
 						}
 					/>
 					{/* THEIR TURN */}
-				<Text style={[titleStyle, {backgroundColor: '#ED3D48' }]}>Their Turn</Text>
+					<Text style={[titleStyle, { backgroundColor: '#F15A24' }]}>Their Turn</Text>
 					<FlatList
 						data={list2}
 						containerStyle={listStyle}
@@ -293,14 +292,11 @@ class Dashboard extends Component {
 					/>
 					{/* PENDING */}
 					<Text style={[titleStyle, {
-						backgroundColor: '#EF4846',
+						backgroundColor: '#ED1C24',
 						shadowColor: '#000000',
-						shadowOffset: {
-							width: 0,
-							height: 5
-						},
-						shadowRadius: 10,
-						shadowOpacity: .5}]}>Pending</Text>
+						shadowOffset: {height: 5},
+						shadowOpacity: .3
+						}]}>Pending</Text>
 					<FlatList
 						data={list3}
 						containerStyle={listStyle}
@@ -321,7 +317,7 @@ class Dashboard extends Component {
 								>{item.opponentName}</Text>
 								<Button
 									rounded
-									backgroundColor={'mediumseagreen'}
+									backgroundColor={'#ED1C24'}
 									title={'REMIND'}
 									buttonStyle={{ padding: 5 }}
 									onPress={() => this._sendReminder(item.opponent, item.gameKey)}
@@ -364,16 +360,19 @@ const styles = {
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		padding: 10,
-		paddingLeft: 0
+		paddingLeft: 0,
+		shadowColor: '#000000',
+		shadowOffset: { height: 5 },
+		shadowOpacity: .5
 	},
 	//body
 	titleStyle: {
 		backgroundColor: '#EB3349',
 		fontWeight: 'bold',
-		fontSize: 18,
+		fontSize: 20,
 		textAlign: 'center',
 		color: '#FFF',
-		padding: 5
+		padding: 10
 	},
 	listStyle: {
 		marginTop: 0,
@@ -382,14 +381,13 @@ const styles = {
 		borderTopWidth: 0
 	},
 	elementStyle: {
-		width: width,
+		backgroundColor: '#FFF',
+		width,
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 10,
 		paddingLeft: 20,
-		paddingRight: 20,
-		borderBottomWidth: 1,
-		borderBottomColor: 'orange'
+		paddingRight: 20
 	},
 	backgroundImage: {
 		flex: 1,

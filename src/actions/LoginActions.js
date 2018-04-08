@@ -12,7 +12,6 @@ import {
 import _ from 'lodash'
 
 export const userLogin = (email, password) => {
-	console.log('hit userLogin', email, password)
 	return (dispatch) => {
 		firebase.auth().signInWithEmailAndPassword(email, password)
 			.then(user => loginSuccess(dispatch, user))
@@ -48,7 +47,6 @@ export const persistentEmailLogin = (user) => {
 }
 
 const loginSuccess = (dispatch, user) => {
-	console.log('login success')
 	userFetch(dispatch,user)
 	dispatch({
 		type: LOGIN_SUCCESS,

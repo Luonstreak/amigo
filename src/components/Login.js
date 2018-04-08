@@ -10,7 +10,7 @@ import firebase from 'firebase';
 import * as actions from '../actions';
 
 class Login extends Component {
-	state = { keyboard: false, email: 'dastore@gmail.com', password: 'peroque' }
+	state = { keyboard: false, email: '', password: '' }
 
 	componentWillMount() {
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({ keyboard: true }));

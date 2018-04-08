@@ -17,10 +17,6 @@ import * as actions from '../actions';
 
 class Modal extends Component {
 
-	componentWillMount() {
-		console.log(this.props.player.info)
-	}
-
 	whereToRouteTo = () => {
 		const { text, opponentAnswer, choice } = this.props;
 		if (text) {
@@ -108,7 +104,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-	console.log(state.player)
 	return { game: state.game, user: state.login.user, player: state.player };
 };
 

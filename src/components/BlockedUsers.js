@@ -17,7 +17,6 @@ class BlockedUsers extends Component {
 			value['gameKey'] = key
 			data.push(value)
 		})
-		console.log(data)
 		if (data.length < 1) {
 			return (
 				<View style={{ flex: 1, marginTop: 2, alignItems: 'center' }}>

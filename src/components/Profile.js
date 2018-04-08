@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
 import firebase from 'firebase';
+import _ from 'lodash';
 
 class Profile extends Component {
 	
@@ -59,6 +60,10 @@ class Profile extends Component {
 
 	render() {
 		const { info, friends } = this.props.dash;
+		const top = [], rest = [];
+		_.forEach(friends, (el) => {
+			console.log(el)
+		})
 		const { headerStyle, titleStyle, listStyle, elementStyle, navBar } = styles;
 		return (
 			<View style={{ flex: 1 }}>

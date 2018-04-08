@@ -20,13 +20,6 @@ class Settings extends Component {
 		errorP: null,
 	}
 
-	
-	componentWillMount() {
-		const { currentUser } = firebase.auth();
-		console.log('user', currentUser.refreshToken)
-	}
-	
-
 	_isEmail = (section) => {
 		section === 'Email' ? this.props.state.email : this.state.password
 	}
@@ -61,7 +54,6 @@ class Settings extends Component {
 					: alert('There has been an error, please try again!')
 				});
 			}).catch(error => {
-				console.log('reauth error', error)
 				alert('There has been an error, please try again!')
 			});
 		}
