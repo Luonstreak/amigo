@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, Dimensions, Text, View, FlatList } from 'react-native';
+import { ActivityIndicator, ImageBackground, Platform, Dimensions, Text, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Button, Divider } from 'react-native-elements';
 import firebase from 'firebase';
@@ -17,9 +17,9 @@ class ContactList extends Component {
 		name: null
 	}
 	
-	componentDidMount() {
-		setTimeout(() => this.showFirstContactAsync(), 1);
-	}
+	// componentDidMount() {
+	// 	this.showFirstContactAsync();
+	// }
 	
 	async showFirstContactAsync() {
 		// const logos = ['basketball-ball', 'bicycle', 'bowling-ball', 'cog', 'hand-scissors', 'heart', 'leaf', 'lemon', 'recycle', 'sun']
@@ -100,9 +100,9 @@ class ContactList extends Component {
 
 	render() {
 		return (
-			<View>
+			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
 				<FlatList
-					data={this.state.contacts}
+					data={this.props.contacts}
 					containerStyle={styles.listStyle}
 					keyExtractor={(item, index) => index}
 					renderItem={({ item }) => {
@@ -111,7 +111,7 @@ class ContactList extends Component {
 								style={styles.elementStyle}
 							>
 								<Text
-									style={{ flex: 1, fontSize: 20, color: 'mediumseagreen' }}
+									style={{ flex: 1, fontSize: 20 }}
 									onPress={() => {
 										if (item.phoneNumbers.length > 1) {
 											this.setState({ list: item.phoneNumbers, name: item.name })
@@ -128,13 +128,22 @@ class ContactList extends Component {
 					}}
 				/>
 				{this.renderModal()}
-			</View>
+			</ImageBackground>
 		);
 	}
 }
 
 const { height, width } = Dimensions.get('window');
 const styles = {
+	container: {
+		flex: 1,
+		backgroundColor: '#DFE2E7'
+	},
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10
+	},
 	modal: {
 		position: 'absolute',
 		width: width * .9,
@@ -168,7 +177,12 @@ const styles = {
 		paddingLeft: 20,
 		paddingRight: 20,
 		borderBottomWidth: 1,
-		borderBottomColor: 'orange'
+		borderBottomColor: 'tomato'
+	},
+	backgroundImage: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 }
 

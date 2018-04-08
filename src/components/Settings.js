@@ -178,6 +178,7 @@ class Settings extends Component {
 	}
 
 	render() {
+		const { uid } = this.props.login.user
 		return (
 			<View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
 				<Accordion
@@ -197,7 +198,6 @@ class Settings extends Component {
 						borderWidth: 1 }]}
 					textStyle={{ fontSize: 20, color: 'tomato' }}
 					containerStyle={{ border: 1, borderColor: 'dodgerblue' }}
-					onPress={() => this._logout()}
 					onPress={() => { this.props.fetchBlockedUsers(uid) }}
 				/>
 

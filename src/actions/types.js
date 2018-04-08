@@ -31,6 +31,7 @@ export const ADDED_ANSWER = 'added_answer';
 export const GOT_RESULT = 'got_result';
 export const STATUS_UPDATE = 'status_update';
 export const LOADING = 'loading';
+export const SAVE_CONTACTS = 'save_contacts';
 
 //PROFILE
 export const GET_USER = 'get_user';
