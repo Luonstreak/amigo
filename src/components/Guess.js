@@ -199,6 +199,8 @@ const styles = StyleSheet.create({
 	//global
 	container: {
 		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'flex-end',
 		backgroundColor: '#DFE2E7'
 	},
 	horizontal: {

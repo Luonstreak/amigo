@@ -61,9 +61,6 @@ class Profile extends Component {
 	render() {
 		const { info, friends } = this.props.dash;
 		const top = [], rest = [];
-		_.forEach(friends, (el) => {
-			console.log(el)
-		})
 		const { headerStyle, titleStyle, listStyle, elementStyle, navBar } = styles;
 		return (
 			<View style={{ flex: 1 }}>

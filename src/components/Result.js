@@ -102,16 +102,6 @@ class Result extends Component {
 							containerStyle={{ marginLeft: 50, width: 20 }}
 						/>
 					</View>
-				{/* </ScrollView>
-				<Button
-					rounded
-					title="Continue"
-					titleTextColor={'#F7F7F7'}
-					backgroundColor={'#6DC066'}
-					buttonStyle={{ justifyContent: 'center', width: width * 0.8, margin: width * 0.1, marginBottom: height * .25 }}
-					onPress={() => this.props.changeStatus('guess', uid, gameKey)}
-				/> */}
-				<Chat />
 					<ScrollView style={styles.card} showsVerticalScrollIndicator={false}>
 						<View style={styles.question}>
 							<Text style={{ fontSize: 30 }}>{result.content}</Text>
@@ -147,10 +137,10 @@ class Result extends Component {
 						title="Continue"
 						titleTextColor={'#F7F7F7'}
 						backgroundColor={'#6DC066'}
-						buttonStyle={{ justifyContent: 'center', width: width * 0.8, margin: width * 0.1 }}
+						buttonStyle={{ width: width * .9, margin: width * .05 }}
 						onPress={() => this.props.changeStatus('guess', uid, gameKey)}
 					/>
-					<Chat />
+					<Chat height={150} />
 				</TouchableOpacity>
 				{this._renderMenu()}
 			</View>
@@ -164,6 +154,8 @@ const styles = StyleSheet.create({
 	container: {
 		marginTop: 40,
 		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'flex-end',
 		backgroundColor: '#DFE2E7'
 	},
 	//header

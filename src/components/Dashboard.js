@@ -34,6 +34,7 @@ class Dashboard extends Component {
 	}
 
 	componentDidMount() {
+		console.log('this.props.login', this.props.login)
 		this._onRefresh()
 		this.props.friendsFetch(this.props.dash.info.phone)
 		this.props.getCategories()
@@ -174,7 +175,7 @@ class Dashboard extends Component {
 	}
 
 	_lastPlayed = (data) => {
-		var date = moment('201803191102', 'YYYYMMDDHHmm')
+		var date = moment(data, 'YYYYMMDDHHmm')
 		return date.fromNow()
 	}
 
@@ -240,7 +241,6 @@ class Dashboard extends Component {
 						containerStyle={listStyle}
 						keyExtractor={(item, index) => index}
 						renderItem={({ item }) => {
-							console.log('item',item)
 							return (
 								<View
 									style={elementStyle}
@@ -286,7 +286,6 @@ class Dashboard extends Component {
 						containerStyle={listStyle}
 						keyExtractor={(item, index) => index}
 						renderItem={({ item }) => {
-							console.log(item)
 							return (
 								<View
 									style={elementStyle}

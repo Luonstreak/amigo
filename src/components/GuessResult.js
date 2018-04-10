@@ -25,7 +25,7 @@ class GuessResult extends Component {
 	state = {
 		show: false
 	}
-
+	
 	renderAskBackButton = (prevQ, oxtQ) => {
 		if (!oxtQ || prevQ.value.questionNumber !== oxtQ.value.questionNumber) {
 			return (
@@ -122,9 +122,8 @@ class GuessResult extends Component {
 		else { return null }
 	}
 
-
 	render() {
-		if (this.props.game.loading) {
+		if (!this.props.player.info) {
 			return (
 				<ActivityIndicator
 					animating={true}
@@ -194,6 +193,8 @@ const styles = StyleSheet.create({
 	//global
 	container: {
 		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'flex-end',
 		backgroundColor: '#DFE2E7'
 	},
 	horizontal: {
@@ -252,9 +253,8 @@ const styles = StyleSheet.create({
 		height: 50,
 		backgroundColor: '#0D658D',
 		flexDirection: 'row',
-		margin: 30,
+		margin: 15,
 		marginTop: 0,
-		marginBottom: height * .23,
 		borderRadius: 10,
 		justifyContent: 'space-around',
 		alignItems: 'center'
@@ -280,6 +280,10 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 10
 	},
+	spiner: {
+		alignItems: 'center',
+		justifyContent: 'center'
+	}
 });
 
 const mapStateToProps = state => {

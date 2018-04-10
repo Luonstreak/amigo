@@ -86,7 +86,7 @@ class AskBack extends Component {
 					/>
 				</View>
 				{this.renderCard()}
-				<Chat style={styles.chat} />
+				<Chat />
 			</View>
 		)
 	}
@@ -141,11 +141,6 @@ const styles = StyleSheet.create({
 		width: 250,
 		borderRadius: 10,
 		margin: 10
-	},
-	//footer - chat
-	chat: {
-		marginTop: 10,
-		backgroundColor: '#ADD8E6',
 	}
 });
 

@@ -58,7 +58,6 @@ class Question extends Component {
 					title={'SHOW NEW QUESTION'}
 					rounded
 					backgroundColor={'mediumseagreen'}
-					containerStyle={{ marginBottom: height * .25 }}
 					onPress={() => {Actions.categories()}}
 				/>
 			)
@@ -67,7 +66,6 @@ class Question extends Component {
 				<Button
 					title={'ONLY 3 QUESTIONS PER ROUND'}
 					rounded
-					containerStyle={{ marginBottom: height * .25 }}
 					backgroundColor={'lightgray'}
 				/>
 			)
@@ -124,7 +122,7 @@ class Question extends Component {
 		const data = this.props.game.chosenQuestionArr;
 		return (
 			<View style={styles.container}>
-				{/* <View style={styles.counter}>
+				<View style={styles.counter}>
 					<Badge
 						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
@@ -135,7 +133,7 @@ class Question extends Component {
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
 					/>
-				</View> */}
+				</View>
 				<FlatList
 					horizontal
 					pagingEnabled={true}
@@ -147,7 +145,7 @@ class Question extends Component {
 					extraData={this.props.game.chosenQuestionArr}
 					renderItem={({ item }) => this.renderCard(item)}
 				/>
-				<View>
+				<View style={{ margin: 10 }}>
 					{this.props.game.gameKey ? this.renderQuestionButton() : null}
 				</View>
 				{this.props.game.gameKey ? <Chat /> : null}

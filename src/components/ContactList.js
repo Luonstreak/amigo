@@ -148,7 +148,7 @@ const styles = {
 		position: 'absolute',
 		width: width * .9,
 		left: width * .05,
-		top: width * .5,
+		bottom: width * .05,
 		padding: 20,
 		borderRadius: 20,
 		backgroundColor: 'lightgray',
