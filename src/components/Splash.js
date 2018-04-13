@@ -27,7 +27,7 @@ class Splash extends Component {
 	render() {
 		return (
 			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
-				<Text style={{ color: 'white', fontSize: 26 }}>
+				<Text style={{ color: 'tomato', fontSize: 26 }}>
 					WELCOME TO AMIGOO
 				</Text>
 			</ImageBackground>

@@ -137,10 +137,10 @@ class Result extends Component {
 						title="Continue"
 						titleTextColor={'#F7F7F7'}
 						backgroundColor={'#6DC066'}
-						buttonStyle={{ width: width * .9, margin: width * .05 }}
+						buttonStyle={{ margin: 10 }}
 						onPress={() => this.props.changeStatus('guess', uid, gameKey)}
 					/>
-					<Chat height={150} />
+					<Chat />
 				</TouchableOpacity>
 				{this._renderMenu()}
 			</View>
@@ -152,7 +152,7 @@ const { height, width } = Dimensions.get('window');
 const styles = StyleSheet.create({
 	//global
 	container: {
-		marginTop: 40,
+		marginTop: 20,
 		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'flex-end',
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
 	card: {
 		width: (width * .9),
 		margin: (width * .05),
+		marginBottom: 10,
 		backgroundColor: '#0D658D',
 		padding: 20,
 		borderRadius: 20

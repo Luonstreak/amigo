@@ -88,20 +88,20 @@ export const startGame = (game, status, opponent, phone, photo, username) => {
 		ref.limitToLast(5).once('value', async snap => {
 			const obj = { five: snap.val(), gameKey: game, opponent }
 			await dispatch({ type: FETCH_FIVE, payload: obj })
-			if (status == 'result') {
+			if (status == 'modal') {
 				firebase.database().ref(`result/${game}`).once('value', async snap => {
 					await dispatch({ type: GOT_RESULT, payload: snap.val() })
 					Actions.modal()
 				})
-			}
-			else if (status == 'guess') {
-				Actions.guess()
-
-			}
-			else if (status == 'guessResult') {
-				Actions.guessResult()
-			}
-			// Actions.question();
+			} else if(status == 'result') {
+				firebase.database().ref(`result/${game}`).once('value', async snap => {
+					await dispatch({ type: GOT_RESULT, payload: snap.val() })
+					Actions.result()
+				})
+			} 
+			else if (status == 'guess') { Actions.guess() }
+			else if (status == 'guessResult') { Actions.guessResult() }
+			else if (status == 'question') { Actions.question() }
 		})
 	}
 };
@@ -129,10 +129,10 @@ export const fetchChosenQuestions = (gameKey) => {
 	const ref = firebase.database().ref(`questionChoices/${gameKey}`)
 	return (dispatch) => {
 		ref.once('value', async snap => {
-			// var snap = snap.exists()
 			if (snap.val() !== null) {
 				var snapVal = snap.val()
 				var arr = Object.values(snapVal)
+				console.log(arr)
 				await dispatch({
 					type: FETCH_CHOSEN_QUESTIONS,
 					payload: arr
@@ -185,7 +185,8 @@ export const saveAnswer = (num, questionId, opponent, gameKey, displayName) => {
 			status: 'waiting'
 		})
 		firebase.database().ref(`users/${opponent}/games/${gameKey}`).update({
-			status: 'result'
+			status: 'modal',
+			opponentLastPlayed: moment().format('YYYYMMDDHHmm')
 		})
 	})
 

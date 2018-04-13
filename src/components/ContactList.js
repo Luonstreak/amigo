@@ -69,13 +69,14 @@ class ContactList extends Component {
 	renderModal = () => {
 		const { list, name } = this.state;
 		if(this.state.list) {
-			return(
+			return (
 			<View style={styles.modal}>
 				<Text style={styles.modalHead}>PICK A NUMBER</Text>
 				{list.map(el => {
 					el['key'] = Math.floor(Math.random()*100000);
 					return (
 						<Button
+							key={el.key}
 							buttonStyle={styles.modalButton}
 							textStyle={{ color: 'gray' }}
 							title={`${el.number}`}

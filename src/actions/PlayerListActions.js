@@ -1,8 +1,5 @@
-// ABSOLUTE
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
-
-// RELATIVE
 import { SAVE_NUMBERS, PLAYERS_FETCH, PLAYER_SELECTED } from './types';
 
 export const playerSelect = (phone, uid, name) => {

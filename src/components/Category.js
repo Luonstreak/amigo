@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import {
 	ImageBackground,
-	Platform,
 	StyleSheet,
 	Text,
 	View,
 	FlatList,
 	ScrollView,
-	TextInput
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Button, Badge } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
@@ -48,7 +46,7 @@ class Category extends Component {
 		}
 		const { uid } = this.props.user;
 		firebase.database().ref(`questionChoices/${gameKey}`).once('value', snap => {
-			if (snap.numChildren() >= 3) {		
+			if (snap.numChildren() >= 3) {
 				Actions.question({ category: id })
 			}
 			else {

@@ -34,7 +34,6 @@ class Dashboard extends Component {
 	}
 
 	componentDidMount() {
-		console.log('this.props.login', this.props.login)
 		this._onRefresh()
 		this.props.friendsFetch(this.props.dash.info.phone)
 		this.props.getCategories()
@@ -76,6 +75,7 @@ class Dashboard extends Component {
 	_onRefresh = () => {
 		this.setState({ refreshing: true });
 		setTimeout(() => {
+			console.log('on time')
 			this.props.userFetch()
 			this.setState({ refreshing: false })
 			clearTimeout()
@@ -90,7 +90,7 @@ class Dashboard extends Component {
 	_renderChat = () => {
 		if (this.props.dash.chatVisible === 'on'){
 			return (
-				<View style={styles.containerStyle}>
+				<View style={styles.chatContainer}>
 					<ChatModal auxKey={this.state.auxKey} opponent={this.state.opponent}/>
 				</View>
 			)
@@ -175,8 +175,12 @@ class Dashboard extends Component {
 	}
 
 	_lastPlayed = (data) => {
-		var date = moment(data, 'YYYYMMDDHHmm')
-		return date.fromNow()
+		if (data) {
+			var date = moment(data, 'YYYYMMDDHHmm')
+			return date.fromNow()
+		} else {
+			return ''
+		}
 	}
 
 	render() {
@@ -193,9 +197,10 @@ class Dashboard extends Component {
 				</ImageBackground>
 			);
 		}
+
 		const { currentUser } = firebase.auth();
 		const { info } = this.props.dash
-		const { containerStyle, headerStyle, bodyStyle, titleStyle, listStyle, elementStyle } = styles;
+		const { headerStyle, bodyStyle, titleStyle, listStyle, elementStyle } = styles;
 		const list1 = [], list2 = [], list3 = [], blockList = [];
 		var list = _.forIn(info.games, (value, key) => {
 			value['opponent'] = currentUser.uid === value.player1 ? value.player2 : value.player1;
@@ -210,12 +215,14 @@ class Dashboard extends Component {
 		})
 		return (
 			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
+				{/*HEADER*/}
 				<View style={headerStyle}>
 					<Button
 						rounded
 						backgroundColor={'#FFC300'}
 						title={'INVITE FRIENDS'}
 						buttonStyle={{ padding: 5 }}
+						containerViewStyle={{ marginLeft: 0 }}
 						onPress={() => Actions.contactList({ contacts: this.state.contacts })}
 						/>
 					<Avatar
@@ -225,6 +232,7 @@ class Dashboard extends Component {
 						onPress={() => Actions.profile({ current: true })}
 					/>
 				</View>
+				{/*BODY*/}
 				<ScrollView
 					style={bodyStyle}
 					refreshControl={
@@ -355,6 +363,7 @@ class Dashboard extends Component {
 						}
 					/>
 				</ScrollView>
+				{/*CHAT MODAL*/}
 				{this._renderChat()}
 			</ImageBackground>
 		);
@@ -363,25 +372,10 @@ class Dashboard extends Component {
 
 const { height, width } = Dimensions.get('window');
 const styles = {
+	//global
 	container: {
 		flex: 1,
 		justifyContent: 'center'
-	},
-	horizontal: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-		padding: 10
-	},
-	containerStyle: {
-		position: 'absolute',
-		top: width * 0.05,
-		width: width * .9,
-		margin: width * .05,
-		marginTop: 0,
-		paddingTop: 10,
-		justifyContent: 'flex-end',
-		backgroundColor: '#83D0CD',
-		borderRadius: 20
 	},
 	//header
 	headerStyle: {
@@ -389,10 +383,8 @@ const styles = {
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		padding: 10,
-		paddingLeft: 0,
-		shadowColor: '#000000',
-		shadowOffset: { height: 5 },
-		shadowOpacity: .5
+		paddingLeft: 20,
+		paddingRight: 20,
 	},
 	//body
 	titleStyle: {
@@ -421,6 +413,23 @@ const styles = {
 	backgroundImage: {
 		flex: 1,
 		paddingTop: 20
+	},
+	//chat modal
+	horizontal: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		padding: 10
+	},
+	chatContainer: {
+		position: 'absolute',
+		top: width * 0.05,
+		width: width * .9,
+		margin: width * .05,
+		marginTop: 0,
+		paddingTop: 10,
+		justifyContent: 'flex-end',
+		backgroundColor: '#83D0CD',
+		borderRadius: 20
 	}
 }
 

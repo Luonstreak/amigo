@@ -22,8 +22,6 @@ class Chat extends Component {
 
 
 componentDidMount() {
-	console.log('chat props:', this.props.test)
-	console.log('chat current height:', this.state.height)
 	const { gameKey } = this.props.game
 	const ref = firebase.database().ref(`chat/${gameKey}`).on('value', snapshot => {
 		const arr = []

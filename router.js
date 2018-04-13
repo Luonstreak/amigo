@@ -25,6 +25,7 @@ import ReportAbuse from './src/components/ReportAbuse';
 import BlockedUsers from './src/components/BlockedUsers';
 
 const RouterComponent = () => {
+	
 	return (
 		<Router navigationBarStyle={{ marginTop: (Platform.OS === 'ios') ? 0 : 25 }} sceneStyle={{ backgroundColor: '#FFF' }}>
 			<Scene key='root' hideNavBar>
@@ -45,8 +46,8 @@ const RouterComponent = () => {
 					<Scene key='question' component={Question} />
 					<Scene key='modal' component={Modal} hideNavBar />
 					<Scene key='result' component={Result} hideNavBar />
-					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.main()}} />
-					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => { Actions.main() }} />
+					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.popTo('dashboard')}} />
+					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => {Actions.popTo('dashboard')}} />
 					<Scene key='reportAbuse' component={ReportAbuse} onLeft={() => { Actions.pop() }} title='Choose a Reason'/>
 					<Scene key='askBack' component={AskBack} />
 					<Scene key='profile' component={Profile} hideNavBar />

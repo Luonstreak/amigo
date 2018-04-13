@@ -11,25 +11,13 @@ import {
 import { Button, Badge, Avatar } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 import _ from 'lodash';
 //relative
 import * as actions from '../actions';
 
 class Modal extends Component {
-
-	whereToRouteTo = () => {
-		const { text, opponentAnswer, choice } = this.props;
-		if (text) {
-			if (text === 'win') {
-				Actions.guessResult({ text, choice })
-			} else {
-				Actions.guessResult({ text, opponentAnswer, choice })
-			}
-		} else {
-			Actions.result()
-		}
-	}
-
+	
 	render() {
 		if (!this.props.player.info.opponentName) {
 			return (
@@ -52,7 +40,7 @@ class Modal extends Component {
 					source={{ uri: info.opponentPhoto }}
 				/>
 				<View style={styles.message}>
-					<Text style={{ fontSize: 30, color: result.result ? '#6DC066' : '#FF4444' }}>{info.opponentName} GOT IT</Text>
+					<Text style={{ fontSize: 30, color: result.result ? '#6DC066' : '#FF4444' }}>{info.opponentName} got it</Text>
 					<Text style={{ fontSize: 26, fontWeight: 'bold', color: result.result ? '#6DC066' : '#FF4444' }}>{result.result ? 'RIGHT' : 'WRONG'}</Text>
 					<Button
 						rounded
@@ -60,8 +48,14 @@ class Modal extends Component {
 						titleTextColor={'#F7F7F7'}
 						backgroundColor={result.result ? '#6DC066' : '#FF4444' }
 						buttonStyle={{ width: 200, marginTop: 100 }}
-						onPress={() => this.whereToRouteTo()}
-					/>
+						onPress={async () => {
+							const { currentUser } = firebase.auth();
+							await firebase.database().ref(`users/${currentUser.uid}/games/${gameKey}`).update({
+								status: 'result'
+							})
+							Actions.result()
+						}}
+						/>
 				</View>
 			</View>
 		)

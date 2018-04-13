@@ -8,7 +8,8 @@ import {
 	ScrollView,
 	TextInput,
 	Dimensions, 
-	Share
+	Share,
+	ActivityIndicator
 } from 'react-native';
 import { Button, Badge } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -53,7 +54,7 @@ class Question extends Component {
 	renderQuestionButton = () => {
 		const { gameKey, chosenQuestionArr } = this.props.game;
 		if (chosenQuestionArr.length < 3) {
-			return (
+		return (
 				<Button
 					title={'SHOW NEW QUESTION'}
 					rounded
@@ -116,10 +117,36 @@ class Question extends Component {
 		)
 	}
 
+	_renderSpinner = (data) => {
+		if (data) {
+			return (
+				<FlatList
+					horizontal
+					pagingEnabled={true}
+					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
+					keyExtractor={(item, index) => item.questionNumber}
+					initialScrollIndex={data.length - 1}
+					showsHorizontalScrollIndicator={false}
+					data={data}
+					extraData={this.props.game.chosenQuestionArr}
+					renderItem={({ item }) => this.renderCard(item)}
+				/>
+			)
+		} else {
+				return (
+					<ActivityIndicator
+						style={{ flex: 1 }}
+						animating={true}
+						color='dodgerblue'
+						size="large"
+					/>
+				)
+		}
+	}
+
 	render() {
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
-		const data = this.props.game.chosenQuestionArr;
 		return (
 			<View style={styles.container}>
 				<View style={styles.counter}>
@@ -134,17 +161,7 @@ class Question extends Component {
 						containerStyle={styles.badge}
 					/>
 				</View>
-				<FlatList
-					horizontal
-					pagingEnabled={true}
-					getItemLayout={(data, index) => ({ length: (width), offset: width * index, index })}
-					keyExtractor={(item, index) => item.questionNumber}
-					initialScrollIndex={data.length - 1}
-					showsHorizontalScrollIndicator={false}
-					data={data}
-					extraData={this.props.game.chosenQuestionArr}
-					renderItem={({ item }) => this.renderCard(item)}
-				/>
+				{this._renderSpinner(this.props.game.chosenQuestionArr)}
 				<View style={{ margin: 10 }}>
 					{this.props.game.gameKey ? this.renderQuestionButton() : null}
 				</View>
@@ -179,6 +196,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: (width * .90),
 		margin: (width * .05),
+		marginBottom: 0,
 		backgroundColor: '#0D658D',
 		padding: 20,
 		borderRadius: 20

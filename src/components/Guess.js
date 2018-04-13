@@ -233,10 +233,13 @@ const styles = StyleSheet.create({
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,
-		borderRadius: 20
+		borderRadius: 20,
+		shadowColor: '#0D658D',
+		shadowOffset: { height: -20 },
+		shadowOpacity: 0.5,
 	},
 	question: {
-		marginBottom: 10,
+		marginBottom: 20,
 		flex: 2,
 		alignItems: 'center'
 	},

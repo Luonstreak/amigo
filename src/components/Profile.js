@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Dimensions } from 'react-native';
+import { Text, View, ScrollView, FlatList, Dimensions, ActivityIndicator } from 'react-native';
 import { Avatar, Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -58,6 +58,71 @@ class Profile extends Component {
 		})
 	}
 
+	_renderFriends = (friends) => {
+		if (friends) {
+			return (
+				<FlatList
+					data={friends}
+					keyExtractor={(item, index) => index}
+					renderItem={({ item }) => {
+						return (
+							<View style={styles.elementStyle}>
+								<Avatar
+									rounded
+									medium
+									source={{ uri: item.photo }}
+									containerStyle={{ marginRight: 20 }}
+									onPress={() => this.getProfile(item)}
+								/>
+								<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>{item.username}</Text>
+								<Button
+									rounded
+									backgroundColor={'mediumseagreen'}
+									title={'PLAY'}
+									buttonStyle={{ padding: 5 }}
+									onPress={() => this.selectPlayer(item)}
+								/>
+							</View>
+						)
+					}}
+				/>
+			)
+			{/* <Text style={titleStyle}>EVERYONE ELSE</Text>
+					<FlatList
+					data={others}
+					keyExtractor={(item, index) => index}
+					renderItem={({ item }) =>
+						<View
+							style={elementStyle}
+						>
+							<Avatar
+								rounded
+								medium
+								source={{ uri: item.avatar_url }}
+								containerStyle={{ marginRight: 20 }}
+							/>
+							<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>Not So Friend</Text>
+							<Icon
+								name='information-outline'
+								type='material-community'
+								color='#CCC'
+								backgroundColor={'transparent'}
+								onPress={() => alert('see more about your friend..')}
+							/>
+						</View>
+					}
+				/> */}
+		} else {
+			return (
+				<ActivityIndicator
+					style={{ marginTop: 50 }}
+					animating={true}
+					color='dodgerblue'
+					size="large"
+				/>
+			)
+		}
+	}
 	render() {
 		const { info, friends } = this.props.dash;
 		const top = [], rest = [];
@@ -79,9 +144,9 @@ class Profile extends Component {
 							type='material-community'
 							color='dodgerblue'
 							underlayColor='transparent'
-							size={40}
-							onPress={() => Actions.main()}
-						/>
+							size={40} s
+							onPress={() => Actions.popTo('dashboard')}
+					/>
 						{this.renderSettings()}
 					</View>
 					<Avatar
@@ -95,57 +160,8 @@ class Profile extends Component {
 				</View>
 				{/* LIST */}
 				<ScrollView>
-					<Text style={titleStyle}>TOP 3 FRIENDOS</Text>
-					<FlatList
-						data={friends}
-						keyExtractor={(item, index) => index}
-						renderItem={({ item }) => {
-							return (
-								<View style={elementStyle}>
-									<Avatar
-										rounded
-										medium
-										source={{ uri: item.photo }}
-										containerStyle={{ marginRight: 20 }}
-										onPress={() => this.getProfile(item)}
-									/>
-									<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>{item.username}</Text>
-									<Button
-										rounded
-										backgroundColor={'mediumseagreen'}
-										title={'PLAY'}
-										buttonStyle={{ padding: 5 }}
-										onPress={() => this.selectPlayer(item)}
-									/>
-								</View>
-							)
-						}}
-					/>
-					{/* <Text style={titleStyle}>EVERYONE ELSE</Text>
-					 <FlatList
-						data={others}
-						keyExtractor={(item, index) => index}
-						renderItem={({ item }) =>
-							<View
-								style={elementStyle}
-							>
-								<Avatar
-									rounded
-									medium
-									source={{ uri: item.avatar_url }}
-									containerStyle={{ marginRight: 20 }}
-								/>
-								<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>Not So Friend</Text>
-								<Icon
-									name='information-outline'
-									type='material-community'
-									color='#CCC'
-									backgroundColor={'transparent'}
-									onPress={() => alert('see more about your friend..')}
-								/>
-							</View>
-						}
-					/> */}
+					<Text style={styles.titleStyle}>TOP 3 FRIENDOS</Text>
+					{this._renderFriends(friends)}
 				</ScrollView>
 			</View>
 		);
@@ -176,7 +192,7 @@ const styles = {
 		textAlign: 'center',
 		color: '#FFF',
 		backgroundColor: 'dodgerblue',
-		padding: 5
+		padding: 5,
 	},
 	listStyle: {
 		marginTop: 0,

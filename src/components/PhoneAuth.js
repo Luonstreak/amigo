@@ -13,7 +13,7 @@ class PhoneAuth extends Component {
 		this.props.phoneInput(number);
 	}
 	
-	onButtonPress() {
+	onButtonPress = () => {
 		const { phoneNumber } = this.props.phone
 		const phone = String(phoneNumber).replace(/[^\d]/g, '');
 		this.props.userFetch()
@@ -38,7 +38,7 @@ class PhoneAuth extends Component {
 					<Button
 						title='SAVE'
 						backgroundColor='#03A9F4'
-						onPress={this.onButtonPress.bind(this)}
+						onPress={() => this.onButtonPress()}
 					/>
 				</View>
 			</View>

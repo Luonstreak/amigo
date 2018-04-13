@@ -32,7 +32,10 @@ class GuessResult extends Component {
 				<Button
 					title={'ASK BACK'}
 					buttonStyle={styles.chooseButton}
-					onPress={() => { Actions.askBack({ prevQ }) }}
+					onPress={() => { 
+						const { currentUser } = firebase.auth();
+						Actions.askBack({ prevQ })
+					}}
 				/>
 			)
 		}
@@ -173,7 +176,7 @@ class GuessResult extends Component {
 						data={data}
 						renderItem={({ item, index }) => this.renderCard(item, index, data.length)}
 					/>
-					<View style={styles.chooseCard}>
+					<View style={styles.choiceBar}>
 						{this.renderAskBackButton(data[data.length - 1], data[data.length - 2])}
 						<Button
 							title={'NEW QUESTION'}
@@ -227,7 +230,10 @@ const styles = StyleSheet.create({
 		margin: (width * .05),
 		backgroundColor: '#0D658D',
 		padding: 20,
-		borderRadius: 20
+		borderRadius: 20,
+		shadowColor: '#0D658D',
+		shadowOffset: { height: 10 },
+		shadowOpacity: 0.5,
 	},
 	question: {
 		marginBottom: 10,
@@ -249,7 +255,7 @@ const styles = StyleSheet.create({
 		margin: 10
 	},
 	// lower card
-	chooseCard: {
+	choiceBar: {
 		height: 50,
 		backgroundColor: '#0D658D',
 		flexDirection: 'row',
@@ -258,7 +264,6 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		justifyContent: 'space-around',
 		alignItems: 'center'
-
 	},
 	chooseButton: {
 		margin: 10,
