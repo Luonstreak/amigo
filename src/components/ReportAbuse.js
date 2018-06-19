@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, ScrollView, View, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import { Button } from 'react-native-elements';
-import { RadioButtons, SegmentedControls } from 'react-native-radio-buttons';
+import { RadioButtons } from 'react-native-radio-buttons';
 import { connect } from 'react-redux';
 
 import * as actions from '../actions';

@@ -26,37 +26,39 @@ import BlockedUsers from './src/components/BlockedUsers';
 
 const RouterComponent = () => {
 	
-	return (
-		<Router navigationBarStyle={{ marginTop: (Platform.OS === 'ios') ? 0 : 25 }} sceneStyle={{ backgroundColor: '#FFF' }}>
-			<Scene key='root' hideNavBar>
-				<Scene key='auth'>
-					<Scene key='splash' component={Splash} title='True Friends' hideNavBar initial />
-					<Scene key='login' component={Login} title='True Friends Login' hideNavBar />
-					<Scene key='register' component={Register} title='True Friends Register' hideNavBar />
-					<Scene key='forgotPassword' component={ForgotPassword} hideNavBar />
-				</Scene>
-				<Scene key='phoneAuth'>
-					<Scene key='phoneInput' component={PhoneAuth} title='Enter Your Phone Number' hideNavBar initial />
-					{/* <Scene key='codeInput' component={CodeInput} title='Enter Your Code' /> */}
-				</Scene>
-				<Scene key='main'>
-					<Scene key='dashboard' component={Dashboard} hideNavBar initial />
-					<Scene key='contactList' component={ContactList} title='Pick a friend' />
-					<Scene key='categories' component={Category} />
-					<Scene key='question' component={Question} />
-					<Scene key='modal' component={Modal} hideNavBar />
-					<Scene key='result' component={Result} hideNavBar />
-					<Scene key='guess' component={Guess} leftTitle='Dashboard' onLeft={() => {Actions.popTo('dashboard')}} />
-					<Scene key='guessResult' component={GuessResult} leftTitle='Dashboard' onLeft={() => {Actions.popTo('dashboard')}} />
-					<Scene key='reportAbuse' component={ReportAbuse} onLeft={() => { Actions.pop() }} title='Choose a Reason'/>
-					<Scene key='askBack' component={AskBack} />
-					<Scene key='profile' component={Profile} hideNavBar />
-					<Scene key='settings' component={Settings} title='SETTINGS' />
-					<Scene key='blockedUsers' component={BlockedUsers} onLeft={() => { Actions.pop() }} title='Blocked Users' />
-				</Scene>
-			</Scene>
-		</Router>
-	);
+	return <Router navigationBarStyle={{ marginTop: Platform.OS === "ios" ? 0 : 25 }} sceneStyle={{ backgroundColor: "#FFF" }}>
+      <Scene key="root" hideNavBar>
+        <Scene key="auth">
+          <Scene key="splash" component={Splash} title="True Friends" hideNavBar initial />
+          <Scene key="login" component={Login} title="True Friends Login" hideNavBar />
+          <Scene key="register" component={Register} title="True Friends Register" hideNavBar />
+          <Scene key="forgotPassword" component={ForgotPassword} hideNavBar />
+        </Scene>
+        <Scene key="phoneAuth">
+          <Scene key="phoneInput" component={PhoneAuth} title="Enter Your Phone Number" hideNavBar initial />
+          {/* <Scene key='codeInput' component={CodeInput} title='Enter Your Code' /> */}
+        </Scene>
+        <Scene key="main">
+          <Scene key="dashboard" component={Dashboard} hideNavBar initial />
+          <Scene key="contactList" component={ContactList} title="Pick a friend" />
+          <Scene key="categories" component={Category} />
+          <Scene key="question" component={Question} hideNavBar />
+          <Scene key="modal" component={Modal} hideNavBar />
+          <Scene key="result" component={Result} hideNavBar />
+          <Scene key="guess" component={Guess} hideNavBar/>
+          <Scene key="guessResult" component={GuessResult} hideNavBar/>
+          <Scene key="reportAbuse" component={ReportAbuse} onLeft={() => {
+              Actions.pop();
+            }} title="Choose a Reason" />
+          <Scene key="askBack" component={AskBack} />
+          <Scene key="profile" component={Profile} hideNavBar />
+          <Scene key="settings" component={Settings} title="SETTINGS" />
+          <Scene key="blockedUsers" component={BlockedUsers} onLeft={() => {
+              Actions.pop();
+            }} title="Blocked Users" />
+        </Scene>
+      </Scene>
+    </Router>;
 };
 
 export default RouterComponent;

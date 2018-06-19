@@ -4,9 +4,7 @@ import {
 	TextInput,
 	Text,
 	FlatList,
-	Keyboard,
-	Dimensions,
-	DeviceEventEmitter 
+	Dimensions
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -67,66 +65,23 @@ class ChatModal extends Component {
 	render() {
 		const { username } = this.props.dash.info
 		const { container, list, input, title, content } = styles;
-		return (
-			<View style={{ height: height * .4 }}>
-				<View style={{
-					alignItems: 'flex-end',
-					marginRight: width * .02,
-				}}>
-					<Icon
-						name='close-circle'
-						type='material-community'
-						color='dodgerblue'
-						underlayColor='transparent'
-						size={32}
-						onPress={() => this._collapseChat()}
-					/>
-				</View>
-				<FlatList
-					contentContainerStyle={list}
-					inverted
-					data={this.state.messages}
-					keyExtractor={(item, index) => item.id}
-					showsVerticalScrollIndicator={false}
-					renderItem={({ item }) => {
-						return (
-							<View
-								style={{
-									alignItems: item.username === username ? 'flex-end' : 'flex-start'
-								}}
-							>
-								<View
-									style={[{
-										backgroundColor: item.username === username ? 'bisque' : 'aquamarine' ,
-										padding: 2.5,
-										paddingLeft: 10,
-										paddingRight: 10,
-										margin: 2.5,
-										borderRadius: 10,
-									}, this._messageStyle(item.username, username)]}
-								>
-									<Text style={{ color: 'gray' }}>{item.msg}</Text>
-								</View>
-							</View>
-						)
-					}}
-				/>
-				<View style={[list, { marginTop: 5, flexDirection: 'row', justifyContent: 'space-between' }]}>
-					<Text>{this.props.opponent}</Text>
-					<Text>You</Text>
-				</View>
-				<TextInput
-					style={input}
-					value={this.state.input}
-					underlineColorAndroid='transparent'
-					autoCapitalize='none'
-					autoCorrect={false}
-					onChangeText={this._updateInput}
-					onSubmitEditing={() => this._sendMessage(username)}
-					placeholder="say hi to your peeps..."
-				/>
-			</View>
-		);
+		return <View style={{ height: height * 0.4 }}>
+        <View style={{ alignItems: "flex-end", marginRight: width * 0.02 }}>
+          <Icon name="close-circle" type="material-community" color="#F7931E" underlayColor="transparent" size={32} onPress={() => this._collapseChat()} />
+        </View>
+        <FlatList contentContainerStyle={list} inverted data={this.state.messages} keyExtractor={(item, index) => item.id} showsVerticalScrollIndicator={false} renderItem={({ item }) => {
+            return <View style={{ alignItems: item.username === username ? "flex-end" : "flex-start" }}>
+                <View style={[{ backgroundColor: item.username === username ? "bisque" : "aquamarine", padding: 2.5, paddingLeft: 10, paddingRight: 10, margin: 2.5, borderRadius: 10 }, this._messageStyle(item.username, username)]}>
+                  <Text style={{ color: "gray" }}>{item.msg}</Text>
+                </View>
+              </View>;
+          }} />
+        <View style={[list, { marginTop: 5, flexDirection: "row", justifyContent: "space-between" }]}>
+          <Text>{this.props.opponent}</Text>
+          <Text>You</Text>
+        </View>
+        <TextInput style={input} value={this.state.input} underlineColorAndroid="transparent" autoCapitalize="none" autoCorrect={false} onChangeText={this._updateInput} onSubmitEditing={() => this._sendMessage(username)} placeholder="say hi to your peeps..." />
+      </View>;
 	}
 }
 const { height, width } = Dimensions.get('window');

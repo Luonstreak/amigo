@@ -1,11 +1,9 @@
-// ABSOLUTE
 import React, { Component } from 'react';
 import { Text, View, TextInput, Dimensions, Keyboard, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { LinearGradient } from 'expo';
 import { Actions } from 'react-native-router-flux';
-import firebase from 'firebase';
 // RELATIVE
 import * as actions from '../actions';
 
@@ -38,7 +36,7 @@ class Login extends Component {
 		if(this.props.login.error) {
 			return(
 				<Text 
-					style={{ color: 'tomato', margin: 10 }}
+					style={{ color: 'tomato', alignSelf: 'center', marginTop: 10 }}
 				>{this.props.login.error}</Text>
 			)
 		} else { return null }
@@ -93,30 +91,23 @@ class Login extends Component {
 					/>
 				</LinearGradient>
 				<View style={styles.container}>
-					{/* <View style={styles.button}> */}
 						<Button
 							title='Not a friendO yet?'
 							backgroundColor='transparent'
-							textStyle={{ color: 'dodgerblue' }}
-							// buttonStyle={{  }}
+							textStyle={{ color: '#F7931E' }}
 							onPress={() => {
-								// this.props.resetError()
 								Actions.register()
 							}}
 						/>
-					{/* </View> */}
-					{/* <View style={styles.button}> */}
 						<Button
 							title='Forgot Password?'
 							backgroundColor='transparent'
-							textStyle={{ color: 'dodgerblue' }}
-							// buttonStyle={{ }}
+							textStyle={{ color: '#F7931E' }}
 							onPress={() => {
 								this.props.resetError()
 								Actions.forgotPassword()
 							}}
 						/>
-					{/* </View> */}
 				</View>
 				<Button
 					rounded
@@ -132,7 +123,6 @@ class Login extends Component {
 const { height, width } = Dimensions.get('window');
 const styles = {
 	container: {
-		// flex: 1,
 		flexDirection: 'row',
 		marginBottom: 20,
 		justifyContent: 'center'
@@ -144,8 +134,7 @@ const styles = {
 	},
 	card: {
 		width: (width * .8),
-		marginLeft: (width * .1),
-		justifyContent: 'center'
+		marginLeft: (width * .1)
 	},
 	input: {
 		color: 'rgb(0,91,234)',

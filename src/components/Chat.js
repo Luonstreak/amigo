@@ -10,6 +10,8 @@ import {
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import _ from 'lodash';
+import { LinearGradient } from 'expo';
+import colors from '../styles/colors';
 import * as actions from '../actions';
 
 class Chat extends Component {
@@ -50,7 +52,7 @@ _keyboardDidShow = (e) => {
 _keyboardDidHide = (e) => {
 	this.setState({
 		height: this.state.height,
-		bottomSpace: width * .025
+		bottomSpace: 0
 	})
 }
 
@@ -80,24 +82,15 @@ _sendMessage = (username) => {
 	}
 }
 
-_messageStyle = (opp, usr) => {
-	if (opp === usr) {
-		return ({
-			backgroundColor: 'bisque',
-			borderBottomRightRadius: 0
-		})
-	} else {
-		return ({
-			backgroundColor: 'aquamarine',
-			borderBottomLeftRadius: 0,
-		})
-	}
-}
-
 render() {
 	const { username } = this.props.dash.info
 	return (
-		<View style={[styles.container, { height: this.state.height }]}>
+		<LinearGradient
+			start={{ x: 0, y: 0.5 }}
+			end={{ x: 1, y: 0.5 }}
+			colors={[colors.darkred, colors.lightred]}
+			style={[styles.container, { height: this.state.height }]}
+		>
 			<FlatList
 				inverted
 				data={this.state.messages}
@@ -107,20 +100,21 @@ render() {
 					return (
 						<View
 							style={{
-								alignItems: item.username === username ? 'flex-end' : 'flex-start'
+								alignItems: item.username === username ? 'flex-end' : 'flex-start',
 							}}
 						>
 							<View
-								style={[{
-									backgroundColor: item.username === username ? 'bisque' : 'aquamarine',
-									padding: 2.5,
-									paddingLeft: 10,
-									paddingRight: 10,
-									margin: 2.5,
-									borderRadius: 10,
-								}, this._messageStyle(item.username, username)]}
+								style={{
+									paddingVertical: 5,
+									paddingHorizontal: 10,
+									margin: 2,
+									borderRadius: 25,
+									backgroundColor: 'rgba(255,255,255,0.25)',
+									borderBottomLeftRadius: item.username === username ? 25 : 0,
+									borderBottomRightRadius: item.username === username ? 0 : 25,
+								}}
 							>
-								<Text style={{ color: 'gray' }}>{item.msg}</Text>
+								<Text style={{ color: '#FFF', fontSize: 20 }}>{item.msg}</Text>
 							</View>
 						</View>
 					)
@@ -140,30 +134,26 @@ render() {
 				onSubmitEditing={() => this._sendMessage(username)}
 				placeholder="say hi to your peeps..."
 			/>
-		</View>
-	);
+		</LinearGradient>
+	)}
 }
-}
+
 const { height, width } = Dimensions.get('window');
 const styles = {
 	container: {
-		backgroundColor: '#83D0CD',
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
-		paddingTop: 10,
-		paddingLeft: width * .05,
-		paddingRight: width * .05,
+		padding: 20,
 		justifyContent: 'flex-end',
 	},
 	input: {
 		height: 40,
-		padding: 5,
-		paddingLeft: 20,
-		marginTop: 5,
-		color: '#1D8FE1',
-		backgroundColor: '#FFF',
+		paddingVertical: 5,
+		paddingHorizontal: 20,
+		color: '#FFF',
+		backgroundColor: 'rgba(255,255,255,0.5)',
 		fontSize: 15,
-		borderRadius: 20
+		borderRadius: 25
 	}
 }
 

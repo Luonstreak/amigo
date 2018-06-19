@@ -9,6 +9,7 @@ import {
 	USER_FETCH
 } from './types';
 
+
 export const userRegister = (email, password, username) => {
 	return (dispatch) => {
 		firebase.auth().createUserWithEmailAndPassword(email, password)

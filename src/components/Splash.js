@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, ImageBackground, AsyncStorage } from 'react-native';
+import { Text, AsyncStorage, Image } from 'react-native';
 import firebase from 'firebase';
 import { LinearGradient } from 'expo';
+import colors from "../styles/colors";
 import { Actions } from 'react-native-router-flux';
 import * as actions from '../actions';
 
@@ -25,23 +26,28 @@ class Splash extends Component {
 	}
 	
 	render() {
-		return (
-			<ImageBackground source={require('../static/background.png')} style={styles.backgroundImage}>
-				<Text style={{ color: 'tomato', fontSize: 26 }}>
-					WELCOME TO AMIGOO
-				</Text>
-			</ImageBackground>
-		);
+		return <LinearGradient start={{ x: 1, y: 0 }} end={{ x: 0, y: 1 }} colors={[colors.red,colors.darkred]} style={styles.background}>
+        <Image source={{uri:("https://i.imgur.com/2Zc1U4n.png")}} style={styles.logo} />
+				<Text style={styles.title}>AMIGOO</Text>
+      </LinearGradient>;
 	}
 }
 
 const styles = {
-	backgroundImage: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center'
-	}
-}
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  title: {
+    fontSize: 34,
+    color: colors.yellow
+  },
+  logo: {
+    width: 200,
+    height: 200
+  }
+};
 
 const mapStateToProps = state => {
 	return { login: state.login };

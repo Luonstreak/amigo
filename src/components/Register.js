@@ -29,26 +29,26 @@ class Register extends Component {
 		this.keyboardDidHideListener.remove();
 	}
 
-	onButtonPress = () => {
+	handleRegistration = () => {
 		const { email, password, username } = this.state;
-		username.length > 1 ? this.props.userRegister(email, password, username)
-		: this.setState({ error: 'All fields must be filled out.' });
+		this.setState({ error: null });
+		username && password && email ? this.props.userRegister(email, password, username) : this.setState(
+			{ error: "All fields must be filled out." }
+		);
 		Keyboard.dismiss;
 	}
 
 	renderError = () => {
-		this.props.login.error ? 
-			<Text
-				style={{ color: 'tomato', margin: 10 }}
+		if(this.props.login.error){ return <Text
+				style={{ color: 'tomato', alignSelf: 'center', marginTop: 10 }}
 			>{this.props.login.error}</Text>
-		: null
+		}
 	}
+
 	renderStateError = () => {
-		this.state.error ?
-			<Text
-				style={{ color: 'tomato', margin: 10 }}
-			>{this.state.error}</Text>
-		: null
+		if(this.state.error){ return <Text
+				style={{ color: 'tomato', alignSelf: 'center', marginTop: 10 }}
+		>{this.state.error}</Text>}
 	}
 
 	render() {
@@ -100,7 +100,7 @@ class Register extends Component {
 						/>
 					</View>
 					{this.renderStateError()}
-					{/* {this.renderError()} */}
+					{this.renderError()}
 				</View>
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
@@ -110,14 +110,14 @@ class Register extends Component {
 				>
 					<Button
 						buttonStyle={{ backgroundColor: 'transparent' }}
-						onPress={this.onButtonPress}
+						onPress={() => this.handleRegistration()}
 						title='REGISTER'
 					/>
 				</LinearGradient>
 				<Button
 					title='friendO already?'
 					backgroundColor='transparent'
-					textStyle={{ color: 'dodgerblue' }}
+					textStyle={{ color: '#F7931E' }}
 					buttonStyle={{ marginBottom: 20 }}
 					onPress={() => {
 						// this.props.resetError()

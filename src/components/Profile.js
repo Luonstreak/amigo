@@ -1,11 +1,20 @@
-import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Dimensions, ActivityIndicator } from 'react-native';
-import { Avatar, Button, Icon } from 'react-native-elements';
-import { connect } from 'react-redux';
-import { Actions } from 'react-native-router-flux';
-import * as actions from '../actions';
-import firebase from 'firebase';
-import _ from 'lodash';
+import React, { Component } from "react";
+import {
+  ImageBackground,
+	Text,
+  View,
+  ScrollView,
+  FlatList,
+  Dimensions,
+  ActivityIndicator
+} from "react-native";
+import { Avatar, Button, Icon } from "react-native-elements";
+import { LinearGradient } from "expo";
+import { connect } from "react-redux";
+import { Actions } from "react-native-router-flux";
+import firebase from "firebase";
+import * as actions from "../actions";
+import colors from "../styles/colors";
 
 class Profile extends Component {
 	
@@ -28,29 +37,14 @@ class Profile extends Component {
 		}
 	}
 
-	renderSettings = () => {
-		if (this.props.current){
-			return (
-				<Icon
-					name='settings'
-					type='material-community'
-					color='dodgerblue'
-					underlayColor='transparent'
-					onPress={() => Actions.settings()}
-					size={40}
-				/>
-			)
-		} else { return null }
-	}
-
 	selectPlayer = (item) => {
 		const { phone } = this.props.dash.info
 		const { uid } = this.props.user
 		const ref = firebase.database().ref(`opponents/${phone}`).orderByKey().equalTo(item.phone)
-		ref.once('value', snap => {
+		ref.once("value", snap => {
 			var opponent = snap.exists()
 			if (opponent) {
-				alert('You are currently playing a game with this person.')
+				alert("You are currently playing a game with this person.")
 			}
 			else {
 				this.props.playerSelect(item.phone, uid, item.username)
@@ -63,61 +57,30 @@ class Profile extends Component {
 			return (
 				<FlatList
 					data={friends}
-					keyExtractor={(item, index) => index}
+					keyExtractor={index => index}
 					renderItem={({ item }) => {
-						return (
-							<View style={styles.elementStyle}>
-								<Avatar
-									rounded
-									medium
-									source={{ uri: item.photo }}
-									containerStyle={{ marginRight: 20 }}
-									onPress={() => this.getProfile(item)}
-								/>
-								<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>{item.username}</Text>
-								<Button
-									rounded
-									backgroundColor={'mediumseagreen'}
-									title={'PLAY'}
-									buttonStyle={{ padding: 5 }}
-									onPress={() => this.selectPlayer(item)}
-								/>
-							</View>
-						)
+						return <View style={styles.elementStyle}>
+                <Avatar rounded large containerStyle={{ marginRight: 20 }} source={{ uri: item.photo }} onPress={() => this.getProfile(item)} />
+                <Text
+                  style={{
+                    flex: 1,
+                    fontSize: 20,
+                    color: "#FFC300"
+                  }}
+                >
+                  {item.username}
+                </Text>
+                <Button rounded backgroundColor={colors.lightred} title={"PLAY"} onPress={() => this.selectPlayer(item)} />
+              </View>;
 					}}
 				/>
 			)
-			{/* <Text style={titleStyle}>EVERYONE ELSE</Text>
-					<FlatList
-					data={others}
-					keyExtractor={(item, index) => index}
-					renderItem={({ item }) =>
-						<View
-							style={elementStyle}
-						>
-							<Avatar
-								rounded
-								medium
-								source={{ uri: item.avatar_url }}
-								containerStyle={{ marginRight: 20 }}
-							/>
-							<Text style={{ flex: 1, fontSize: 20, color: '#FFC300' }}>Not So Friend</Text>
-							<Icon
-								name='information-outline'
-								type='material-community'
-								color='#CCC'
-								backgroundColor={'transparent'}
-								onPress={() => alert('see more about your friend..')}
-							/>
-						</View>
-					}
-				/> */}
 		} else {
 			return (
 				<ActivityIndicator
 					style={{ marginTop: 50 }}
 					animating={true}
-					color='dodgerblue'
+					color="#FFC300"
 					size="large"
 				/>
 			)
@@ -125,92 +88,116 @@ class Profile extends Component {
 	}
 	render() {
 		const { info, friends } = this.props.dash;
-		const top = [], rest = [];
-		const { headerStyle, titleStyle, listStyle, elementStyle, navBar } = styles;
+		const { headerStyle, photoStyle, titleStyle, gradientStyle } = styles;
 		return (
-			<View style={{ flex: 1 }}>
-				<View style={headerStyle}>
-					<View style={navBar}>
-						<Icon
-							name='arrow-left'
-							type='material-community'
-							color='dodgerblue'
-							underlayColor='transparent'
-							size={40}
-							onPress={() => Actions.pop()}
-						/>
-						<Icon
-							name='home'
-							type='material-community'
-							color='dodgerblue'
-							underlayColor='transparent'
-							size={40} s
-							onPress={() => Actions.popTo('dashboard')}
+			<ImageBackground
+				source={require("../static/background.png")}
+				style={{ flex: 1 }}
+			>
+				<LinearGradient
+					start={{ x: 0, y: 0.5 }}
+					end={{ x: 1, y: 0.5 }}
+					colors={[colors.darkred, colors.lightred]}
+					style={headerStyle}
+				>
+					<Icon
+						name="arrow-left"
+						type="material-community"
+						color={colors.lightgrey}
+						underlayColor={colors.transparent}
+						size={40}
+						onPress={() => Actions.pop()}
 					/>
-						{this.renderSettings()}
-					</View>
+					<Icon
+						name="home"
+						type="material-community"
+						color={colors.lightgrey}
+						underlayColor={colors.transparent}
+						size={40}
+						onPress={() => Actions.popTo("dashboard")}
+					/>
+					{this.props.current && <Icon
+						name="settings"
+						type="material-community"
+						color={colors.lightgrey}
+						underlayColor={colors.transparent}
+						onPress={() => Actions.settings()}
+						size={40}
+					/>}
+				</LinearGradient>
+				<LinearGradient
+					start={{ x: .5, y: 0.5 }}
+					end={{ x: .5, y: 0 }}
+					colors={[colors.lightgrey, colors.transparent]}
+					style={photoStyle}
+				>
 					<Avatar
 						rounded
 						xlarge
 						containerStyle={{ margin: width * 0.025 }}
 						source={{ uri: this._renderPhoto(info) }}
 					/>
-					<Text style={{ fontSize: 22 }}>{this.props.item ? this.props.item.username : info.username}</Text>
-					<Text style={{ fontSize: 18 }}>{friends.length} FRIENDS</Text>
-				</View>
-				{/* LIST */}
+					<Text style={{ fontSize: 34, color: colors.lightred, fontWeight: '400' }}>{this.props.item ? this.props.item.username : info.username}</Text>
+				</LinearGradient>
+				<LinearGradient
+					start={{ x: 0, y: 0.5 }}
+					end={{ x: 1, y: 0.5 }}
+					colors={[colors.darkred, colors.lightred]}
+					style={gradientStyle}
+				>
+					<Text style={[titleStyle, { backgroundColor: colors.transparent }]}>{friends.length == 1 ? "1 FRIEND" : `${friends.length} FRIENDS`}</Text>
+				</LinearGradient>
 				<ScrollView>
-					<Text style={styles.titleStyle}>TOP 3 FRIENDOS</Text>
 					{this._renderFriends(friends)}
 				</ScrollView>
-			</View>
+			</ImageBackground>
 		);
 	}
 }
 
-const { height, width } = Dimensions.get('window');
-
+const { width } = Dimensions.get("window");
 const styles = {
-	//nav
-	navBar: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-		width,
-		paddingTop: 20
-	},
 	//header
 	headerStyle: {
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: 10,
-		backgroundColor: '#D696BB'
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingTop: 20,
+		paddingHorizontal: 20,
 	},
+	//PHOTO
+  photoStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+  },
 	//body
 	titleStyle: {
-		fontWeight: 'bold',
-		fontSize: 18,
-		textAlign: 'center',
-		color: '#FFF',
-		backgroundColor: 'dodgerblue',
-		padding: 5,
-	},
-	listStyle: {
-		marginTop: 0,
-		marginLeft: 0,
-		marginRight: 0,
-		borderTopWidth: 0
+		backgroundColor: colors.transparent,
+		fontWeight: "400",
+		fontSize: 20,
+		textAlign: "center",
+		color: "#FFF",
+		padding: 10
 	},
 	elementStyle: {
-		width: width,
-		flexDirection: 'row',
-		alignItems: 'center',
-		padding: 10,
-		paddingLeft: 20,
-		paddingRight: 20,
-		borderBottomWidth: 1,
-		borderBottomColor: 'orange'
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginHorizontal: 20,
+		marginVertical: 10,
+		backgroundColor: colors.lightgrey,
+		borderRadius: 50,
+		shadowColor: "#000",
+		shadowOffset: { height: 3, width: 0 },
+		shadowOpacity: 0.2
+	},
+	gradientStyle: {
+		shadowColor: "#000",
+		shadowOffset: { height: 3, width: 0 },
+		shadowOpacity: 0.2
 	}
-}
+};
 
 const mapStateToProps = state => {
 	return { user: state.login.user, dash: state.dash }

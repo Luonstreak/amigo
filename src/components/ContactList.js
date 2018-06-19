@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, ImageBackground, Platform, Dimensions, Text, View, FlatList } from 'react-native';
+import { ImageBackground, Platform, Dimensions, Text, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import { Button, Divider } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import firebase from 'firebase';
 import _ from 'lodash';
 
 // RELATIVE
 import * as actions from '../actions';
-import { Actions, Modal } from 'react-native-router-flux';
 
 
 class ContactList extends Component {

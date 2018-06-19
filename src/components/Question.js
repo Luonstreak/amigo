@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import {
-	Platform,
 	StyleSheet,
 	Text,
 	View,
 	FlatList,
 	ScrollView,
-	TextInput,
 	Dimensions, 
 	Share,
-	ActivityIndicator
+	ActivityIndicator,
+	ImageBackground
 } from 'react-native';
-import { Button, Badge } from 'react-native-elements';
+import { Button, Badge, Icon } from "react-native-elements";
+import { LinearGradient } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import firebase from 'firebase';
 
 import * as actions from '../actions';
 
@@ -39,7 +38,7 @@ class Question extends Component {
 				dialogTitle: 'Tell your friend you started a game.',
 				tintColor: 'mediumseagreen'
 			})
-			.then(({ action, activityType }) => {
+			.then(action => {
 				// if (Platform.OS === 'ios') {
 				// 	action === Share.dismissedAction ? alert('Come on, send a message to invite your friend.') : this.props.creatingGame(num, questionNumber, selectedPlayer, phone, username, photo)
 				// }
@@ -52,7 +51,7 @@ class Question extends Component {
 	}
 
 	renderQuestionButton = () => {
-		const { gameKey, chosenQuestionArr } = this.props.game;
+		const { chosenQuestionArr } = this.props.game;
 		if (chosenQuestionArr.length < 3) {
 		return (
 				<Button
@@ -74,47 +73,30 @@ class Question extends Component {
 	}
 
 	renderCard = (item) => {
-		const { score, opponent } = this.props.game
-		const { uid } = this.props.user
-		return (
-			<ScrollView
-				style={styles.card}
-				showsVerticalScrollIndicator={false}
-			>
-				<View style={styles.question}>
-					<Text style={{ fontSize: 30 }}>{item.content}</Text>
-				</View>
-				<View style={styles.user}>
-					<Badge
-						value={'Your answer is...'}
-						textStyle={{ color: '#FFF', fontSize: 20 }}
-						containerStyle={{ backgroundColor: '#F5D86B' }}
-					/>
-				</View>
-				<View style={styles.options}>
-					<Button
-						title={item.choices.option1}
-						buttonStyle={styles.option}
-						onPress={() => { this.select(1, item.questionNumber) }}
-					/>
-					<Button
-						title={item.choices.option2}
-						buttonStyle={styles.option}
-						onPress={() => { this.select(2, item.questionNumber) }}
-					/>
-					<Button
-						title={item.choices.option3}
-						buttonStyle={styles.option}
-						onPress={() => { this.select(3, item.questionNumber) }}
-					/>
-					<Button
-						title={item.choices.option4}
-						buttonStyle={styles.option}
-						onPress={() => { this.select(4, item.questionNumber) }}
-					/>
-				</View>
-			</ScrollView>
-		)
+		return <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} colors={["#DBDBDB", "rgba(255,255,255,.2)"]} style={styles.card}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.question}>
+            <Text style={{ fontSize: 30 }}>{item.content}</Text>
+          </View>
+          <View style={styles.user}>
+            <Badge value={"Your answer is..."} textStyle={{ color: "#FFF", fontSize: 20 }} containerStyle={{ backgroundColor: "#F15A24" }} />
+          </View>
+          <View style={styles.options}>
+            <Button title={item.choices.option1} textStyle={{ color: '#555', fontSize: 20 }} buttonStyle={styles.option} onPress={() => {
+                this.select(1, item.questionNumber);
+              }} />
+            <Button title={item.choices.option2} textStyle={{ color: '#555', fontSize: 20 }} buttonStyle={styles.option} onPress={() => {
+                this.select(2, item.questionNumber);
+              }} />
+            <Button title={item.choices.option3} textStyle={{ color: '#555', fontSize: 20 }} buttonStyle={styles.option} onPress={() => {
+                this.select(3, item.questionNumber);
+              }} />
+            <Button title={item.choices.option4} textStyle={{ color: '#555', fontSize: 20 }} buttonStyle={styles.option} onPress={() => {
+                this.select(4, item.questionNumber);
+              }} />
+          </View>
+        </ScrollView>
+      </LinearGradient>;
 	}
 
 	_renderSpinner = (data) => {
@@ -137,7 +119,7 @@ class Question extends Component {
 					<ActivityIndicator
 						style={{ flex: 1 }}
 						animating={true}
-						color='dodgerblue'
+						color='#F7931E'
 						size="large"
 					/>
 				)
@@ -148,12 +130,23 @@ class Question extends Component {
 		const { score, opponent } = this.props.game
 		const { uid } = this.props.user
 		return (
-			<View style={styles.container}>
+			<ImageBackground
+				source={require("../static/background.png")}
+				style={{ flex: 1 }}
+			>
 				<View style={styles.counter}>
 					<Badge
 						value={score ? score[uid] : 0}
 						textStyle={{ color: '#F7E7B4' }}
 						containerStyle={styles.badge}
+					/>
+					<Icon
+						name="home"
+						type="material-community"
+						color="#FFC300"
+						underlayColor="transparent"
+						size={40}
+						onPress={() => Actions.popTo("dashboard")}
 					/>
 					<Badge
 						value={score ? score[opponent] : 0}
@@ -163,84 +156,78 @@ class Question extends Component {
 				</View>
 				{this._renderSpinner(this.props.game.chosenQuestionArr)}
 				<View style={{ margin: 10 }}>
-					{this.props.game.gameKey ? this.renderQuestionButton() : null}
+					{this.props.game.gameKey && this.renderQuestionButton()}
 				</View>
-				{this.props.game.gameKey ? <Chat /> : null}
-			</View>
+				{this.props.game.gameKey && <Chat />}
+			</ImageBackground>
 		)
 	}
 }
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
-	//global
-	container: {
-		flex: 1,
-		backgroundColor: '#DFE2E7'
-	},
-	//header
-	counter: {
-		height: 50,
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingLeft: 30,
-		paddingRight: 30,
-		backgroundColor: '#83D0CD',
-		flexDirection: 'row'
-	},
-	badge: {
-		padding: 10
-	},
-	//card
-	card: {
-		flex: 1,
-		width: (width * .90),
-		margin: (width * .05),
-		marginBottom: 0,
-		backgroundColor: '#0D658D',
-		padding: 20,
-		borderRadius: 20
-	},
-	question: {
-		marginBottom: 10,
-		flex: 2,
-		alignItems: 'center'
-	},
-	user: {
-		marginBottom: 10,
-		justifyContent: 'center'
-	},
-	options: {
-		flex: 4,
-		alignItems: 'center'
-	},
-	option: {
-		backgroundColor: '#0099FF',
-		width: 250,
-		borderRadius: 10,
-		margin: 10
-	},
-	// lower card
-	chooseCard: {
-		height: 50,
-		backgroundColor: '#0D658D',
-		flexDirection: 'row',
-		margin: 30,
-		marginTop: 0,
-		marginBottom: 0,
-		borderRadius: 10,
-		justifyContent: 'space-around',
-		alignItems: 'center'
-
-	},
-	choose_button: {
+  //header
+  counter: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    paddingBottom: -10,
+    backgroundColor: "#FFF",
+    flexDirection: "row"
+  },
+  badge: {
+    padding: 10
+  },
+  //card
+  card: {
+    flex: 1,
+    width: width * 0.9,
+    margin: width * 0.05,
+    marginBottom: 0,
+    padding: 20,
+    borderRadius: 20
+  },
+  question: {
+    marginBottom: 10,
+    flex: 2,
+    alignItems: "center"
+  },
+  user: {
+    marginBottom: 10,
+    justifyContent: "center"
+  },
+  options: {
+		marginTop: 10,
+    flex: 4,
+    alignItems: "center"
+  },
+  option: {
+    width: 250,
+    height: 50,
 		margin: 10,
-		padding: 5,
-		paddingLeft: 10,
-		paddingRight: 10,
-		borderRadius: 10,
-		backgroundColor: '#0099FF'
-	}
+    borderRadius: 50,
+		backgroundColor: '#DBDBDB'
+  },
+  // lower card
+  chooseCard: {
+    height: 50,
+    backgroundColor: "#0D658D",
+    flexDirection: "row",
+    margin: 30,
+    marginTop: 0,
+    marginBottom: 0,
+    borderRadius: 10,
+    justifyContent: "space-around",
+    alignItems: "center"
+  },
+  choose_button: {
+    margin: 10,
+    padding: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 10,
+    backgroundColor: "#0099FF"
+  }
 });
 
 const mapStateToProps = state => {

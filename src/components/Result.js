@@ -4,19 +4,16 @@ import {
 	Text,
 	View,
 	ScrollView,
-	TextInput,
 	Dimensions,
 	TouchableOpacity
 } from 'react-native';
-import { Button, Badge, Avatar, Icon } from 'react-native-elements';
+import { Button, Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 //relative
 import Chat from './Chat';
 import * as actions from '../actions';
 import { transparent } from 'material-ui/styles/colors';
-import firebase from 'firebase';
 
 class Result extends Component {
 	state = {

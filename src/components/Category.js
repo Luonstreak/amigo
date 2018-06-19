@@ -168,12 +168,9 @@ class Category extends Component {
 }
 
 const styles = StyleSheet.create({
-	//global
 	container: {
-		flex: 1,
-		paddingTop: 20
+		flex: 1
 	},
-	//card
 	card: {
 		borderWidth: 1,
 		borderColor: '#EF4846',
@@ -193,18 +190,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		marginBottom: 20
 
-	},
-	// footer - chat
-	chat: {
-		height: 100,
-		backgroundColor: '#ADD8E6'
-	},
-	input: {
-		backgroundColor: '#96EAD7',
-		margin: 10,
-		borderRadius: 10,
-		padding: 10
-	},
+	}
 });
 
 const mapStateToProps = state => {

@@ -2,8 +2,8 @@
 import firebase from 'firebase';
 import axios from 'axios';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ImageBackground, Dimensions } from 'react-native';
-import { FormLabel, FormInput, Button, FormValidationMessage } from 'react-native-elements';
+import { View } from 'react-native';
+import { FormLabel, FormInput, Button } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 
@@ -27,7 +27,7 @@ class CodeInput extends Component {
 			// this.props.userFetch()
 			Actions.main();
 		} catch (error) {
-			console.log(error, 'fuckfuckfuck');
+			console.log('Code Input Error',error);
 		}
 	}
 

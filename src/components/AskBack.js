@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
 import {
-	Platform,
 	StyleSheet,
 	Text,
 	View,
-	FlatList,
 	ScrollView,
-	TextInput,
 	Dimensions
 } from 'react-native';
 import { Button, Badge } from 'react-native-elements';
-import { Actions } from 'react-native-router-flux';
 import Chat from './Chat';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import firebase from 'firebase';
 
 import * as actions from '../actions';
 

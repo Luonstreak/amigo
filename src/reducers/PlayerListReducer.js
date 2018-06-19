@@ -12,7 +12,6 @@ export default (state = INITIAL_STATE, action) => {
 		case PLAYER_SELECTED:
 			return { ...state, selectedPlayer: action.payload };
 		case FETCHED_OPPONENT_NAME_AND_PHOTO:
-			console.log('info updated')
 			return { ...state, info: action.payload };
 		case SAVE_NUMBERS:
 			return { ...state, numbers: action.payload };

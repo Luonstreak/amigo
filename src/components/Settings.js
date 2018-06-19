@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { ScrollView, View, AsyncStorage, Text, TextInput, Dimensions } from 'react-native';
+import { View, AsyncStorage, Text, TextInput, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import { LinearGradient } from 'expo';
 import firebase from 'firebase';
 import Accordion from 'react-native-collapsible/Accordion';
 
@@ -26,7 +25,7 @@ class Settings extends Component {
 
 	_renderHeader = (section) => {
 		return (
-			<View style={{ borderBottomWidth: 2, borderBottomColor: 'dodgerblue' }}>
+			<View style={{ borderBottomWidth: 2, borderBottomColor: '#CBCBCB' }}>
 				<Text style={styles.header}>UPDATE {section.toUpperCase()}</Text>
 			</View>
 		);
@@ -105,7 +104,7 @@ class Settings extends Component {
 	_renderContent = (section, state) => {
 		return (
 			<View style={{ alignItems: 'center' }}>
-				<Text style={{ color: 'dodgerblue', fontSize: 20, margin: 10 }}>Current {section}</Text>
+				<Text style={{ color: '#F7931E', fontSize: 20, margin: 10 }}>Current {section}</Text>
 				<TextInput
 					secureTextEntry={section === 'Email' ? false : true}
 					editable={section === 'Email' ? false : true}
@@ -118,7 +117,7 @@ class Settings extends Component {
 					onChangeText={text => this.setState({ password: text })}
 				// onChangeText={this.onEmailInput}
 				/>
-				<Text style={{ color: 'dodgerblue', fontSize: 20, margin: 10 }}>New {section}</Text>
+				<Text style={{ color: '#F7931E', fontSize: 20, margin: 10 }}>New {section}</Text>
 				<TextInput
 					ref='SecondInput'
 					secureTextEntry={section === 'Email' ? false : true}
@@ -189,62 +188,64 @@ class Settings extends Component {
 					
 				/>
 					
-				<Button
-					title="BLOCKED USERS"
-					buttonStyle={[styles.button, {
-						marginBottom: 20,
-						backgroundColor: 'white',
-						borderColor: 'tomato',
-						borderWidth: 1 }]}
-					textStyle={{ fontSize: 20, color: 'tomato' }}
-					containerStyle={{ border: 1, borderColor: 'dodgerblue' }}
-					onPress={() => { this.props.fetchBlockedUsers(uid) }}
-				/>
+				<View>
+					<Button
+						title="BLOCKED USERS"
+						buttonStyle={[styles.button, {
+							marginBottom: 20,
+							backgroundColor: '#FFF',
+							borderColor: 'tomato',
+							borderWidth: 1 }]}
+						textStyle={{ fontSize: 20, color: 'tomato' }}
+						containerStyle={{ border: 1, borderColor: '#CBCBCB' }}
+						onPress={() => { this.props.fetchBlockedUsers(uid) }}
+					/>
 
-				<Button
-					title="LOG OUT"
-					buttonStyle={[styles.button, {
-						marginBottom: 20,
-						backgroundColor: 'white',
-						borderColor: 'tomato',
-						borderWidth: 1 }]}
-					textStyle={{ fontSize: 20, color: 'tomato' }}
-					containerStyle={{ border: 1, borderColor: 'dodgerblue' }}
-					onPress={() => this._logout()}
-				/>
+					<Button
+						title="LOG OUT"
+						buttonStyle={[styles.button, {
+							marginBottom: 20,
+							backgroundColor: '#FFF',
+							borderColor: 'tomato',
+							borderWidth: 1 }]}
+						textStyle={{ fontSize: 20, color: 'tomato' }}
+						containerStyle={{ border: 1, borderColor: '#CBCBCB' }}
+						onPress={() => this._logout()}
+					/>
+				</View>
 			</View>
 		);
 	}
 }
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const styles = {
-	header: {
-		width,
-		fontWeight: 'bold',
-		fontSize: 22,
-		textAlign: 'center',
-		color: 'dodgerblue',
-		padding: 10,
-	},
-	input: {
-		width: width * .8,
-		color: 'rgb(0,91,234)',
-		backgroundColor: 'rgba(0,198,251,0.1)',
-		borderRadius: 30,
-		fontSize: 20,
-		padding: 15,
-		paddingLeft: 25,
-		margin: 20,
-		marginTop: 0,
-	},
-	button: {
-		width: width * .8,
-		borderRadius: 30,
-		padding: 15,
-		backgroundColor: 'dodgerblue'
-	}
-}
+  header: {
+    width,
+    fontWeight: "bold",
+    fontSize: 22,
+    textAlign: "center",
+    color: "#888",
+    padding: 10
+  },
+  input: {
+    width: width * 0.8,
+    color: "#F7931E",
+    backgroundColor: "#EDEDED",
+    borderRadius: 30,
+    fontSize: 20,
+    padding: 15,
+    paddingLeft: 25,
+    margin: 20,
+    marginTop: 0
+  },
+  button: {
+    width: width * 0.8,
+    borderRadius: 30,
+    padding: 15,
+    backgroundColor: "#F7931E"
+  }
+};
 
 const mapStateToProps = state => {
 	return { dash: state.dash, login: state.login };

@@ -4,15 +4,12 @@ import {
 	Text,
 	View,
 	ActivityIndicator,
-	ScrollView,
-	TextInput,
 	Dimensions
 } from 'react-native';
-import { Button, Badge, Avatar } from 'react-native-elements';
+import { Button, Avatar } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
-import _ from 'lodash';
 //relative
 import * as actions from '../actions';
 
@@ -28,7 +25,7 @@ class Modal extends Component {
 				/>
 			);
 		}
-		const { opponent, result, gameKey } = this.props.game
+		const { result, gameKey } = this.props.game
 		const { uid } = this.props.user
 		const { info } = this.props.player
 		return (
@@ -62,7 +59,7 @@ class Modal extends Component {
 	}
 }
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
 	//global
 	container: {

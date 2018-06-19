@@ -20,7 +20,7 @@ class BlockedUsers extends Component {
 		if (data.length < 1) {
 			return (
 				<View style={{ flex: 1, marginTop: 2, alignItems: 'center' }}>
-					<Text style={{ fontSize: 20, color: 'dodgerblue' }}>No Blocked Users!</Text>
+					<Text style={{ fontSize: 20, color: '#F7931E' }}>No Blocked Users!</Text>
 				</View>
 			)
 		}
@@ -30,7 +30,7 @@ class BlockedUsers extends Component {
 					<FlatList
 						data={data}
 						containerStyle={listStyle}
-						keyExtractor={(item, index) => index}
+						keyExtractor={(index) => index}
 						renderItem={({ item }) =>
 							<View
 								style={elementStyle}

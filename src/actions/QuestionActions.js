@@ -88,20 +88,14 @@ export const startGame = (game, status, opponent, phone, photo, username) => {
 		ref.limitToLast(5).once('value', async snap => {
 			const obj = { five: snap.val(), gameKey: game, opponent }
 			await dispatch({ type: FETCH_FIVE, payload: obj })
-			if (status == 'modal') {
+			if (status == 'modal' || status == 'result') {
 				firebase.database().ref(`result/${game}`).once('value', async snap => {
 					await dispatch({ type: GOT_RESULT, payload: snap.val() })
-					Actions.modal()
+					Actions.push(status)
 				})
-			} else if(status == 'result') {
-				firebase.database().ref(`result/${game}`).once('value', async snap => {
-					await dispatch({ type: GOT_RESULT, payload: snap.val() })
-					Actions.result()
-				})
-			} 
-			else if (status == 'guess') { Actions.guess() }
-			else if (status == 'guessResult') { Actions.guessResult() }
-			else if (status == 'question') { Actions.question() }
+			} else { 
+				Actions.push(status)
+			}
 		})
 	}
 };
@@ -132,7 +126,6 @@ export const fetchChosenQuestions = (gameKey) => {
 			if (snap.val() !== null) {
 				var snapVal = snap.val()
 				var arr = Object.values(snapVal)
-				console.log(arr)
 				await dispatch({
 					type: FETCH_CHOSEN_QUESTIONS,
 					payload: arr

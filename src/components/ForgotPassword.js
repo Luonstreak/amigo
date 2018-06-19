@@ -1,4 +1,3 @@
-// ABSOLUTE
 import React, { Component } from 'react';
 import { Text, View, TextInput, Dimensions, Keyboard, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
@@ -46,68 +45,42 @@ class ForgotPassword extends Component {
 	}
 
 	render() {
-		return (
-			<View style={[styles.card, this.state.keyboard ? { marginTop: height * 0.1 } : { marginTop: height * 0.4 }]}>
-				<View>
-					<Text style={{ alignSelf: 'center', color: 'dodgerblue', fontSize: 20 }}>Forgot Password </Text>
-					<View>
-						<TextInput
-							style={styles.input}
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Email'
-							underlineColorAndroid='transparent'
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='next'
-							value={this.props.email}
-							onSubmitEditing={event => this.refs.SecondInput.focus()}
-							onChangeText={this.onEmailInput}
-						/>
-					</View>
-				</View>
-				{this.renderError()}
-				<LinearGradient
-					start={{ x: 0.0, y: 0.5 }}
-					end={{ x: 1.0, y: 0.5 }}
-					colors={['#00c6fb', '#005bea']}
-					style={styles.button}
-				>
-					<Button
-						buttonStyle={{ backgroundColor: 'transparent' }}
-						onPress={this.onButtonPress}
-						title='Continue'
-					/>
-				</LinearGradient>
-				<View style={styles.container}>
-					<Button
-						title='Go Back'
-						backgroundColor='transparent'
-						textStyle={{ color: 'dodgerblue' }}
-						// buttonStyle={{  }}
-						onPress={() => {
-							this.props.resetError()
-							Actions.login()
-						}}
-					/>
-				</View>
-			</View>
-		);
+		return <View style={[styles.card, this.state.keyboard ? { marginTop: height * 0.1 } : { marginTop: height * 0.4 }]}>
+        <View>
+          <Text
+            style={{
+              alignSelf: "center",
+							color: "#F7931E",
+              fontSize: 20
+            }}
+          >
+            Forgot Password{" "}
+          </Text>
+          <View>
+            <TextInput style={styles.input} placeholderTextColor="rgba(0,91,234,0.5)" placeholder="Email" underlineColorAndroid="transparent" autoCapitalize="none" autoCorrect={false} returnKeyType="next" value={this.props.email} onSubmitEditing={event => this.refs.SecondInput.focus()} onChangeText={this.onEmailInput} />
+          </View>
+        </View>
+        {this.renderError()}
+        <LinearGradient start={{ x: 0.0, y: 0.5 }} end={{ x: 1.0, y: 0.5 }} colors={["#00c6fb", "#005bea"]} style={styles.button}>
+          <Button buttonStyle={{ backgroundColor: "transparent" }} onPress={this.onButtonPress} title="Continue" />
+        </LinearGradient>
+        <View style={styles.container}>
+          <Button title="Go Back" backgroundColor="transparent" textStyle={{ color: "#F7931E" }} onPress={() => {
+              this.props.resetError();
+              Actions.pop();
+            }} />
+        </View>
+      </View>;
 	}
 }
 
 const { height, width } = Dimensions.get('window');
 const styles = {
 	container: {
-		// flex: 1,
 		flexDirection: 'row',
 		marginBottom: 20,
 		justifyContent: 'center'
 	},
-	// button: {
-	// 	marginTop: 20,
-	// 	backgroundColor: 'green',
-	// 	height: 20
-	// },
 	card: {
 		width: (width * .8),
 		marginLeft: (width * .1),
