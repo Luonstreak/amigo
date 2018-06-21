@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { TextInput, View } from 'react-native';
+import { Text, TextInput, View, Dimensions } from "react-native";
 import { LinearGradient } from "expo";
 import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
-
-// RELATIVE
+import colors from "../styles/colors";
 import * as actions from '../actions';
 
 class PhoneAuth extends Component {
@@ -22,54 +21,62 @@ class PhoneAuth extends Component {
 
 	render() {
 		return (
-			<View>
-				<View style={{ marginTop: 20, marginLeft: '10%' }}>
-					<TextInput
-							style={styles.input}
-							placeholder='Enter your phone number'
-							keyboardType='numeric'
-							underlineColorAndroid='transparent'
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='next'
-							value={this.props.phone.phoneNumber}
-							onChangeText={this.onPhoneInput.bind(this)}
-							onSubmitEditing={event => this.refs.SecondInput.focus()}
-						/>
-					<LinearGradient
-						start={{ x: 0.0, y: 0.5 }}
-						end={{ x: 1.0, y: 0.5 }}
-						colors={['#00c6fb', '#005bea']}
-						style={styles.button}
-					>
-						<Button
-							title='SAVE'
-							backgroundColor='transparent'
-							onPress={() => this.submitPhone()}
-						/>
-					</LinearGradient>
-				</View>
+			<View style={styles.card}>
+				<Text style={{
+					fontSize: 24, color: colors.darkred, fontWeight: '400'
+				}}>PHONE VERIFICATION</Text>
+				<TextInput
+						style={styles.input}
+						placeholder='Enter your phone number'
+						placeholderTextColor={colors.darkred}
+						keyboardType='numeric'
+						underlineColorAndroid={colors.transparent}
+						autoCapitalize='none'
+						autoCorrect={false}
+						returnKeyType='next'
+						value={this.props.phone.phoneNumber}
+						onChangeText={this.onPhoneInput.bind(this)}
+						onSubmitEditing={() => this.refs.SecondInput.focus()}
+					/>
+				<LinearGradient
+					start={{ x: 0.0, y: 0.5 }}
+					end={{ x: 1.0, y: 0.5 }}
+					colors={[colors.darkred, colors.lightred]}
+					style={styles.button}
+				>
+					<Button
+						title='SAVE'
+						backgroundColor={colors.transparent}
+						onPress={() => this.submitPhone()}
+					/>
+				</LinearGradient>
 			</View>
 		);
 	}
 }
 
+const { height, width } = Dimensions.get("window");
 const styles = {
-  input: {
-    color: "rgb(0,91,234)",
-    backgroundColor: "rgba(0,198,251,0.1)",
-    fontSize: 15,
-    padding: 15,
-    paddingLeft: 30,
-    width: "90%",
-    marginTop: 20,
-    borderRadius: 50
-  },
-  button: {
-		marginTop: 20,
-		borderRadius: 50,
-    width: "90%"
-  }
+	card: {
+		width: width * 0.8,
+		marginLeft: width * 0.1,
+		alignItems: 'center'
+	},
+	input: {
+		width: width * .8,
+		color: colors.darkred,
+		backgroundColor: colors.lightyellow,
+		fontSize: 15,
+		paddingHorizontal: 25,
+		paddingVertical: 15,
+		marginVertical: 10,
+		borderRadius: 50
+	},
+	button: {
+		width: width * .8,
+		marginVertical: 10,
+		borderRadius: 50
+	}
 };
 
 const mapStateToProps = state => {

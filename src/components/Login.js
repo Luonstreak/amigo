@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo';
 import { Actions } from 'react-native-router-flux';
 // RELATIVE
 import * as actions from '../actions';
+import colors from '../styles/colors';
 
 class Login extends Component {
 	state = { keyboard: false, email: '', password: '' }
@@ -21,10 +22,8 @@ class Login extends Component {
 	}
 
 	onButtonPress = () => {
-		const { email, password } = this.state;
-		this.props.userLogin(email, password);
-		this.setState({email: ''})
-		this.setState({password: ''})
+		this.props.userLogin(this.state.email, this.state.password);
+		this.setState({email: '', password: ''})
 		Keyboard.dismiss;
 	}
 
@@ -36,82 +35,80 @@ class Login extends Component {
 		if(this.props.login.error) {
 			return(
 				<Text 
-					style={{ color: 'tomato', alignSelf: 'center', marginTop: 10 }}
+					style={{ color: colors.wrong, alignSelf: 'center', marginTop: 10 }}
 				>{this.props.login.error}</Text>
 			)
-		} else { return null }
+		}
 	}
 	
 
 	render() {
 		return (
 			<View style={[styles.card, this.state.keyboard ? { marginTop: height * 0.1 } : { marginTop: height * 0.4 }]}>
-				<View>
-					<View>
-						<TextInput
-							style={styles.input}
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Email'
-							underlineColorAndroid='transparent'
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='next'
-							value={this.state.email}
-							onSubmitEditing={event => this.refs.SecondInput.focus()}
-							onChangeText={text => this.setState({ email: text })}
-						/>
-					</View>
-					<View>
-						<TextInput
-							style={styles.input}
-							ref='SecondInput'
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Password'
-							underlineColorAndroid='transparent'
-							secureTextEntry={true}
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='done'
-							value={this.state.password}
-							onChangeText={text => this.setState({ password: text })}
-						/>
-					</View>
+				<Text style={{
+					fontSize: 24, color: colors.darkred, fontWeight: '400'
+				}}>LOGIN</Text>
+				<View style={{ flexDirection: 'column'}}>
+					<TextInput
+						style={styles.input}
+						placeholderTextColor={colors.darkred}
+						placeholder='Email'
+						underlineColorAndroid={colors.transparent}
+						autoCapitalize='none'
+						autoCorrect={false}
+						returnKeyType='next'
+						value={this.state.email}
+						onSubmitEditing={event => this.refs.SecondInput.focus()}
+						onChangeText={text => this.setState({ email: text })}
+					/>
+					<TextInput
+						style={styles.input}
+						ref='SecondInput'
+						placeholderTextColor={colors.darkred}
+						placeholder='Password'
+						underlineColorAndroid={colors.transparent}
+						secureTextEntry={true}
+						autoCapitalize='none'
+						autoCorrect={false}
+						returnKeyType='done'
+						value={this.state.password}
+						onChangeText={text => this.setState({ password: text })}
+					/>
 				</View>
 				{this.renderError()}
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
 					end={{ x: 1.0, y: 0.5 }}
-					colors={['#00c6fb', '#005bea']}
+					colors={[colors.darkred, colors.lightred]}
 					style={styles.button}
 				>
 					<Button
-						buttonStyle={{ backgroundColor: 'transparent' }}
+						buttonStyle={{ backgroundColor: colors.transparent }}
 						onPress={this.onButtonPress}
 						title='LOGIN'
 					/>
 				</LinearGradient>
-				<View style={styles.container}>
-						<Button
-							title='Not a friendO yet?'
-							backgroundColor='transparent'
-							textStyle={{ color: '#F7931E' }}
-							onPress={() => {
-								Actions.register()
-							}}
-						/>
-						<Button
-							title='Forgot Password?'
-							backgroundColor='transparent'
-							textStyle={{ color: '#F7931E' }}
-							onPress={() => {
-								this.props.resetError()
-								Actions.forgotPassword()
-							}}
-						/>
-				</View>
+				<Button
+					title='Not a friendO yet?'
+					backgroundColor={colors.transparent}
+					textStyle={{ color: colors.lightred }}
+					onPress={() => {
+						Actions.register()
+					}}
+				/>
+				<Button
+					title='Forgot Password?'
+					backgroundColor={colors.transparent}
+					textStyle={{ color: colors.lightred }}
+					onPress={() => {
+						this.props.resetError()
+						Actions.forgotPassword()
+					}}
+				/>
 				<Button
 					rounded
 					title='Login with Facebook'
+					style={styles.button}
 					backgroundColor='#3b5998'
 					onPress={this.loginwithFacebook}
 				/>
@@ -122,34 +119,27 @@ class Login extends Component {
 
 const { height, width } = Dimensions.get('window');
 const styles = {
-	container: {
-		flexDirection: 'row',
-		marginBottom: 20,
-		justifyContent: 'center'
-	},
-	button: {
-		marginTop: 20,
-		backgroundColor: 'green',
-		height: 20
-	},
-	card: {
-		width: (width * .8),
-		marginLeft: (width * .1)
-	},
-	input: {
-		color: 'rgb(0,91,234)',
-		backgroundColor: 'rgba(0,198,251,0.1)',
-		fontSize: 15,
-		padding: 15,
-		paddingLeft: 30,
-		marginTop: 20,
-		borderRadius: 50
-	},
-	button: {
-		marginTop: 20,
-		borderRadius: 50
-	}
-}
+  card: {
+    width: width * 0.8,
+		marginLeft: width * 0.1,
+		alignItems: 'center'
+  },
+  input: {
+    width: width * .8,
+    color: colors.darkred,
+    backgroundColor: colors.lightyellow,
+    fontSize: 15,
+		paddingHorizontal: 25,
+		paddingVertical: 15,
+		marginVertical: 10,
+    borderRadius: 50
+  },
+  button: {
+    width: width * .8,
+		marginVertical: 10,
+    borderRadius: 50
+  }
+};
 
 const mapStateToProps = state => {
 	return { login: state.login };

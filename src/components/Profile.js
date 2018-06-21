@@ -57,9 +57,9 @@ class Profile extends Component {
 			return (
 				<FlatList
 					data={friends}
-					keyExtractor={index => index}
-					renderItem={({ item }) => {
-						return <View style={styles.elementStyle}>
+					keyExtractor={(item,index) => index}
+					renderItem={({item}, index) => {
+						return <View style={styles.elementStyle} key={index}>
                 <Avatar rounded large containerStyle={{ marginRight: 20 }} source={{ uri: item.photo }} onPress={() => this.getProfile(item)} />
                 <Text
                   style={{
@@ -193,6 +193,7 @@ const styles = {
 		shadowOpacity: 0.2
 	},
 	gradientStyle: {
+		marginBottom: 10,
 		shadowColor: "#000",
 		shadowOffset: { height: 3, width: 0 },
 		shadowOpacity: 0.2

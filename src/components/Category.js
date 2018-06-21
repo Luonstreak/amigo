@@ -6,6 +6,7 @@ import {
 	View,
 	FlatList,
 	ScrollView,
+	Dimensions
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Button } from 'react-native-elements';
@@ -14,8 +15,10 @@ import { connect } from 'react-redux';
 import firebase from 'firebase';
 import _ from 'lodash';
 import IconBadge from 'react-native-icon-badge';
+import { LinearGradient } from 'expo';
 
 import * as actions from '../actions';
+import colors from '../styles/colors';
 
 class Category extends Component {
 
@@ -36,7 +39,7 @@ class Category extends Component {
 		var arr = this.props.categories
 		var newArr = []
 		arr.map(el => {
-			if (el.value <= this.props.points){
+			if(el.value <= this.props.points){
 				newArr.push(el.key)
 			}
 		})
@@ -90,7 +93,7 @@ class Category extends Component {
 	}
 
 	renderItem = (item, index) => {
-		const colors = ['#F15A24', '#FBB03B', '#FCEE21','#D9E021','#8CC63F']
+		const colors = ['#F15A24', '#FBB03B', '#FCEE21', '#D9E021', '#8CC63F']
 		const { gameKey } = this.props.game;
 		const { categories } = this.props
 		const diff = item.value - this.props.points
@@ -142,14 +145,20 @@ class Category extends Component {
 		const arr = this.props.categories
 		return (
 			<ImageBackground source={require('../static/background.png')} style={styles.container}>
+				<LinearGradient start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} colors={[colors.darkred, colors.lightred]} style={styles.header}>
+					<Icon name="arrow-left" type="material-community" color={colors.lightgrey} underlayColor={colors.transparent} size={35} onPress={() => Actions.pop()} />
+					<Icon name="home" type="material-community" color={colors.lightgrey} underlayColor={colors.transparent} size={35} onPress={() => Actions.popTo("dashboard")} />
+					<View style={{ width: 40 }}></View>
+				</LinearGradient>
+				<View style={styles.title}>
+					<Text style={{
+						fontSize: 24, color: colors.darkred, fontWeight: 'bold'
+					}}>CATEGORIES</Text>
+				</View>
 				<ScrollView
 					style={styles.card}
 					showsVerticalScrollIndicator={false}
 				>
-					<View style={styles.header}>
-						<Text style={{
-							fontSize: 24, color: '#EF4846', fontWeight: 'bold' }}>CATEGORIES</Text>
-					</View>
 					<Button
 						title={'Random'}
 						buttonStyle={[styles.option, { backgroundColor: '#ED1C24' }]}
@@ -167,31 +176,38 @@ class Category extends Component {
 	}
 }
 
-const styles = StyleSheet.create({
+const { height, width } = Dimensions.get('window');
+const styles = {
 	container: {
 		flex: 1
 	},
+	title: {
+		width,
+		paddingVertical: 20,
+		alignItems: 'center'
+	},
 	card: {
-		borderWidth: 1,
-		borderColor: '#EF4846',
-		margin: 30,
+		margin: 20,
 		padding: 20,
-		borderRadius: 20
+		backgroundColor: colors.transparent
 	},
 	header: {
-		alignItems: 'center',
-		marginTop: 10,
-		marginBottom: 20
+		width,
+		flexDirection: "row",
+		paddingTop: 20,
+		paddingBottom: 10,
+		paddingHorizontal: 20,
+		alignItems: "center",
+		justifyContent: "space-between"
 	},
 	option: {
-		shadowColor: '#000000',
+		shadowColor: colors.black,
 		shadowOffset: { height: 2.5 },
 		shadowOpacity: .5,
-		borderRadius: 10,
+		borderRadius: 5,
 		marginBottom: 20
-
 	}
-});
+};
 
 const mapStateToProps = state => {
 	const arr = []

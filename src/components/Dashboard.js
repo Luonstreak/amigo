@@ -71,13 +71,10 @@ class Dashboard extends Component {
   }
 
   // SPINNER
-  _onRefresh = () => {
+  _onRefresh = async () => {
     this.setState({ refreshing: true });
-    setTimeout(() => {
-      this.props.userFetch();
-      this.setState({ refreshing: false });
-      clearTimeout();
-    }, 500);
+		await this.props.userFetch();
+		this.setState({ refreshing: false });
   };
 
   _getChatInfo = (game, name) => {
@@ -231,11 +228,8 @@ class Dashboard extends Component {
 			elementStyle,
 			gradientStyle
     } = styles;
-    const list1 = [],
-      list2 = [],
-      list3 = [],
-      blockList = [];
-    var list = _.forIn(info.games, (value, key) => {
+    const list1 = [],list2 = [],list3 = [],blockList = [];
+    _.forIn(info.games, (value, key) => {
       value["opponent"] =
         currentUser.uid === value.player1 ? value.player2 : value.player1;
       value["gameKey"] = key;
@@ -310,7 +304,7 @@ class Dashboard extends Component {
 											rounded
 											large
 											source={{ uri: item.opponentPhoto }}
-											containerStyle={{ marginRight: 20 }}
+											containerStyle={{ marginRight: 20, backgroundColor: '#FFF' }}
 											onPress={() => this._getProfile(item)}
 										/>
 										<TouchableOpacity
@@ -319,7 +313,7 @@ class Dashboard extends Component {
 											}
 										>
 											<Text
-												style={{ fontSize: 20, color: colors.darkgrey }}
+												style={{ fontSize: 16, color: colors.darkgrey }}
 											>
 												{item.opponentName}
 											</Text>
@@ -365,7 +359,7 @@ class Dashboard extends Component {
             renderItem={({ item }) => {
               return (
                 <View style={[elementStyle, gradientStyle]}>
-									<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+									<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
 										<Avatar
 											rounded
 											large
@@ -379,7 +373,7 @@ class Dashboard extends Component {
 											}
 										>
 											<Text
-												style={{ fontSize: 20, color: colors.darkgrey }}
+												style={{ fontSize: 16, color: colors.darkgrey }}
 											>
 												{item.opponentName}
 											</Text>
@@ -392,7 +386,7 @@ class Dashboard extends Component {
                     rounded
 										backgroundColor={colors.red}
                     title={"NUDGE"}
-                    buttonStyle={{ padding: 5 }}
+										buttonStyle={{ padding: 5, marginRight: 10 }}
                     onPress={() =>
                       this._addNudge(
                         item.player1 !== currentUser.uid
@@ -419,24 +413,24 @@ class Dashboard extends Component {
           </LinearGradient>
           <FlatList
             data={list3}
-            keyExtractor={index => index}
+            keyExtractor={(item, index) => index}
             renderItem={({ item }) => (
               <View style={[elementStyle, gradientStyle]}>
                 <Avatar
                   rounded
                   large
-                  source={{ uri: item.opponentPhoto }}
+                  source={{ uri: item.photo }}
                   containerStyle={{ marginRight: 20 }}
                   onPress={() => this._getProfile(item)}
                 />
-                <Text style={{ fontSize: 20, color: colors.darkgrey }}>
+                <Text style={{ fontSize: 16, color: colors.darkgrey }}>
                   {item.opponentName}
                 </Text>
                 <Button
                   rounded
 									backgroundColor={colors.lightred}
                   title={"REMIND"}
-                  buttonStyle={{ padding: 5 }}
+									buttonStyle={{ padding: 5, marginRight: 10 }}
                   onPress={() =>
                     this._sendReminder(item.opponent, item.gameKey)
                   }
@@ -470,7 +464,7 @@ const styles = {
     fontSize: 20,
     textAlign: "center",
     color: "#FFF",
-    padding: 10
+		padding: 10,
   },
   elementStyle: {
     flexDirection: "row",
@@ -487,7 +481,7 @@ const styles = {
   gradientStyle: {
     shadowColor: "#000",
     shadowOffset: { height: 3, width: 0 },
-    shadowOpacity: 0.2
+		shadowOpacity: 0.2,
   },
   //chat modal
   horizontal: {

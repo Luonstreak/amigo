@@ -297,7 +297,6 @@ const styles = {
     flexDirection: "row",
     padding: 20,
     paddingBottom: 10,
-    // paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "space-between"
   },
@@ -316,10 +315,7 @@ const styles = {
     margin: 20,
     backgroundColor: "#FFF",
     padding: 20,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { height: 10, width: 10 },
-    shadowOpacity: 1
+    borderRadius: 10
   },
   question: {
     marginBottom: 20,

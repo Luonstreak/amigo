@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { LinearGradient } from 'expo';
 import { Actions } from 'react-native-router-flux';
 // RELATIVE
+import colors from '../styles/colors';
 import * as actions from '../actions';
 
 class Register extends Component {
@@ -54,58 +55,53 @@ class Register extends Component {
 	render() {
 		return (
 			<View style={[styles.card, this.state.keyboard ? { marginTop: height * 0.1 } : { marginTop: height * 0.4 }]}>
-				<View>
-					<View>
-						<TextInput
-							style={styles.input}
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Email'
-							underlineColorAndroid='transparent'
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='next'
-							value={this.state.email}
-							onSubmitEditing={event => this.refs.SecondInput.focus()}
-							onChangeText={text => this.setState({ email: text, error: '' })}
-						/>
-					</View>
-					<View>
-						<TextInput
-							style={styles.input}
-							ref='SecondInput'
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Password'
-							underlineColorAndroid='transparent'
-							secureTextEntry={true}
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='done'
-							value={this.state.password}
-							onSubmitEditing={event => this.refs.ThirdInput.focus()}
-							onChangeText={text => this.setState({ password: text, error: '' })}
-						/>
-					</View>
-					<View>
-						<TextInput
-							style={styles.input}
-							ref='ThirdInput'
-							placeholderTextColor='rgba(0,91,234,0.5)'
-							placeholder='Username'
-							underlineColorAndroid='transparent'
-							autoCapitalize='none'
-							autoCorrect={false}
-							returnKeyType='done'
-							value={this.state.username}
-							onChangeText={text => this.setState({ username: text, error: '' })}
-						/>
-					</View>
-					{this.renderStateError()}
-					{this.renderError()}
+				<Text style={{fontSize: 24, color: colors.darkred, fontWeight: '400'}}>REGISTER</Text>
+				<View style={{ flexDirection: 'column' }}>
+					<TextInput
+						style={styles.input}
+						placeholderTextColor={colors.darkred}
+						placeholder='Email'
+						underlineColorAndroid='transparent'
+						autoCapitalize='none'
+						autoCorrect={false}
+						returnKeyType='next'
+						value={this.state.email}
+						onSubmitEditing={event => this.refs.SecondInput.focus()}
+						onChangeText={text => this.setState({ email: text, error: '' })}
+					/>
+					<TextInput
+						style={styles.input}
+						ref='SecondInput'
+						placeholderTextColor={colors.darkred}
+						placeholder='Password'
+						underlineColorAndroid='transparent'
+						secureTextEntry={true}
+						autoCapitalize='none'
+						autoCorrect={false}
+						returnKeyType='done'
+						value={this.state.password}
+						onSubmitEditing={() => this.refs.ThirdInput.focus()}
+						onChangeText={text => this.setState({ password: text, error: '' })}
+					/>
+					<TextInput
+						style={styles.input}
+						ref='ThirdInput'
+						placeholderTextColor={colors.darkred}
+						placeholder='Username'
+						underlineColorAndroid='transparent'
+						autoCapitalize='none'
+						autoCorrect={false}
+						returnKeyType='done'
+						value={this.state.username}
+						onChangeText={text => this.setState({ username: text, error: '' })}
+					/>
 				</View>
+				{this.renderStateError()}
+				{this.renderError()}
 				<LinearGradient
 					start={{ x: 0.0, y: 0.5 }}
 					end={{ x: 1.0, y: 0.5 }}
-					colors={['#00c6fb', '#005bea']}
+					colors={[colors.darkred, colors.red]}
 					style={styles.button}
 				>
 					<Button
@@ -134,19 +130,21 @@ const styles = {
 	card: {
 		width: (width * .8),
 		marginLeft: (width * .1),
-		justifyContent: 'center'
+		alignItems: 'center'
 	},
 	input: {
-		color: 'rgb(0,91,234)',
-		backgroundColor: 'rgba(0,198,251,0.1)',
+		width: width * .8,
+		color: colors.darkred,
+		backgroundColor: colors.lightyellow,
 		fontSize: 15,
-		padding: 15,
-		paddingLeft: 30,
-		marginTop: 20,
+		paddingHorizontal: 25,
+		paddingVertical: 15,
+		marginVertical: 10,
 		borderRadius: 50
 	},
 	button: {
-		marginTop: 20,
+		width: width * .8,
+		marginVertical: 10,
 		borderRadius: 50
 	}
 }

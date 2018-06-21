@@ -17,10 +17,7 @@ class Splash extends Component {
 			if (user) {
 				return this.props.persistentEmailLogin(user)
 			} else {
-				setTimeout(() => {
-					return Actions.login()
-					clearTimeout();
-				}, 1000);
+				Actions.login();
 			}
 		})
 	}

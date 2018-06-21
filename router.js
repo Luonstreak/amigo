@@ -39,23 +39,23 @@ const RouterComponent = () => {
           {/* <Scene key='codeInput' component={CodeInput} title='Enter Your Code' /> */}
         </Scene>
         <Scene key="main">
-          <Scene key="dashboard" component={Dashboard} hideNavBar initial />
-          <Scene key="contactList" component={ContactList} title="Pick a friend" />
-          <Scene key="categories" component={Category} />
-          <Scene key="question" component={Question} hideNavBar />
-          <Scene key="modal" component={Modal} hideNavBar />
-          <Scene key="result" component={Result} hideNavBar />
+          <Scene key="dashboard" component={Dashboard} hideNavBar initial/>
+          <Scene key="contactList" component={ContactList} title="Pick a friend" hideNavBar/>
+          <Scene key="categories" component={Category} hideNavBar/>
+          <Scene key="question" component={Question} hideNavBar/>
+          <Scene key="modal" component={Modal} hideNavBar/>
+          <Scene key="result" component={Result} hideNavBar/>
           <Scene key="guess" component={Guess} hideNavBar/>
           <Scene key="guessResult" component={GuessResult} hideNavBar/>
           <Scene key="reportAbuse" component={ReportAbuse} onLeft={() => {
               Actions.pop();
-            }} title="Choose a Reason" />
-          <Scene key="askBack" component={AskBack} />
-          <Scene key="profile" component={Profile} hideNavBar />
-          <Scene key="settings" component={Settings} title="SETTINGS" />
+            }} title="Choose a Reason"/>
+          <Scene key="askBack" component={AskBack} hideNavBar/>
+          <Scene key="profile" component={Profile} hideNavBar/>
+          <Scene key="settings" component={Settings} title="SETTINGS"/>
           <Scene key="blockedUsers" component={BlockedUsers} onLeft={() => {
               Actions.pop();
-            }} title="Blocked Users" />
+            }} title="Blocked Users"/>
         </Scene>
       </Scene>
     </Router>;

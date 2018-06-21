@@ -17,6 +17,7 @@ import moment from 'moment';
 import { Actions } from 'react-native-router-flux';
 
 export const fetchQuestion = (id, num, gameKey, selectedPlayer) => {
+	console.log('into action creator');
 	const { currentUser } = firebase.auth()
 	return (dispatch) => {
 		const ref = firebase.database().ref(`questions/${id}/${id}${num}`);
@@ -196,6 +197,7 @@ export const creatingGame = (num, questionId, selectedPlayer, phone, username, p
 	const choice = `option${num}`
 	var pushId = null
 
+
 	firebase.database().ref(`allUids/${opponent}`).once('value', snap => {
 		var existingOpponent = snap.val()
 		if (existingOpponent) {
@@ -227,7 +229,7 @@ export const creatingGame = (num, questionId, selectedPlayer, phone, username, p
 			firebase.database().ref(`friends/${phone}`).update({
 				[opponent]: {
 					username: selectedPlayer.name,
-					photo: 'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/moustache.png?alt=media&token=e2d14111-962b-4527-9a2a-47430b5bc2e5',
+					photo: photo,
 					count: 0
 				}
 			})
@@ -251,7 +253,8 @@ export const creatingGame = (num, questionId, selectedPlayer, phone, username, p
 }
 
 const initialGame = (currentUser, choice, questionId, opponent, username, phone, opponentName, photo, exists) => {
-
+	const pics = ["https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/DRAGON.png?alt=media&token=903c5ad7-3bf3-4476-bf88-629703662ba3", "https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/GODZ.png?alt=media&token=97543b34-bbb2-4662-9db2-90cd1badf35a", "https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/MONKEY.png?alt=media&token=40b032fa-0405-4f20-a689-bd9a9966acd1", "https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/MONSTER.png?alt=media&token=0ac84ade-e765-450b-b360-5673ea4fac70", "https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/PUMP.png?alt=media&token=6929f688-1838-4998-bb1d-cb0b736dc246", "https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/ROBOT.png?alt=media&token=90390298-3ac0-44bf-b1a9-3f08277e6547"];
+  let defaultPic = pics[Math.floor(Math.random() * 6)];
 	firebase.database().ref(`questions/r/${questionId}`).once('value', snap => {
 		const option1 = snap.val().choices.option1
 		const option2 = snap.val().choices.option2
@@ -287,7 +290,7 @@ const initialGame = (currentUser, choice, questionId, opponent, username, phone,
 			status: 'pending',
 			opponentPhone: opponent,
 			opponentName: opponentName,
-			opponentPhoto: 'https://firebasestorage.googleapis.com/v0/b/friend-ec2f8.appspot.com/o/moustache.png?alt=media&token=e2d14111-962b-4527-9a2a-47430b5bc2e5',
+			opponentPhoto: defaultPic,
 		})
 		if (exists) {
 			firebase.database().ref(`users/${opponent}/games/${key}`).set({
